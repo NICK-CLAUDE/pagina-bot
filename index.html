@@ -193,11 +193,11 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
     <span class="label">En pocas palabras</span>
     <h3>Mañana: challenge de 5.000 con el bot de ETH, Bitcoin y oro (ya está listo). Después, sumarle el bot del Nasdaq en la misma cuenta.</h3>
     <div class="big">
-      <div><b class="pos">7 de cada 10</b><span>Pass Rate (veces que pasa el challenge) del bot de ETH, Bitcoin y oro solo, en unos 3 meses (2024 a 2026)</span></div>
-      <div><b class="pos">8 a 9 de cada 10</b><span>Pass Rate (veces que pasa el challenge) con los dos bots juntos, en unos 2 meses (2024 a 2026)</span></div>
+      <div><b class="pos">8 a 9 de cada 10</b><span>Pass Rate (veces que pasa el challenge) del bot de ETH, Bitcoin y oro solo, en unos 4 meses (2018 a 2026)</span></div>
+      <div><b class="pos">casi 10 de cada 10</b><span>Pass Rate (veces que pasa el challenge) con los dos bots juntos, en unos 3 meses y medio (2018 a 2026)</span></div>
       <div><b>36 US$</b><span>es lo máximo que podés perder con el challenge de 5.000: lo que pagás</span></div>
     </div>
-    <p>El bot de ETH, Bitcoin y oro es el más probado: anduvo bien de 2018 a 2026 y en MetaTrader 5. El del Nasdaq también ganó en todos los años que probamos, pero todavía <b>no lo vimos funcionar en Live Trading (en vivo)</b>. Por eso la idea es arrancar con uno solo y sumar el segundo cuando lo veamos andar bien en la Demo Account (cuenta demo).</p>
+    <p>El bot de ETH, Bitcoin y oro es el más probado: anduvo bien de 2018 a 2026 y en MetaTrader 5. El del Nasdaq también ganó en cada uno de los 8 años que probamos (2018 a 2026), incluso en 2022, que fue malo para las criptomonedas, pero todavía <b>no lo vimos funcionar en Live Trading (en vivo)</b>. Por eso la idea es arrancar con uno solo y sumar el segundo cuando lo veamos andar bien en la Demo Account (cuenta demo).</p>
     <p>Lo malo: los dos tienen Losing Streaks (rachas de muchas pérdidas seguidas), y nada de esto asegura que el futuro sea igual al pasado.</p>
   </section>
 
@@ -205,30 +205,32 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
     <h2>Los dos bots</h2>
     <div class="list">
       <div class="item"><span class="pill ok">BOT 1</span><p><b>Trend Following (seguir la tendencia) en ETH, Bitcoin y oro</b> (versión "cuida la cuenta", Risk per Trade (riesgo por operación) 1,25 %). Compra cuando el precio viene subiendo con fuerza y sale cuando la subida se corta. Hace unas 8 Trades (operaciones) por mes y las deja abiertas varios días. Win Rate (operaciones ganadoras): 4 de cada 10, pero las que gana valen mucho más que las que pierde.</p></div>
-      <div class="item"><span class="pill ok">BOT 2</span><p><b>Breakout (ruptura) del Nasdaq</b> (idea de Larry Williams, Risk per Trade 0,5 % si va junto con el otro). Cuando abre la bolsa de Nueva York (10:30 de Argentina) pone dos Pending Orders (órdenes pendientes): "compro si sube la mitad de lo que se movió ayer" y "vendo si baja la mitad". OCO (One-Cancels-the-Other): si se activa una, cancela la otra. Cierra siempre antes de que termine el día. Hace unas 15 Trades (operaciones) por mes y Win Rate (operaciones ganadoras): 5 de cada 10.</p></div>
+      <div class="item"><span class="pill ok">BOT 2</span><p><b>Breakout (ruptura) del Nasdaq</b> (idea de Larry Williams, Risk per Trade 0,75 %). Cuando abre la bolsa de Nueva York (10:30 de Argentina) pone dos Pending Orders (órdenes pendientes): "compro si sube la mitad de lo que se movió ayer" y "vendo si baja la mitad". OCO (One-Cancels-the-Other): si se activa una, cancela la otra. Cierra siempre antes de que termine el día. Hace unas 15 Trades (operaciones) por mes y Win Rate (operaciones ganadoras): 5 de cada 10.</p></div>
     </div>
     <p>Se complementan (Diversification, diversificación) porque operan <b>mercados y horarios distintos</b>: cuando uno tiene una mala racha, el otro muchas veces no.</p>
   </section>
 
   <section>
     <h2>Solos o juntos: cómo les habría ido en el challenge</h2>
-    <p>Simulé el plan Standard (Profit Target, objetivo de ganancia: +8 % y +5 %; Max Daily Loss, pérdida diaria máxima: 5 %; Max Total Loss, pérdida total máxima: 10 %) arrancando un challenge en cada día de 2024 a 2026, los años que tienen en común las dos pruebas:</p>
+    <p>Simulé el plan Standard (Profit Target, objetivo de ganancia: +8 % y +5 %; Max Daily Loss, pérdida diaria máxima: 5 %; Max Total Loss, pérdida total máxima: 10 %) arrancando un challenge en cada día de <b>2018 a 2026</b>, con las pruebas de MetaTrader 5. Los dos bots comparten la misma cuenta, así que los límites de pérdida cuentan la suma de los dos:</p>
     <div class="card scroll">
       <table>
         <thead><tr><th>Qué bots</th><th>Pass Rate (pasa el challenge)</th><th>Tarda (normalmente)</th><th>Lo pasa en 3 meses o menos</th><th>Terminás el año perdiendo lo que pagaste</th><th>Ganancia típica en un año (cuenta de 5.000)</th><th>Ganancia típica en un año (cuenta de 100.000)</th></tr></thead>
         <tbody>
-          <tr style="background:var(--accent-bg)"><td><b>Los dos juntos</b> (ETH/BTC/oro 1,25 % + Nasdaq 0,5 %)</td><td class="pos">8 a 9 de cada 10</td><td class="pos">unos 2 meses</td><td class="pos">5 de cada 10</td><td class="amb">2 de cada 10</td><td class="pos">+1.400 US$</td><td class="pos">+28.500 US$</td></tr>
-          <tr><td>Solo ETH, Bitcoin y oro (1,25 %)</td><td>7 de cada 10</td><td>unos 3 meses</td><td>3 a 4 de cada 10</td><td class="amb">2 de cada 10</td><td class="pos">+1.100 US$</td><td class="pos">+22.200 US$</td></tr>
-          <tr><td>Solo Nasdaq (1 %)</td><td>8 a 9 de cada 10</td><td class="amb">unos 4 meses</td><td>2 de cada 10</td><td class="amb">2 de cada 10</td><td>+300 US$</td><td>+6.400 US$</td></tr>
-          <tr><td>Juntos, pero el Nasdaq a 0,75 %</td><td class="neg">7 de cada 10</td><td class="pos">unos 2 meses</td><td class="pos">5 a 6 de cada 10</td><td class="amb">2 de cada 10</td><td class="pos">+1.600 US$</td><td class="pos">+31.300 US$</td></tr>
+          <tr style="background:var(--accent-bg)"><td><b>Los dos juntos</b> (ETH/BTC/oro 1,25 % + Nasdaq 0,75 %)</td><td class="pos">casi 10 de cada 10</td><td class="pos">unos 3 meses y medio</td><td class="pos">4 de cada 10</td><td class="pos">1 de cada 10</td><td class="pos">+1.100 US$</td><td class="pos">+22.500 US$</td></tr>
+          <tr><td>Los dos juntos, más tranquilo (ETH/BTC/oro 1 % + Nasdaq 0,75 %)</td><td class="pos">casi 10 de cada 10</td><td>unos 4 meses</td><td>3 a 4 de cada 10</td><td class="pos">1 de cada 10</td><td class="pos">+1.000 US$</td><td class="pos">+20.100 US$</td></tr>
+          <tr><td>Los dos juntos, Nasdaq más chico (ETH/BTC/oro 1,25 % + Nasdaq 0,5 %)</td><td>casi 10 de cada 10</td><td>unos 4 meses</td><td>3 de cada 10</td><td class="amb">1 a 2 de cada 10</td><td>+840 US$</td><td>+16.900 US$</td></tr>
+          <tr><td>Solo ETH, Bitcoin y oro (1,25 %)</td><td>8 a 9 de cada 10</td><td>unos 4 meses</td><td>3 de cada 10</td><td class="neg">4 de cada 10</td><td>+410 US$</td><td>+8.300 US$</td></tr>
+          <tr><td>Solo Nasdaq (1 %)</td><td class="pos">10 de cada 10</td><td class="amb">unos 6 meses y medio</td><td>1 de cada 10</td><td class="amb">2 de cada 10</td><td>+340 US$</td><td>+6.900 US$</td></tr>
         </tbody>
       </table>
     </div>
     <ul>
-      <li><b>Juntos ganan en todo:</b> pasan más veces, más rápido, y terminan el año con más plata. Por eso recomiendo sumar el bot del Nasdaq.</li>
-      <li><b>El Nasdaq a 0,5 %, no más:</b> a 0,75 % se apura un poco, pero falla más (las pérdidas de los dos se suman en días malos).</li>
-      <li><b>Ojo, estos números son optimistas:</b> 2024 a 2026 fueron años buenos para ETH y Bitcoin. Mirando también 2022 (año malo), el bot de ETH, Bitcoin y oro pasaba 8 de cada 10 veces pero ganaba bastante menos en el año (ver más abajo). La "ganancia típica" ya descuenta lo que pagaste y supone que te quedás con el 80 % (Profit Split, reparto de ganancias).</li>
-      <li>Probé solo 3 niveles de riesgo para el Nasdaq y elegí el del medio, así que casi no hay Overfitting (sobreoptimización: acomodar el bot al pasado para que se vea mejor).</li>
+      <li><b>Juntos ganan en todo:</b> pasan más veces, más rápido y con menos riesgo de perder lo que pagaste (1 de cada 10 contra 4 de cada 10 del bot de criptomonedas solo). Por eso recomiendo sumar el bot del Nasdaq.</li>
+      <li><b>Se ve en cada época:</b> juntos pasan 10 de cada 10 en 2018 a 2021, casi 10 de cada 10 en 2022 a 2026 y 10 de cada 10 en 2024 a 2026. Con el de criptomonedas solo, 2022 a 2026 fue la época más floja (8 de cada 10).</li>
+      <li><b>Ojo con el Nasdaq:</b> nuestra otra prueba del Nasdaq da cerca de un 30 % menos ganancia que MetaTrader. Si en la realidad rinde un 30 % menos, el resultado se parece a la fila "Nasdaq más chico" (0,5 %): igual pasa casi siempre, en unos 4 meses.</li>
+      <li><b>Cuánto arriesgar:</b> probé pocas combinaciones (ETH/BTC/oro 0,75, 1 y 1,25 %; Nasdaq 0,5 y 0,75 %) y la elegida anduvo bien en todas las épocas, así que casi no hay Overfitting (sobreoptimización: acomodar el bot al pasado para que se vea mejor). No probé arriesgar más: en el bot de criptomonedas solo, arriesgar más hacía fallar más veces.</li>
+      <li>La "ganancia típica" ya descuenta lo que pagaste y supone que te quedás con el 80 % (Profit Split, reparto de ganancias).</li>
     </ul>
   </section>
 
@@ -248,8 +250,8 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
     <h2>Después: sumar el bot del Nasdaq</h2>
     <div class="card steps">
       <div class="step"><p><b>Activarlo 2 a 4 semanas en la Demo Account (cuenta demo)</b> (cuando me digas). Hay que ver que ponga las dos órdenes a las 10:30, cancele la que sobra y cierre antes del final del día.</p></div>
-      <div class="step"><p><b>Si anda bien, sumarlo a la cuenta del challenge</b> en un gráfico del Nasdaq de 1 minuto, con riesgo 0,5 %. Los dos bots conviven en la misma cuenta sin molestarse.</p></div>
-      <div class="step"><p><b>Con una cuenta de 5.000 hay un detalle:</b> 0,5 % son 25 US$ por operación, y el Minimum Lot Size (tamaño mínimo de operación) del Nasdaq puede quedar justo. Lo reviso con los datos de Funding Pips cuando tengas la cuenta.</p></div>
+      <div class="step"><p><b>Si anda bien, sumarlo a la cuenta del challenge</b> en un gráfico del Nasdaq de 1 minuto, con riesgo 0,75 %. Los dos bots conviven en la misma cuenta sin molestarse.</p></div>
+      <div class="step"><p><b>Con una cuenta de 5.000 hay un detalle:</b> 0,75 % son 37,50 US$ por operación, y el Minimum Lot Size (tamaño mínimo de operación) del Nasdaq puede quedar justo. Lo reviso con los datos de Funding Pips cuando tengas la cuenta.</p></div>
       <div class="step"><p><b>Si el challenge de 5.000 sale bien, pasar al de 100.000</b> con los dos bots. Las pruebas dicen lo mismo para 5.000 que para 100.000: lo que cambia es cuánto ganás.</p></div>
     </div>
   </section>
@@ -315,12 +317,28 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
         </tbody>
       </table>
     </div>
+    <p>Probé además el bot en MetaTrader 5, año por año, desde 2018 (Risk per Trade 0,75 %). Ganó en los 8 años:</p>
+    <div class="card scroll">
+      <table>
+        <thead><tr><th>Año</th><th>Resultado</th><th>Profit Factor (gana por cada 1 que pierde)</th><th>Max Drawdown (peor bajada)</th></tr></thead>
+        <tbody>
+          <tr><td>2018</td><td class="pos">+30 %</td><td>1,51</td><td class="neg">−6,5 %</td></tr>
+          <tr><td>2019</td><td class="pos">+12 %</td><td>1,20</td><td class="neg">−9,4 %</td></tr>
+          <tr><td>2020</td><td class="pos">+13 %</td><td>1,24</td><td class="neg">−5,3 %</td></tr>
+          <tr><td>2021</td><td class="pos">+29 %</td><td>1,65</td><td class="neg">−2,6 %</td></tr>
+          <tr><td>2022</td><td class="pos">+23 %</td><td>1,43</td><td class="neg">−5,0 %</td></tr>
+          <tr><td>2023</td><td class="pos">+20 %</td><td>1,38</td><td class="neg">−4,5 %</td></tr>
+          <tr><td>2024 a 2026</td><td class="pos">+19 % por año</td><td>1,46</td><td class="neg">−5,4 %</td></tr>
+        </tbody>
+      </table>
+    </div>
     <p class="muted" style="font-size:14px">Estos números ya descuentan el Spread (diferencia entre precio de compra y de venta, lo que cobra el broker) en cada operación. MetaTrader dio más (+28 %, +24 % y +8 %), pero supone que la orden siempre se llena justo en el precio pedido; en la realidad hay Slippage (deslizamiento): a veces se llena unos puntos peor.</p>
     <ul>
       <li><b>Solo, es lento:</b> tarda 4 a 8 meses en pasar el challenge según cuánto arriesgues. Su valor está en sumarlo al otro bot.</li>
       <li><b>2026 viene más flojo</b> que 2024 y 2025. Puede ser una mala racha normal o que la estrategia se esté gastando: hay que vigilarlo.</li>
       <li><b>Su Max Drawdown (peor bajada) fue 14 pérdidas de las grandes seguidas</b> (a 0,5 % por operación, unos −7 %).</li>
-      <li><b>Falta:</b> verlo funcionar en la demo y probarlo en años anteriores a 2021.</li>
+      <li><b>Años anteriores a los que miramos (2018 a 2020):</b> también ganó los tres (ver tabla de abajo).</li>
+      <li><b>Falta:</b> verlo funcionar en la demo.</li>
     </ul>
   </section>
 
@@ -390,7 +408,7 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
         <li><b>El bot de ETH, Bitcoin y oro solo gana si las criptomonedas tienen buenas subidas.</b> Solo compra. En años en que bajan todo el tiempo, como 2022, pierde de a poco.</li>
         <li><b>Los dos pierden muchas veces:</b> el de criptomonedas pierde 6 de cada 10 operaciones y el del Nasdaq 5 de cada 10. Ganan porque lo que ganan es más grande que lo que pierden.</li>
         <li><b>Hubo un Drawdown (bajada) de 28 %</b> en 2022 y 2023 con el bot de criptomonedas original. Si algo así pasa durante el challenge, el bot se apaga solo en −9 % para no romper las reglas: perdés el challenge, pero no más que lo que pagaste.</li>
-        <li><b>La prueba de los dos juntos cubre solo 2024 a 2026,</b> años buenos para las criptomonedas. En años malos el resultado va a ser peor.</li>
+        <li><b>La prueba de los dos juntos cubre 2018 a 2026</b> con precios de MetaTrader 5, que suelen ser algo más favorables que la realidad. En un año malo para las criptomonedas, como 2022, la ganancia es bastante menor.</li>
         <li><b>Si pasás, ojo con la Funded Account (cuenta fondeada):</b> desde enero de 2026 Funding Pips cierra solas las operaciones abiertas el viernes. El bot de criptomonedas deja operaciones abiertas varios días, así que ahí probablemente gane menos (preparo una versión para esa etapa). El del Nasdaq no tiene ese problema porque cierra todos los días.</li>
         <li><b>Las pruebas son un poco optimistas.</b> No ven la Floating Loss (pérdida flotante: cuánto baja una operación mientras está abierta), solo cómo termina. En la realidad, el resultado va a ser algo peor.</li>
         <li><b>Funding Pips puede cobrar distinto que el broker de las pruebas</b> (IC Markets). Si es más caro, el resultado baja.</li>
@@ -413,7 +431,7 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
         <div><dt>Funded Account (cuenta fondeada)</dt><dd>La cuenta con plata de la empresa que te dan al pasar las dos etapas.</dd></div>
         <div><dt>Profit Split (reparto de ganancias)</dt><dd>Qué parte de lo que ganás en la cuenta fondeada es tuya (80 %).</dd></div>
         <div><dt>Pass Rate (% que pasa el challenge)</dt><dd>De todos los challenges simulados, cuántos pasan las dos etapas.</dd></div>
-        <div><dt>Risk per Trade (riesgo por operación)</dt><dd>Cuánto de la cuenta se pierde si una operación sale mal. En 5.000, 1,25 % son 62,50 US$ y 0,5 % son 25 US$.</dd></div>
+        <div><dt>Risk per Trade (riesgo por operación)</dt><dd>Cuánto de la cuenta se pierde si una operación sale mal. En 5.000, 1,25 % son 62,50 US$ y 0,75 % son 37,50 US$.</dd></div>
         <div><dt>Trade (operación)</dt><dd>Una compra o venta, desde que el bot entra hasta que sale.</dd></div>
         <div><dt>Long / Short (comprar / vender)</dt><dd>Long = ganar si el precio sube. Short = ganar si el precio baja.</dd></div>
         <div><dt>Lot (lote)</dt><dd>El tamaño de una operación.</dd></div>
@@ -436,7 +454,7 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
     </div>
   </section>
 
-  <footer>Pruebas hechas con el simulador de MetaTrader 5 y precios del broker IC Markets entre 2018 y 2026, y con precios de Dukascopy para el Nasdaq. Los números de cada operación están en las otras pestañas de esta página: arriba podés prender "Bot ETH-BTC-oro (2022-26)" y "Bot Nasdaq (2024-26)" a la vez para verlos juntos (los dos se ajustan al mismo riesgo por operación, así que es una vista aproximada; la tabla "Solos o juntos" usa el Nasdaq a 0,5 %). Resultados pasados no garantizan resultados futuros.</footer>
+  <footer>Pruebas hechas con el simulador de MetaTrader 5 y precios del broker IC Markets entre 2018 y 2026, y con precios de Dukascopy para el Nasdaq. Los números de cada operación están en las otras pestañas de esta página: arriba podés prender "Bot ETH-BTC-oro (2022-26)" y "Bot Nasdaq (2024-26)" a la vez para verlos juntos (los dos se ajustan al mismo riesgo por operación, así que es una vista aproximada; la tabla "Solos o juntos" usa el Nasdaq a 0,75 %). Resultados pasados no garantizan resultados futuros.</footer>
 </div>
 
   <!-- RESUMEN -->
