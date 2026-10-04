@@ -162,60 +162,60 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
       <span class="pill ok">● 100% LOCAL</span>
     </div>
     <nav class="tabs" role="tablist" aria-label="Secciones">
-      <button class="tab" role="tab" data-tab="veredicto" aria-selected="true">Veredicto</button>
-      <button class="tab" role="tab" data-tab="resumen" aria-selected="false">Resumen</button>
-      <button class="tab" role="tab" data-tab="metricas" aria-selected="false">Detalle</button>
-      <button class="tab" role="tab" data-tab="operaciones" aria-selected="false">Operaciones</button>
+      <button class="tab" role="tab" data-tab="veredicto" aria-selected="true">Verdict (veredicto)</button>
+      <button class="tab" role="tab" data-tab="resumen" aria-selected="false">Summary (resumen)</button>
+      <button class="tab" role="tab" data-tab="metricas" aria-selected="false">Details (detalle)</button>
+      <button class="tab" role="tab" data-tab="operaciones" aria-selected="false">Trades (operaciones)</button>
       <button class="tab" role="tab" data-tab="fondeos" aria-selected="false">Challenge</button>
-      <button class="tab" role="tab" data-tab="robustez" aria-selected="false">¿Es suerte?</button>
-      <button class="tab" role="tab" data-tab="duelo" aria-selected="false">Cara a cara</button>
+      <button class="tab" role="tab" data-tab="robustez" aria-selected="false">Robustness (¿es suerte?)</button>
+      <button class="tab" role="tab" data-tab="duelo" aria-selected="false">Head-to-Head (cara a cara)</button>
     </nav>
-    <button class="btn" id="btnCargar" type="button">Cargar informes</button>
+    <button class="btn" id="btnCargar" type="button">Load Reports (cargar informes)</button>
   </div>
 </div>
 
 <div class="wrap">
   <section class="card filters" aria-label="Filtros">
-    <div class="grp"><span class="label">Pruebas cargadas (tocá para prender o apagar)</span><div class="chips" id="chips"></div></div>
-    <label class="grp"><span class="label">Desde</span><input type="date" id="desde"></label>
-    <label class="grp"><span class="label">Hasta</span><input type="date" id="hasta"></label>
+    <div class="grp"><span class="label">Loaded Backtests (pruebas cargadas, tocá para prender o apagar)</span><div class="chips" id="chips"></div></div>
+    <label class="grp"><span class="label">From (desde)</span><input type="date" id="desde"></label>
+    <label class="grp"><span class="label">To (hasta)</span><input type="date" id="hasta"></label>
     <div class="count" id="count"></div>
   </section>
 
   <!-- VEREDICTO (informe opcional que inserta analizador_backtest.py --informe) -->
   <div class="pane informe" data-pane="veredicto"><header style="display:grid;gap:12px">
-    <span class="label">Informe final · pruebas con datos del pasado · actualizado 4 de octubre de 2026</span>
-    <h1>Dos bots que funcionan: <em>tendencia en ETH, Bitcoin y oro</em>, y <em>ruptura del Nasdaq</em>. Juntos pasan más y más rápido.</h1>
-    <p class="muted">Probamos 6 ideas con datos de los últimos años, como si las hubiéramos usado en ese momento. Dos funcionaron y cuatro no sirven. Ahora mismo no hay ningún bot operando en tu cuenta demo.</p>
+    <span class="label">Final Report (informe final) · Backtest (pruebas con datos del pasado) · actualizado 4 de octubre de 2026</span>
+    <h1>Dos bots que funcionan: <em>Trend Following (tendencia) en ETH, Bitcoin y oro</em>, y <em>Breakout (ruptura) del Nasdaq</em>. Juntos pasan más y más rápido.</h1>
+    <p class="muted">Hicimos el Backtest (prueba con datos del pasado) de 6 ideas, como si las hubiéramos usado en ese momento. Dos funcionaron y cuatro no sirven. Ahora mismo no hay ningún bot operando en tu Demo Account (cuenta demo).</p>
   </header>
 
   <section class="card hero">
-    <span class="label">En pocas palabras</span>
+    <span class="label">TL;DR (en pocas palabras)</span>
     <h3>Mañana: challenge de 5.000 con el bot de ETH, Bitcoin y oro (ya está listo). Después, sumarle el bot del Nasdaq en la misma cuenta.</h3>
     <div class="big">
-      <div><b class="pos">7 de cada 10</b><span>veces pasa el challenge el bot de ETH, Bitcoin y oro solo, en unos 3 meses (2024 a 2026)</span></div>
-      <div><b class="pos">8 a 9 de cada 10</b><span>veces pasan los dos bots juntos, en unos 2 meses (2024 a 2026)</span></div>
-      <div><b>36 US$</b><span>es lo máximo que podés perder con el challenge de 5.000: lo que pagás</span></div>
+      <div><b class="pos">7 de cada 10</b><span>Pass Rate (veces que pasa el challenge) del bot de ETH, Bitcoin y oro solo, en unos 3 meses (2024 a 2026)</span></div>
+      <div><b class="pos">8 a 9 de cada 10</b><span>Pass Rate (veces que pasa el challenge) con los dos bots juntos, en unos 2 meses (2024 a 2026)</span></div>
+      <div><b>36 US$</b><span>Challenge Fee (lo que pagás): es lo máximo que podés perder con el challenge de 5.000</span></div>
     </div>
-    <p>El bot de ETH, Bitcoin y oro es el más probado: anduvo bien de 2018 a 2026 y en MetaTrader 5. El del Nasdaq también ganó en todos los años que probamos, pero todavía <b>no lo vimos funcionar en vivo</b>. Por eso la idea es arrancar con uno solo y sumar el segundo cuando lo veamos andar bien en la demo.</p>
-    <p>Lo malo: los dos tienen rachas de muchas pérdidas seguidas, y nada de esto asegura que el futuro sea igual al pasado.</p>
+    <p>El bot de ETH, Bitcoin y oro es el más probado: anduvo bien de 2018 a 2026 y en MetaTrader 5. El del Nasdaq también ganó en todos los años que probamos, pero todavía <b>no lo vimos funcionar en Live Trading (en vivo)</b>. Por eso la idea es arrancar con uno solo y sumar el segundo cuando lo veamos andar bien en la Demo Account (cuenta demo).</p>
+    <p>Lo malo: los dos tienen Losing Streaks (rachas de muchas pérdidas seguidas), y nada de esto asegura que el futuro sea igual al pasado.</p>
   </section>
 
   <section>
     <h2>Los dos bots</h2>
     <div class="list">
-      <div class="item"><span class="pill ok">BOT 1</span><p><b>Tendencia en ETH, Bitcoin y oro</b> (versión "cuida la cuenta", 1,25 % por operación). Compra cuando el precio viene subiendo con fuerza y sale cuando la subida se corta. Hace unas 8 operaciones por mes y las deja abiertas varios días. Gana 4 de cada 10 operaciones, pero las que gana valen mucho más que las que pierde.</p></div>
-      <div class="item"><span class="pill ok">BOT 2</span><p><b>Ruptura del Nasdaq</b> (idea de Larry Williams, 0,5 % por operación si va junto con el otro). Cuando abre la bolsa de Nueva York (10:30 de Argentina) pone dos órdenes: "compro si sube la mitad de lo que se movió ayer" y "vendo si baja la mitad". Si se activa una, cancela la otra. Cierra siempre antes de que termine el día. Hace unas 15 operaciones por mes y gana 5 de cada 10.</p></div>
+      <div class="item"><span class="pill ok">BOT 1</span><p><b>Trend Following (seguir la tendencia) en ETH, Bitcoin y oro</b> (versión "cuida la cuenta", Risk per Trade (riesgo por operación) 1,25 %). Compra cuando el precio viene subiendo con fuerza y sale cuando la subida se corta. Hace unas 8 Trades (operaciones) por mes y las deja abiertas varios días. Win Rate (operaciones ganadoras): 4 de cada 10, pero las que gana valen mucho más que las que pierde.</p></div>
+      <div class="item"><span class="pill ok">BOT 2</span><p><b>Breakout (ruptura) del Nasdaq</b> (idea de Larry Williams, Risk per Trade 0,5 % si va junto con el otro). Cuando abre la bolsa de Nueva York (10:30 de Argentina) pone dos Pending Orders (órdenes pendientes): "compro si sube la mitad de lo que se movió ayer" y "vendo si baja la mitad". OCO (One-Cancels-the-Other): si se activa una, cancela la otra. Cierra siempre antes de que termine el día. Hace unas 15 Trades (operaciones) por mes y Win Rate (operaciones ganadoras): 5 de cada 10.</p></div>
     </div>
-    <p>Se complementan porque operan <b>mercados y horarios distintos</b>: cuando uno tiene una mala racha, el otro muchas veces no.</p>
+    <p>Se complementan (Diversification, diversificación) porque operan <b>mercados y horarios distintos</b>: cuando uno tiene una mala racha, el otro muchas veces no.</p>
   </section>
 
   <section>
-    <h2>Solos o juntos: cómo les habría ido en el challenge</h2>
-    <p>Simulé el plan Standard (+8 % y +5 %, sin perder 5 % en un día ni 10 % en total) arrancando un challenge en cada día de 2024 a 2026, los años que tienen en común las dos pruebas:</p>
+    <h2>Solo vs. Combined (solos o juntos): cómo les habría ido en el challenge</h2>
+    <p>Simulé el plan Standard (Profit Target, objetivo de ganancia: +8 % y +5 %; Max Daily Loss, pérdida diaria máxima: 5 %; Max Total Loss, pérdida total máxima: 10 %) arrancando un challenge en cada día de 2024 a 2026, los años que tienen en común las dos pruebas:</p>
     <div class="card scroll">
       <table>
-        <thead><tr><th>Qué bots</th><th>Pasa el challenge</th><th>Tarda (normalmente)</th><th>Lo pasa en 3 meses o menos</th><th>Terminás el año perdiendo lo que pagaste</th><th>Ganancia típica en un año (cuenta de 5.000)</th><th>Ganancia típica en un año (cuenta de 100.000)</th></tr></thead>
+        <thead><tr><th>Bots</th><th>Pass Rate (pasa el challenge)</th><th>Median Time (tarda normalmente)</th><th>Pass within 90 Days (lo pasa en 3 meses o menos)</th><th>Net Loss Rate (terminás el año perdiendo lo que pagaste)</th><th>Typical Yearly Profit (ganancia típica en un año), cuenta de 5.000</th><th>Typical Yearly Profit (ganancia típica en un año), cuenta de 100.000</th></tr></thead>
         <tbody>
           <tr style="background:var(--accent-bg)"><td><b>Los dos juntos</b> (ETH/BTC/oro 1,25 % + Nasdaq 0,5 %)</td><td class="pos">8 a 9 de cada 10</td><td class="pos">unos 2 meses</td><td class="pos">5 de cada 10</td><td class="amb">2 de cada 10</td><td class="pos">+1.400 US$</td><td class="pos">+28.500 US$</td></tr>
           <tr><td>Solo ETH, Bitcoin y oro (1,25 %)</td><td>7 de cada 10</td><td>unos 3 meses</td><td>3 a 4 de cada 10</td><td class="amb">2 de cada 10</td><td class="pos">+1.100 US$</td><td class="pos">+22.200 US$</td></tr>
@@ -227,29 +227,29 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
     <ul>
       <li><b>Juntos ganan en todo:</b> pasan más veces, más rápido, y terminan el año con más plata. Por eso recomiendo sumar el bot del Nasdaq.</li>
       <li><b>El Nasdaq a 0,5 %, no más:</b> a 0,75 % se apura un poco, pero falla más (las pérdidas de los dos se suman en días malos).</li>
-      <li><b>Ojo, estos números son optimistas:</b> 2024 a 2026 fueron años buenos para ETH y Bitcoin. Mirando también 2022 (año malo), el bot de ETH, Bitcoin y oro pasaba 8 de cada 10 veces pero ganaba bastante menos en el año (ver más abajo). La "ganancia típica" ya descuenta lo que pagaste y supone que te quedás con el 80 %.</li>
-      <li>Probé solo 3 niveles de riesgo para el Nasdaq y elegí el del medio, así que el resultado casi no está "acomodado" a favor.</li>
+      <li><b>Ojo, estos números son optimistas:</b> 2024 a 2026 fueron años buenos para ETH y Bitcoin. Mirando también 2022 (año malo), el bot de ETH, Bitcoin y oro pasaba 8 de cada 10 veces pero ganaba bastante menos en el año (ver más abajo). La "Typical Profit (ganancia típica)" ya descuenta lo que pagaste y supone que te quedás con el 80 % (Profit Split, reparto de ganancias).</li>
+      <li>Probé solo 3 niveles de riesgo para el Nasdaq y elegí el del medio, así que casi no hay Overfitting (sobreoptimización: acomodar el bot al pasado para que se vea mejor).</li>
     </ul>
   </section>
 
   <section>
     <h2>Mañana: cómo arrancar el challenge de 5.000</h2>
     <div class="card steps">
-      <div class="step"><p><b>Comprar el 2 Step Standard de 5.000</b> con plataforma <b>MT5</b> y pérdida diaria de <b>5 %</b>. Lo máximo que podés perder es lo que pagás (unos 36 US$).</p></div>
+      <div class="step"><p><b>Comprar el 2 Step Standard de 5.000</b> con plataforma <b>MT5</b> y Max Daily Loss (pérdida diaria máxima) de <b>5 %</b>. Lo máximo que podés perder es lo que pagás (unos 36 US$).</p></div>
       <div class="step"><p><b>Entrar a esa cuenta en tu MetaTrader 5</b> (vos ponés la contraseña; yo nunca la veo). Fijarte que existan los mercados <b>ETHUSD, BTCUSD y XAUUSD</b>, y cómo se llama el Nasdaq (puede ser NAS100 o USTEC). Si tienen otro nombre, me avisás y lo ajusto.</p></div>
-      <div class="step"><p><b>Abrir un gráfico de ETHUSD en 4 horas (H4)</b>, arrastrar el bot <b>Tendencia_4H</b> y en "Cargar" elegir <b>challenge_5k_etapa1.set</b>. Activar "Trading algorítmico". El bot opera los 3 mercados desde ese único gráfico.</p></div>
-      <div class="step"><p><b>Dejar la computadora prendida y MT5 abierto</b> (o usar un servidor VPS). Si MT5 está cerrado, el bot no puede cerrar operaciones ni frenar.</p></div>
-      <div class="step"><p><b>Cuando llegue a +8 %, el bot cierra todo y se detiene solo.</b> Funding Pips te da la cuenta de la etapa 2: repetir el paso 3 con <b>challenge_5k_etapa2.set</b> (meta +5 %).</p></div>
-      <div class="step"><p><b>No tocar las operaciones del bot.</b> Va a haber rachas de varias pérdidas seguidas: es normal. El bot se frena solo si pierde 4 % en un día o 9 % en total, antes de los límites de Funding Pips (5 % y 10 %).</p></div>
+      <div class="step"><p><b>Abrir un gráfico de ETHUSD en 4 horas (H4)</b>, arrastrar el bot <b>Tendencia_4H</b> y en "Cargar" elegir <b>challenge_5k_etapa1.set</b>. Activar "Algo Trading (trading algorítmico)". El bot opera los 3 mercados desde ese único gráfico.</p></div>
+      <div class="step"><p><b>Dejar la computadora prendida y MT5 abierto</b> (o usar un VPS, Virtual Private Server: una computadora en internet que no se apaga). Si MT5 está cerrado, el bot no puede cerrar operaciones ni frenar.</p></div>
+      <div class="step"><p><b>Cuando llegue al Profit Target (objetivo de ganancia) de +8 %, el bot cierra todo y se detiene solo.</b> Funding Pips te da la cuenta de la Phase 2 (etapa 2): repetir el paso 3 con <b>challenge_5k_etapa2.set</b> (Profit Target +5 %).</p></div>
+      <div class="step"><p><b>No tocar las operaciones del bot.</b> Va a haber rachas de varias pérdidas seguidas: es normal. El bot se frena solo (Kill Switch) si pierde 4 % en un día o 9 % en total, antes de los límites de Funding Pips (5 % y 10 %).</p></div>
     </div>
   </section>
 
   <section>
     <h2>Después: sumar el bot del Nasdaq</h2>
     <div class="card steps">
-      <div class="step"><p><b>Activarlo 2 a 4 semanas en la cuenta demo</b> (cuando me digas). Hay que ver que ponga las dos órdenes a las 10:30, cancele la que sobra y cierre antes del final del día.</p></div>
+      <div class="step"><p><b>Activarlo 2 a 4 semanas en la Demo Account (cuenta demo)</b> (cuando me digas). Hay que ver que ponga las dos órdenes a las 10:30, cancele la que sobra y cierre antes del final del día.</p></div>
       <div class="step"><p><b>Si anda bien, sumarlo a la cuenta del challenge</b> en un gráfico del Nasdaq de 1 minuto, con riesgo 0,5 %. Los dos bots conviven en la misma cuenta sin molestarse.</p></div>
-      <div class="step"><p><b>Con una cuenta de 5.000 hay un detalle:</b> 0,5 % son 25 US$ por operación, y el tamaño mínimo de operación del Nasdaq puede quedar justo. Lo reviso con los datos de Funding Pips cuando tengas la cuenta.</p></div>
+      <div class="step"><p><b>Con una cuenta de 5.000 hay un detalle:</b> 0,5 % son 25 US$ por operación, y el Minimum Lot Size (tamaño mínimo de operación) del Nasdaq puede quedar justo. Lo reviso con los datos de Funding Pips cuando tengas la cuenta.</p></div>
       <div class="step"><p><b>Si el challenge de 5.000 sale bien, pasar al de 100.000</b> con los dos bots. Las pruebas dicen lo mismo para 5.000 que para 100.000: lo que cambia es cuánto ganás.</p></div>
     </div>
   </section>
@@ -259,7 +259,7 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
     <p>Probé 4 versiones en MetaTrader 5 con precios reales, en dos épocas distintas y con distintos riesgos por operación. Esta es la mejor combinación de cada una para el plan Standard (los números son los de la peor de las dos épocas):</p>
     <div class="card scroll">
       <table>
-        <thead><tr><th>Versión</th><th>Riesgo por operación</th><th>Pasa el challenge</th><th>Tarda (normalmente)</th><th>Lo pasa en 3 meses o menos</th><th>Terminás el año perdiendo lo que pagaste</th></tr></thead>
+        <thead><tr><th>Version (versión)</th><th>Risk per Trade (riesgo por operación)</th><th>Pass Rate (pasa el challenge)</th><th>Median Time (tarda normalmente)</th><th>Pass within 90 Days (lo pasa en 3 meses o menos)</th><th>Net Loss Rate (terminás el año perdiendo lo que pagaste)</th></tr></thead>
         <tbody>
           <tr style="background:var(--accent-bg)"><td><b>Cuida la cuenta</b> · la que usamos</td><td>1,25 %</td><td class="pos">8 de cada 10</td><td>3 a 4 meses</td><td>3 de cada 10</td><td class="amb">2 a 4 de cada 10</td></tr>
           <tr><td>Igual, pero más tranquilo</td><td>1 %</td><td class="pos">9 de cada 10</td><td>4 a 4,5 meses</td><td>2 a 3 de cada 10</td><td class="amb">3 a 4 de cada 10</td></tr>
@@ -271,25 +271,25 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
     </div>
     <p>La versión "cuida la cuenta" tiene dos reglas extra:</p>
     <ul>
-      <li><b>Si ya tiene una compra abierta en Bitcoin, la de ETH arriesga la mitad</b> (y al revés). Las dos suelen subir y bajar juntas, así que tener las dos a full es como apostar doble a lo mismo.</li>
-      <li><b>Si la cuenta está 5 % abajo de su mejor momento, arriesga la mitad</b> hasta recuperarse. Así una mala racha no la lleva al límite de −10 %.</li>
+      <li><b>Si ya tiene una compra abierta en Bitcoin, la de ETH arriesga la mitad</b> (y al revés). Las dos suelen subir y bajar juntas (Correlation, correlación), así que tener las dos a full es como apostar doble a lo mismo.</li>
+      <li><b>Drawdown Risk Cut: si la cuenta está 5 % abajo de su mejor momento, arriesga la mitad</b> hasta recuperarse. Así una mala racha no la lleva al límite de −10 %.</li>
     </ul>
-    <h3>¿Cómo sabemos que no fue suerte?</h3>
-    <p>Elegimos ETH, Bitcoin y oro mirando cómo le fue al bot entre 2022 y 2026. Eso tiene una trampa: siempre vas a encontrar algo que anduvo bien en el pasado. Para controlarlo, probamos el mismo bot, sin cambiarle nada, en años que no habíamos mirado: <b>2018 a 2021</b>.</p>
+    <h3>Out-of-Sample Test (prueba fuera de muestra): ¿cómo sabemos que no fue suerte?</h3>
+    <p>Elegimos ETH, Bitcoin y oro mirando cómo le fue al bot entre 2022 y 2026. Eso tiene una trampa: siempre vas a encontrar algo que anduvo bien en el pasado. Para controlarlo, probamos el mismo bot, sin cambiarle nada, en años que no habíamos mirado (Out-of-Sample): <b>2018 a 2021</b>.</p>
     <div class="card scroll">
       <table>
-        <thead><tr><th>Mercado</th><th>2018 a 2021<br>(años que no miramos)</th><th>2022 a 2026<br>(años que usamos para elegir)</th></tr></thead>
+        <thead><tr><th>Symbol (mercado)</th><th>2018 a 2021<br>Out-of-Sample (años que no miramos)</th><th>2022 a 2026<br>In-Sample (años que usamos para elegir)</th></tr></thead>
         <tbody>
           <tr><td>Bitcoin</td><td class="pos">ganó</td><td class="pos">ganó</td></tr>
           <tr><td>ETH</td><td class="pos">ganó</td><td class="pos">ganó</td></tr>
           <tr><td>Oro</td><td class="amb">quedó igual</td><td class="pos">ganó</td></tr>
-          <tr><td>Índices de bolsa (Nasdaq, S&amp;P, DAX)</td><td class="neg">perdió</td><td class="neg">perdió</td></tr>
+          <tr><td>Stock Indices (índices de bolsa: Nasdaq, S&amp;P, DAX)</td><td class="neg">perdió</td><td class="neg">perdió</td></tr>
         </tbody>
       </table>
     </div>
     <p>ETH y Bitcoin ganaron en los dos períodos, así que no parece casualidad. El oro quedó porque se mueve distinto que las criptomonedas y suaviza las bajadas: con oro el bot pasa el challenge 8 de cada 10 veces; sin oro, 6 de cada 10.</p>
     <div class="card">
-      <span class="label">Cómo le fue cada año, arriesgando 0,75 % por operación</span>
+      <span class="label">Yearly Return (cómo le fue cada año), Risk per Trade 0,75 %</span>
       <div class="scroll"><table>
         <tbody>
           <tr><td>2022</td><td class="neg">−4 %</td><td style="text-align:left;font-family:var(--display)" class="muted">año malo para las criptomonedas</td></tr>
@@ -304,10 +304,10 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
 
   <section>
     <h2>Bot 2: Nasdaq, en detalle</h2>
-    <p>Elegimos sus reglas mirando 2021 a 2023 y después lo probamos <b>una sola vez</b> en 2024 a 2026, años que no habíamos mirado. Le fue igual de bien en los dos períodos: gana 1,28 por cada 1 que pierde. También lo probamos en MetaTrader 5 con precios de IC Markets: hizo la misma operación que nuestra prueba en 496 de 497 días.</p>
+    <p>Elegimos sus reglas mirando 2021 a 2023 y después lo probamos <b>una sola vez</b> en 2024 a 2026 (Out-of-Sample), años que no habíamos mirado. Le fue igual de bien en los dos períodos: Profit Factor (gana por cada 1 que pierde) de 1,28. También lo probamos en MetaTrader 5 con precios de IC Markets: hizo la misma operación que nuestra prueba en 496 de 497 días.</p>
     <div class="card scroll">
       <table>
-        <thead><tr><th>Año (arriesgando 0,75 % por operación)</th><th>Resultado</th><th>En una cuenta de 5.000</th></tr></thead>
+        <thead><tr><th>Year (año), Risk per Trade 0,75 %</th><th>Return (resultado)</th><th>On a 5.000 Account (en una cuenta de 5.000)</th></tr></thead>
         <tbody>
           <tr><td>2024</td><td class="pos">+19 %</td><td class="pos">+970 US$</td></tr>
           <tr><td>2025</td><td class="pos">+13 %</td><td class="pos">+650 US$</td></tr>
@@ -315,34 +315,34 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
         </tbody>
       </table>
     </div>
-    <p class="muted" style="font-size:14px">Estos números ya descuentan lo que cobra el broker en cada operación. MetaTrader dio más (+28 %, +24 % y +8 %), pero supone que la orden siempre se llena justo en el precio pedido; en la realidad a veces se llena unos puntos peor.</p>
+    <p class="muted" style="font-size:14px">Estos números ya descuentan el Spread (diferencia entre precio de compra y de venta, lo que cobra el broker) en cada operación. MetaTrader dio más (+28 %, +24 % y +8 %), pero supone que la orden siempre se llena justo en el precio pedido; en la realidad hay Slippage (deslizamiento): a veces se llena unos puntos peor.</p>
     <ul>
       <li><b>Solo, es lento:</b> tarda 4 a 8 meses en pasar el challenge según cuánto arriesgues. Su valor está en sumarlo al otro bot.</li>
       <li><b>2026 viene más flojo</b> que 2024 y 2025. Puede ser una mala racha normal o que la estrategia se esté gastando: hay que vigilarlo.</li>
-      <li><b>Su peor bajada fue 14 pérdidas de las grandes seguidas</b> (a 0,5 % por operación, unos −7 %).</li>
+      <li><b>Su Max Drawdown (peor bajada) fue 14 pérdidas de las grandes seguidas</b> (a 0,5 % por operación, unos −7 %).</li>
       <li><b>Falta:</b> verlo funcionar en la demo y probarlo en años anteriores a 2021.</li>
     </ul>
   </section>
 
   <section>
-    <h2>Las 6 ideas que probamos</h2>
+    <h2>The 6 Ideas We Tested (las 6 ideas que probamos)</h2>
     <div class="list">
-      <div class="item"><span class="pill ok">SÍ</span><p><b>Seguir la tendencia en ETH, Bitcoin y oro.</b> Funcionó en todos los años que probamos.</p></div>
-      <div class="item"><span class="pill ok">SÍ</span><p><b>Ruptura del Nasdaq (Larry Williams).</b> Ganó en todos los años que probamos. Solo es lento; junto al otro bot, ayuda.</p></div>
-      <div class="item"><span class="pill bad">NO</span><p><b>Comprar si el Nasdaq rompe el rango de la primera media hora.</b> En los años que no habíamos mirado ganó muy poco y en 2026 perdió.</p></div>
+      <div class="item"><span class="pill ok">YES (SÍ)</span><p><b>Trend Following (seguir la tendencia) en ETH, Bitcoin y oro.</b> Funcionó en todos los años que probamos.</p></div>
+      <div class="item"><span class="pill ok">YES (SÍ)</span><p><b>Breakout (ruptura) del Nasdaq, Larry Williams.</b> Ganó en todos los años que probamos. Solo es lento; junto al otro bot, ayuda.</p></div>
+      <div class="item"><span class="pill bad">NO</span><p><b>Opening Range Breakout, ORB (comprar si el Nasdaq rompe el rango de la primera media hora).</b> En los años que no habíamos mirado ganó muy poco y en 2026 perdió.</p></div>
       <div class="item"><span class="pill bad">NO</span><p><b>SomosETH (el bot de Somosbulls).</b> No se puede probar, y Funding Pips prohíbe usar bots hechos por otros para abrir operaciones: te cerrarían la cuenta.</p></div>
       <div class="item"><span class="pill bad">NO</span><p><b>La estrategia de Fede Esses.</b> Perdió plata en 2025 y en 2026.</p></div>
-      <div class="item"><span class="pill bad">NO</span><p><b>Seguir la tendencia en índices de bolsa</b> (Nasdaq, S&amp;P 500 y DAX alemán). Perdió en todos los períodos.</p></div>
+      <div class="item"><span class="pill bad">NO</span><p><b>Trend Following (seguir la tendencia) en Stock Indices (índices de bolsa)</b> (Nasdaq, S&amp;P 500 y DAX alemán). Perdió en todos los períodos.</p></div>
     </div>
   </section>
 
   <section>
-    <h2>¿Una cuenta de 100.000 o diez de 5.000?</h2>
+    <h2>One 100k Account vs. Ten 5k Accounts (¿una cuenta de 100.000 o diez de 5.000?)</h2>
     <p class="muted">(Esta parte y la siguiente se calcularon con el bot de ETH, Bitcoin y oro original a 0,75 %, de 2022 a 2026. Con la versión "cuida la cuenta", en el plan de 100.000 terminás el año perdiendo lo que pagaste 3 a 4 de cada 10 veces, y en un año normal ganás unos +12.000 a +14.000 US$.)</p>
-    <p>Si pasás, operás con la plata de Funding Pips y te quedás con el 80 % de lo que ganes. Simulé cada plan durante 12 meses, arrancando en cada día posible de 2022 a 2026:</p>
+    <p>Si pasás, operás con la plata de Funding Pips y te quedás con el 80 % de lo que ganes (Profit Split, reparto de ganancias). Simulé cada plan durante 12 meses, arrancando en cada día posible de 2022 a 2026:</p>
     <div class="card scroll">
       <table>
-        <thead><tr><th>Plan</th><th>Pagás</th><th>No llegás a pasar el challenge</th><th>Terminás el año perdiendo lo que pagaste</th><th>Lo que ganás en un año normal</th></tr></thead>
+        <thead><tr><th>Plan</th><th>Fee (lo que pagás)</th><th>Fail Rate (no llegás a pasar el challenge)</th><th>Net Loss Rate (terminás el año perdiendo lo que pagaste)</th><th>Typical Yearly Profit (lo que ganás en un año normal)</th></tr></thead>
         <tbody>
           <tr style="background:var(--accent-bg)"><td><b>1 cuenta de 100.000</b></td><td>652 US$</td><td>2 de cada 10</td><td class="neg">4 de cada 10</td><td class="pos">+8.200 US$</td></tr>
           <tr><td>10 de 5.000, todas el mismo día</td><td>360 US$</td><td>2 de cada 10</td><td class="neg">4 de cada 10</td><td class="pos">+4.100 US$</td></tr>
@@ -354,7 +354,7 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
       <ul>
         <li><b>Lo máximo que podés perder es lo que pagás por el challenge.</b> La plata que el bot pierde dentro de la cuenta es de Funding Pips, no tuya.</li>
         <li><b>La cuenta de 100.000 es mejor que diez de 5.000 compradas el mismo día.</b> Como las diez copian las mismas operaciones, pasan o fallan todas juntas: es lo mismo que una sola cuenta, pero con la mitad de dinero para operar.</li>
-        <li><b>Diez cuentas escalonadas fallan menos,</b> porque cada una arranca en otro momento, pero en un buen año ganás la mitad.</li>
+        <li><b>Diez cuentas escalonadas (Staggered) fallan menos,</b> porque cada una arranca en otro momento, pero en un buen año ganás la mitad.</li>
         <li><b>¿Por qué a veces perdés lo que pagaste aunque pases el challenge?</b> Porque, una vez que pasás, la cuenta nueva arranca de cero con el mismo límite de −10 %. Si justo llega una mala racha antes de ganar algo, se pierde sin que hayas cobrado nada.</li>
       </ul>
       <p class="muted" style="font-size:14px">Los planes de 5.000 usan un precio estimado de 36 US$; el de 100.000 es el precio real de la web de Funding Pips.</p>
@@ -363,11 +363,11 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
   </section>
 
   <section>
-    <h2>¿Qué plan de 100.000 conviene: Standard, Flex o Pro?</h2>
+    <h2>Which 100k Plan (¿qué plan de 100.000 conviene?): Standard, Flex or Pro</h2>
     <p>Funding Pips tiene 3 planes con reglas distintas. Probé cada uno con el bot de ETH, Bitcoin y oro, buscando cuánto arriesgar por operación para que le vaya mejor en cada plan:</p>
     <div class="card scroll">
       <table>
-        <thead><tr><th>Plan</th><th>Precio</th><th>Reglas</th><th>Mejor riesgo por operación</th><th>Pasa el challenge</th><th>Tarda</th><th>Terminás perdiendo lo que pagaste</th><th>Lo que ganás en un año normal</th></tr></thead>
+        <thead><tr><th>Plan</th><th>Price (precio)</th><th>Rules (reglas)</th><th>Best Risk per Trade (mejor riesgo por operación)</th><th>Pass Rate (pasa el challenge)</th><th>Median Time (tarda)</th><th>Net Loss Rate (terminás perdiendo lo que pagaste)</th><th>Typical Yearly Profit (lo que ganás en un año normal)</th></tr></thead>
         <tbody>
           <tr style="background:var(--accent-bg)"><td><b>Standard</b></td><td>652 US$</td><td style="font-family:var(--display);white-space:normal;min-width:180px">llegar a +8 % y +5 %, sin perder 5 % en un día ni 10 % en total</td><td>0,75 % (750 US$)</td><td class="pos">8 de cada 10</td><td>4 a 5 meses</td><td class="neg">4 de cada 10</td><td class="pos">+8.200 US$</td></tr>
           <tr><td>Flex</td><td>555 US$</td><td style="font-family:var(--display);white-space:normal;min-width:180px">llegar a +10 % y +8 %, sin perder 4 % en un día ni 12 % en total</td><td>1 % (1.000 US$)</td><td>7 de cada 10</td><td>unos 5 meses</td><td class="neg">5 de cada 10</td><td class="pos">+8.900 US$</td></tr>
@@ -384,35 +384,54 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
   </section>
 
   <section>
-    <h2>Lo malo que tenés que saber</h2>
+    <h2>Risks (lo malo que tenés que saber)</h2>
     <div class="card">
       <ul>
         <li><b>El bot de ETH, Bitcoin y oro solo gana si las criptomonedas tienen buenas subidas.</b> Solo compra. En años en que bajan todo el tiempo, como 2022, pierde de a poco.</li>
         <li><b>Los dos pierden muchas veces:</b> el de criptomonedas pierde 6 de cada 10 operaciones y el del Nasdaq 5 de cada 10. Ganan porque lo que ganan es más grande que lo que pierden.</li>
-        <li><b>Hubo una bajada de 28 %</b> en 2022 y 2023 con el bot de criptomonedas original. Si algo así pasa durante el challenge, el bot se apaga solo en −9 % para no romper las reglas: perdés el challenge, pero no más que lo que pagaste.</li>
+        <li><b>Hubo un Drawdown (bajada) de 28 %</b> en 2022 y 2023 con el bot de criptomonedas original. Si algo así pasa durante el challenge, el bot se apaga solo en −9 % para no romper las reglas: perdés el challenge, pero no más que lo que pagaste.</li>
         <li><b>La prueba de los dos juntos cubre solo 2024 a 2026,</b> años buenos para las criptomonedas. En años malos el resultado va a ser peor.</li>
-        <li><b>Si pasás, ojo con la cuenta fondeada:</b> desde enero de 2026 Funding Pips cierra solas las operaciones abiertas el viernes. El bot de criptomonedas deja operaciones abiertas varios días, así que ahí probablemente gane menos (preparo una versión para esa etapa). El del Nasdaq no tiene ese problema porque cierra todos los días.</li>
-        <li><b>Las pruebas son un poco optimistas.</b> No ven cuánto baja una operación mientras está abierta, solo cómo termina. En la realidad, el resultado va a ser algo peor.</li>
+        <li><b>Si pasás, ojo con la Funded Account (cuenta fondeada):</b> desde enero de 2026 Funding Pips cierra solas las operaciones abiertas el viernes. El bot de criptomonedas deja operaciones abiertas varios días, así que ahí probablemente gane menos (preparo una versión para esa etapa). El del Nasdaq no tiene ese problema porque cierra todos los días.</li>
+        <li><b>Las pruebas son un poco optimistas.</b> No ven la Floating Loss (pérdida flotante: cuánto baja una operación mientras está abierta), solo cómo termina. En la realidad, el resultado va a ser algo peor.</li>
         <li><b>Funding Pips puede cobrar distinto que el broker de las pruebas</b> (IC Markets). Si es más caro, el resultado baja.</li>
-        <li><b>Nos saltamos la prueba de 2 o 3 meses en demo</b> para el bot de criptomonedas. Como el challenge de 5.000 cuesta poco, usarlo como prueba real es razonable, pero el resultado puede ser peor.</li>
+        <li><b>Nos saltamos la prueba de 2 o 3 meses en Demo Account (cuenta demo)</b> para el bot de criptomonedas. Como el challenge de 5.000 cuesta poco, usarlo como prueba real es razonable, pero el resultado puede ser peor.</li>
         <li><b>Funding Pips permite bots propios:</b> guardá el código de los bots (te lo puedo pasar) por si te piden demostrar que son tuyos.</li>
-        <li><b>Que haya funcionado en el pasado no asegura que funcione en el futuro.</b></li>
+        <li><b>Past performance does not guarantee future results (que haya funcionado en el pasado no asegura que funcione en el futuro).</b></li>
       </ul>
     </div>
   </section>
 
   <section>
-    <h2>Palabras que vas a ver</h2>
+    <h2>Key Terms (palabras que vas a ver)</h2>
     <div class="card">
       <dl class="glosario">
-        <div><dt>Challenge</dt><dd>El examen de Funding Pips. Pagás una vez; si lo pasás, te dan una cuenta con su plata para operar y te quedás con una parte de lo que ganes.</dd></div>
-        <div><dt>Riesgo por operación</dt><dd>Cuánto de la cuenta se pierde si una operación sale mal. En 5.000, 1,25 % son 62,50 US$ y 0,5 % son 25 US$.</dd></div>
-        <div><dt>Bajada (en inglés, drawdown)</dt><dd>Cuánto bajó la cuenta desde su mejor momento hasta su peor momento siguiente, antes de recuperarse.</dd></div>
-        <div><dt>Gana por cada 1 que pierde (profit factor)</dt><dd>Si es 1,28, por cada dólar que el bot perdió en total, ganó 1,28. Más de 1 significa que gana.</dd></div>
-        <div><dt>Stop</dt><dd>El precio donde el bot cierra una operación que sale mal, para que la pérdida no siga creciendo.</dd></div>
-        <div><dt>Freno</dt><dd>Lo que le agregamos a los bots para cumplir las reglas: si pierden demasiado en un día o en total, cierran todo y dejan de operar.</dd></div>
-        <div><dt>Backtest o prueba con datos del pasado</dt><dd>Hacer funcionar el bot sobre precios de años anteriores, como si estuviéramos en ese momento, para ver cómo le habría ido.</dd></div>
-        <div><dt>Cuenta demo</dt><dd>Una cuenta con plata de mentira y precios reales. Sirve para ver al bot funcionar sin arriesgar nada.</dd></div>
+        <div><dt>Challenge (el examen de Funding Pips)</dt><dd>Pagás una vez; si lo pasás, te dan una cuenta con su plata para operar y te quedás con una parte de lo que ganes.</dd></div>
+        <div><dt>Phase 1 / Phase 2 (etapa 1 / etapa 2)</dt><dd>Las dos partes del examen: primero hay que llegar a +8 % y después a +5 % (plan Standard).</dd></div>
+        <div><dt>Profit Target (objetivo de ganancia)</dt><dd>Lo que hay que ganar en cada etapa para pasar a la siguiente.</dd></div>
+        <div><dt>Max Daily Loss (pérdida diaria máxima)</dt><dd>Lo máximo que podés perder en un solo día (5 % en el plan Standard). Si lo pasás, perdés la cuenta.</dd></div>
+        <div><dt>Max Total Loss (pérdida total máxima)</dt><dd>Lo máximo que la cuenta puede bajar desde su saldo inicial (10 % en el plan Standard). Si lo pasás, perdés la cuenta.</dd></div>
+        <div><dt>Funded Account (cuenta fondeada)</dt><dd>La cuenta con plata de la empresa que te dan al pasar las dos etapas.</dd></div>
+        <div><dt>Profit Split (reparto de ganancias)</dt><dd>Qué parte de lo que ganás en la cuenta fondeada es tuya (80 %).</dd></div>
+        <div><dt>Pass Rate (% que pasa el challenge)</dt><dd>De todos los challenges simulados, cuántos pasan las dos etapas.</dd></div>
+        <div><dt>Risk per Trade (riesgo por operación)</dt><dd>Cuánto de la cuenta se pierde si una operación sale mal. En 5.000, 1,25 % son 62,50 US$ y 0,5 % son 25 US$.</dd></div>
+        <div><dt>Trade (operación)</dt><dd>Una compra o venta, desde que el bot entra hasta que sale.</dd></div>
+        <div><dt>Long / Short (comprar / vender)</dt><dd>Long = ganar si el precio sube. Short = ganar si el precio baja.</dd></div>
+        <div><dt>Lot (lote)</dt><dd>El tamaño de una operación.</dd></div>
+        <div><dt>Win Rate (operaciones ganadoras)</dt><dd>Qué % de las operaciones termina en ganancia. Un bot puede ganar con 4 de cada 10 si lo que gana es más grande que lo que pierde.</dd></div>
+        <div><dt>Profit Factor (gana por cada 1 que pierde)</dt><dd>Si es 1,28, por cada dólar que el bot perdió en total, ganó 1,28. Más de 1 significa que gana.</dd></div>
+        <div><dt>Drawdown (bajada)</dt><dd>Cuánto bajó la cuenta desde su mejor momento hasta su peor momento siguiente, antes de recuperarse.</dd></div>
+        <div><dt>Stop Loss (stop)</dt><dd>El precio donde el bot cierra una operación que sale mal, para que la pérdida no siga creciendo.</dd></div>
+        <div><dt>Kill Switch (freno)</dt><dd>Lo que le agregamos a los bots para cumplir las reglas: si pierden demasiado en un día o en total, cierran todo y dejan de operar.</dd></div>
+        <div><dt>Backtest (prueba con datos del pasado)</dt><dd>Hacer funcionar el bot sobre precios de años anteriores, como si estuviéramos en ese momento, para ver cómo le habría ido.</dd></div>
+        <div><dt>In-Sample / Out-of-Sample (dentro / fuera de muestra)</dt><dd>In-Sample = los años que miramos para elegir las reglas. Out-of-Sample = años que no miramos, para comprobar que no fue suerte.</dd></div>
+        <div><dt>Overfitting (sobreoptimización)</dt><dd>Acomodar el bot al pasado hasta que se vea perfecto. Suele fallar en el futuro.</dd></div>
+        <div><dt>Monte Carlo</dt><dd>Mezclar los resultados al azar miles de veces para ver qué es normal y qué es suerte.</dd></div>
+        <div><dt>Trend Following (seguir la tendencia)</dt><dd>Comprar cuando el precio viene subiendo con fuerza y salir cuando la subida se corta.</dd></div>
+        <div><dt>Breakout (ruptura)</dt><dd>Entrar cuando el precio rompe un nivel o rango.</dd></div>
+        <div><dt>Spread (diferencia entre compra y venta)</dt><dd>Lo que cobra el broker en cada operación.</dd></div>
+        <div><dt>Slippage (deslizamiento)</dt><dd>Cuando la orden se llena a un precio peor que el pedido.</dd></div>
+        <div><dt>Swap</dt><dd>Lo que cobra el broker por dejar una operación abierta de un día para el otro.</dd></div>
+        <div><dt>Demo Account (cuenta demo)</dt><dd>Una cuenta con plata de mentira y precios reales. Sirve para ver al bot funcionar sin arriesgar nada.</dd></div>
       </dl>
     </div>
   </section>
@@ -423,49 +442,56 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
   <!-- RESUMEN -->
   <div class="pane" data-pane="resumen" hidden style="display:grid;gap:18px">
     <div><h2 class="sec" id="titulo">Resumen</h2><p class="sub" id="subtitulo"></p></div>
-    <section class="card verdict"><span class="label">Veredicto en pocas palabras</span><p id="lead"></p><div class="checks" id="checks"></div></section>
+    <section class="card verdict"><span class="label">Verdict (veredicto en pocas palabras)</span><p id="lead"></p><div class="checks" id="checks"></div></section>
     <details class="card">
-      <summary>¿Cómo leer esta página? (palabras que vas a ver)</summary>
+      <summary>Key Terms (palabras que vas a ver en esta página)</summary>
       <dl class="kv" style="margin-top:10px">
-        <dt>Backtest</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Hacer funcionar el bot sobre precios de años anteriores para ver cómo le habría ido.</dd>
-        <dt>Operación</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Una compra (o venta) desde que entra hasta que sale. Si el bot cierra en partes, cuenta como una sola.</dd>
-        <dt>Bajada</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Cuánto bajó la cuenta desde su mejor momento antes de recuperarse. En inglés, drawdown.</dd>
-        <dt>Gana por cada 1 que pierde</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Si dice 1,56, por cada dólar perdido ganó 1,56. Más de 1 = gana. En inglés, profit factor.</dd>
-        <dt>Riesgo por operación</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">El % de la cuenta que se pierde si una operación sale mal (toca el stop).</dd>
-        <dt>Stop</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">El precio donde el bot corta una operación perdedora.</dd>
+        <dt>Backtest (prueba con datos del pasado)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Hacer funcionar el bot sobre precios de años anteriores para ver cómo le habría ido.</dd>
+        <dt>Trade (operación)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Una compra (o venta) desde que entra hasta que sale. Si el bot cierra en partes, cuenta como una sola.</dd>
+        <dt>Drawdown (bajada)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Cuánto bajó la cuenta desde su mejor momento antes de recuperarse.</dd>
+        <dt>Profit Factor (gana por cada 1 que pierde)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Si dice 1,56, por cada dólar perdido ganó 1,56. Más de 1 = gana.</dd>
+        <dt>Risk per Trade (riesgo por operación)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">El % de la cuenta que se pierde si una operación sale mal (toca el stop).</dd>
+        <dt>Stop Loss (stop)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">El precio donde el bot corta una operación perdedora.</dd>
         <dt>Swap</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Lo que cobra el broker por dejar una operación abierta de un día para el otro.</dd>
-        <dt>Colores</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Verde = bien. Amarillo = vigilar. Rojo = mal.</dd>
+        <dt>Win Rate (operaciones ganadoras)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Qué % de las operaciones termina en ganancia.</dd>
+        <dt>CAGR (ganancia por año)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Ganancia promedio de cada año, reinvirtiendo lo ganado.</dd>
+        <dt>Expectancy (ganancia promedio por operación)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Lo que gana o pierde en promedio cada operación, contando las perdedoras.</dd>
+        <dt>Sharpe Ratio (estabilidad)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Qué tan pareja es la ganancia. Más de 1 = bastante pareja.</dd>
+        <dt>Monte Carlo</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Mezclar las operaciones al azar miles de veces para ver qué resultados son normales y cuáles fueron suerte.</dd>
+        <dt>Funded Account (cuenta fondeada)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">La cuenta con plata de la empresa que te dan al pasar el challenge.</dd>
+        <dt>Pass Rate (% que pasa el challenge)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">De los challenges simulados, cuántos pasan las dos fases.</dd>
+        <dt>Colors (colores)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Verde = bien. Amarillo = vigilar. Rojo = mal.</dd>
       </dl>
     </details>
     <div class="kpis" id="kpis1"></div>
-    <section class="card"><h3>Cómo creció la cuenta <span class="pill ok" id="pillBal"></span></h3><div class="chart"><canvas id="chEquity" aria-label="Curva de balance"></canvas></div></section>
-    <section class="card"><h3>Bajadas desde el mejor momento (%) <span class="pill bad" id="pillDD"></span></h3><div class="chart sm"><canvas id="chDD" aria-label="Drawdown"></canvas></div></section>
+    <section class="card"><h3>Equity Curve (cómo creció la cuenta) <span class="pill ok" id="pillBal"></span></h3><div class="chart"><canvas id="chEquity" aria-label="Curva de balance"></canvas></div></section>
+    <section class="card"><h3>Drawdown (bajadas desde el mejor momento, %) <span class="pill bad" id="pillDD"></span></h3><div class="chart sm"><canvas id="chDD" aria-label="Drawdown"></canvas></div></section>
     <div class="kpis" id="kpis2"></div>
-    <section class="card"><h3>Rentabilidad por año</h3><div class="chart xs"><canvas id="chAnual" aria-label="Rentabilidad por año"></canvas></div></section>
+    <section class="card"><h3>Yearly Return (rentabilidad por año)</h3><div class="chart xs"><canvas id="chAnual" aria-label="Rentabilidad por año"></canvas></div></section>
   </div>
 
   <!-- MÉTRICAS -->
   <div class="pane" data-pane="metricas" hidden style="display:grid;gap:18px">
-    <div><h2 class="sec">Todos los números</h2><p class="sub">Todo se recalcula en vivo con los mercados y fechas elegidos.</p></div>
+    <div><h2 class="sec">All Metrics (todos los números)</h2><p class="sub">Todo se recalcula en vivo con los mercados y fechas elegidos.</p></div>
     <div class="g3">
-      <section class="card"><h3>Ganancias</h3><dl class="kv" id="mRent"></dl></section>
-      <section class="card"><h3>Operaciones</h3><dl class="kv" id="mOps"></dl></section>
-      <section class="card"><h3>Bajadas y rachas</h3><dl class="kv" id="mRiesgo"></dl></section>
+      <section class="card"><h3>Profitability (ganancias)</h3><dl class="kv" id="mRent"></dl></section>
+      <section class="card"><h3>Trades (operaciones)</h3><dl class="kv" id="mOps"></dl></section>
+      <section class="card"><h3>Risk &amp; Streaks (bajadas y rachas)</h3><dl class="kv" id="mRiesgo"></dl></section>
     </div>
-    <section class="card"><h3>Cuánto ganó o perdió cada operación (% de la cuenta)</h3><div class="chart sm"><canvas id="chPnl" aria-label="Resultado por operación"></canvas></div></section>
+    <section class="card"><h3>P&amp;L per Trade (cuánto ganó o perdió cada operación, % de la cuenta)</h3><div class="chart sm"><canvas id="chPnl" aria-label="Resultado por operación"></canvas></div></section>
     <div class="g2">
-      <section class="card"><h3>Cuántas operaciones ganaron o perdieron cada monto</h3><div class="chart sm"><canvas id="chHist" aria-label="Distribución"></canvas></div></section>
-      <section class="card"><h3>Ganancia según mercado, hora o día
-        <span class="seg" id="segGrupo"><button aria-pressed="true" data-g="simbolo">Mercado</button><button aria-pressed="false" data-g="hora">Hora</button><button aria-pressed="false" data-g="dia">Día</button></span></h3>
+      <section class="card"><h3>P&amp;L Distribution (cuántas operaciones ganaron o perdieron cada monto)</h3><div class="chart sm"><canvas id="chHist" aria-label="Distribución"></canvas></div></section>
+      <section class="card"><h3>Profit by Symbol, Hour or Day (ganancia según mercado, hora o día)
+        <span class="seg" id="segGrupo"><button aria-pressed="true" data-g="simbolo">Symbol (mercado)</button><button aria-pressed="false" data-g="hora">Hour (hora)</button><button aria-pressed="false" data-g="dia">Day (día)</button></span></h3>
         <div class="chart sm"><canvas id="chGrupo" aria-label="Rendimiento por grupo"></canvas></div></section>
     </div>
-    <section class="card"><h3>Ganancia mes a mes (% de la cuenta)</h3><div class="scroll"><table class="heat" id="tMeses"></table></div></section>
-    <section class="card"><h3>Por mercado</h3><div class="scroll"><table id="tSimbolos"></table></div></section>
+    <section class="card"><h3>Monthly Returns (ganancia mes a mes, % de la cuenta)</h3><div class="scroll"><table class="heat" id="tMeses"></table></div></section>
+    <section class="card"><h3>By Symbol (por mercado)</h3><div class="scroll"><table id="tSimbolos"></table></div></section>
   </div>
 
   <!-- OPERACIONES -->
   <div class="pane" data-pane="operaciones" hidden style="display:grid;gap:18px">
-    <div><h2 class="sec">Operaciones</h2><p class="sub">Cada fila es una posición completa: los cierres parciales se suman a la misma operación.</p></div>
+    <div><h2 class="sec">Trades (operaciones)</h2><p class="sub">Cada fila es una posición completa: los cierres parciales se suman a la misma operación.</p></div>
     <section class="card">
       <h3><span id="opsTitulo"></span><span class="pager"><button class="btn" id="prev" type="button" aria-label="Página anterior">←</button><span class="mono" id="pagina"></span><button class="btn" id="next" type="button" aria-label="Página siguiente">→</button></span></h3>
       <div class="scroll"><table id="tOps"></table></div>
@@ -474,67 +500,67 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
 
   <!-- FONDEOS -->
   <div class="pane" data-pane="fondeos" hidden style="display:grid;gap:18px">
-    <div><h2 class="sec">Simulador del challenge</h2><p class="sub">Arranca un challenge en cada día del historial y cuenta cuántos pasan, cuántos se queman y cuánto tardan.</p></div>
+    <div><h2 class="sec">Challenge Simulator (simulador del challenge)</h2><p class="sub">Arranca un challenge en cada día del historial y cuenta cuántos pasan, cuántos se queman y cuánto tardan.</p></div>
     <div class="chips" id="presets"></div>
     <section class="card">
-      <h3>Reglas del challenge</h3>
+      <h3>Challenge Rules (reglas del challenge)</h3>
       <div class="form">
-        <label><span class="label">Capital de la cuenta (US$)</span><input type="number" id="fCap" min="1000" step="1000" value="5000"></label>
-        <label><span class="label">Objetivo fase 1 (%)</span><input type="number" id="fObj1" min="0.5" step="0.5" value="8"></label>
-        <label><span class="label">Objetivo fase 2 (%)</span><input type="number" id="fObj2" min="0" step="0.5" value="5"><span class="hint">0 = una sola fase</span></label>
-        <label><span class="label">Días mínimos con operaciones</span><input type="number" id="fMin" min="0" step="1" value="3"></label>
-        <label><span class="label">Pérdida diaria máx. (%)</span><input type="number" id="fDia" min="0.5" step="0.5" value="5"></label>
-        <label><span class="label">Pérdida total máx. (%)</span><input type="number" id="fTot" min="0.5" step="0.5" value="10"></label>
-        <label><span class="label">Cómo mide la pérdida total</span><select id="fTipo"><option value="estatico">Desde el saldo inicial (Funding Pips)</option><option value="trailing">Desde el mejor saldo alcanzado</option></select></label>
-        <label><span class="label">Límite de tiempo (días)</span><input type="number" id="fLim" min="0" step="1" value="0"><span class="hint">0 = sin límite</span></label>
-        <label><span class="label">Riesgo que usó la prueba (%)</span><input type="number" id="fRb" min="0.1" step="0.1" value="1"><span class="hint">lo que arriesgaba el bot en el backtest</span></label>
-        <label><span class="label">Riesgo que vas a usar (%)</span><input type="number" id="fRc" min="0.1" step="0.05" value="1.25"><span class="hint">% de la cuenta que se pierde si una operación sale mal</span></label>
-        <label><span class="label">Mitad de riesgo si la cuenta está abajo (%)</span><input type="number" id="fBaj" min="0" step="1" value="5"><span class="hint">desde su mejor momento · 0 = apagado</span></label>
+        <label><span class="label">Account Size (capital de la cuenta, US$)</span><input type="number" id="fCap" min="1000" step="1000" value="5000"></label>
+        <label><span class="label">Phase 1 Profit Target (objetivo fase 1, %)</span><input type="number" id="fObj1" min="0.5" step="0.5" value="8"></label>
+        <label><span class="label">Phase 2 Profit Target (objetivo fase 2, %)</span><input type="number" id="fObj2" min="0" step="0.5" value="5"><span class="hint">0 = una sola fase</span></label>
+        <label><span class="label">Minimum Trading Days (días mínimos con operaciones)</span><input type="number" id="fMin" min="0" step="1" value="3"></label>
+        <label><span class="label">Max Daily Loss (pérdida diaria máxima, %)</span><input type="number" id="fDia" min="0.5" step="0.5" value="5"></label>
+        <label><span class="label">Max Total Loss (pérdida total máxima, %)</span><input type="number" id="fTot" min="0.5" step="0.5" value="10"></label>
+        <label><span class="label">Drawdown Type (cómo mide la pérdida total)</span><select id="fTipo"><option value="estatico">Static (desde el saldo inicial, Funding Pips)</option><option value="trailing">Trailing (desde el mejor saldo alcanzado)</option></select></label>
+        <label><span class="label">Time Limit (límite de tiempo, días)</span><input type="number" id="fLim" min="0" step="1" value="0"><span class="hint">0 = sin límite</span></label>
+        <label><span class="label">Backtest Risk (riesgo que usó la prueba, %)</span><input type="number" id="fRb" min="0.1" step="0.1" value="1"><span class="hint">lo que arriesgaba el bot en el backtest</span></label>
+        <label><span class="label">Risk per Trade (riesgo que vas a usar, %)</span><input type="number" id="fRc" min="0.1" step="0.05" value="1.25"><span class="hint">% de la cuenta que se pierde si una operación sale mal</span></label>
+        <label><span class="label">Drawdown Risk Cut (mitad de riesgo si la cuenta está abajo, %)</span><input type="number" id="fBaj" min="0" step="1" value="5"><span class="hint">desde su mejor momento · 0 = apagado</span></label>
       </div>
     </section>
     <div class="kpis" id="kpisF"></div>
     <div class="g2">
-      <section class="card"><h3>Por qué no pasaron</h3><div class="chart xs"><canvas id="chFallos" aria-label="Motivos de fallo"></canvas></div></section>
-      <section class="card"><h3>Cuánto arriesgar: chance de pasar en menos de un año</h3><div class="chart xs"><canvas id="chRiesgo" aria-label="Riesgo contra probabilidad"></canvas></div></section>
+      <section class="card"><h3>Failure Reasons (por qué no pasaron)</h3><div class="chart xs"><canvas id="chFallos" aria-label="Motivos de fallo"></canvas></div></section>
+      <section class="card"><h3>Risk vs. Pass Rate (cuánto arriesgar: chance de pasar en menos de un año)</h3><div class="chart xs"><canvas id="chRiesgo" aria-label="Riesgo contra probabilidad"></canvas></div></section>
     </div>
     <section class="card">
-      <h3>Si hubieras ido comprando un challenge detrás de otro</h3>
+      <h3>Back-to-Back Attempts (si hubieras ido comprando un challenge detrás de otro)</h3>
       <p class="note" style="margin-bottom:10px">Si empezás el primer día y cada vez que pasás o te quemás arrancás otro challenge: así habría ido. El ancho de cada bloque es lo que duró.</p>
       <div class="timeline" id="timeline"></div>
-      <div class="legend" style="margin-top:10px"><span><i style="background:var(--gain)"></i>Fondeada</span><span><i style="background:var(--warn)"></i>Pasó fase 1, se quemó en fase 2</span><span><i style="background:var(--loss)"></i>Quemada en fase 1</span><span><i style="background:var(--dim)"></i>En curso</span></div>
+      <div class="legend" style="margin-top:10px"><span><i style="background:var(--gain)"></i>Funded (fondeada)</span><span><i style="background:var(--warn)"></i>Passed Phase 1, blown in Phase 2 (pasó fase 1, se quemó en fase 2)</span><span><i style="background:var(--loss)"></i>Blown in Phase 1 (quemada en fase 1)</span><span><i style="background:var(--dim)"></i>In progress (en curso)</span></div>
       <div class="scroll" style="margin-top:14px"><table id="tIntentos"></table></div>
     </section>
     <section class="card">
-      <h3>¿Cuánto ganarías o perderías en un año?</h3>
+      <h3>One-Year Outcome (¿cuánto ganarías o perderías en un año?)</h3>
       <p class="note" style="margin-bottom:12px">Todas las cuentas copian cada operación. Si arrancan el mismo día, pasan o se queman todas juntas: es una sola apuesta multiplicada. Arrancarlas escalonadas reparte la suerte. Cada cuenta que fondea sigue operando hasta cumplir el horizonte, retira su parte de la ganancia cada 30 días y se pierde si rompe las reglas.</p>
       <div class="form">
-        <label><span class="label">Cantidad de cuentas</span><input type="number" id="mN" min="1" max="50" step="1" value="1"></label>
-        <label><span class="label">Precio por challenge (US$)</span><input type="number" id="mPrecio" min="0" step="1" value="36"></label>
-        <label><span class="label">Arrancar una cada (días)</span><input type="number" id="mCada" min="0" step="1" value="0"><span class="hint">0 = todas el mismo día</span></label>
-        <label><span class="label">Tu parte de la ganancia (%)</span><input type="number" id="mReparto" min="0" max="100" step="5" value="80"></label>
-        <label><span class="label">Horizonte por cuenta (meses)</span><input type="number" id="mMeses" min="3" max="36" step="1" value="12"></label>
+        <label><span class="label">Number of Accounts (cantidad de cuentas)</span><input type="number" id="mN" min="1" max="50" step="1" value="1"></label>
+        <label><span class="label">Challenge Fee (precio por challenge, US$)</span><input type="number" id="mPrecio" min="0" step="1" value="36"></label>
+        <label><span class="label">Stagger (arrancar una cada, días)</span><input type="number" id="mCada" min="0" step="1" value="0"><span class="hint">0 = todas el mismo día</span></label>
+        <label><span class="label">Profit Split (tu parte de la ganancia, %)</span><input type="number" id="mReparto" min="0" max="100" step="5" value="80"></label>
+        <label><span class="label">Horizon per Account (horizonte por cuenta, meses)</span><input type="number" id="mMeses" min="3" max="36" step="1" value="12"></label>
       </div>
     </section>
     <div class="kpis" id="kpisM"></div>
     <div class="g2">
-      <section class="card"><h3>Lo que te queda al final del año, descontando lo que pagaste (US$)</h3><div class="chart sm"><canvas id="chMulti" aria-label="Distribución del resultado neto"></canvas></div></section>
-      <section class="card"><h3>Varias cuentas: todas juntas o de a una</h3><div class="scroll"><table id="tEscalon"></table></div></section>
+      <section class="card"><h3>Net Result Distribution (lo que te queda al final del año, descontando lo que pagaste, US$)</h3><div class="chart sm"><canvas id="chMulti" aria-label="Distribución del resultado neto"></canvas></div></section>
+      <section class="card"><h3>Multi-Account Staggering (varias cuentas: todas juntas o de a una)</h3><div class="scroll"><table id="tEscalon"></table></div></section>
     </div>
     <p class="note">Aproximación: usa el resultado de cada operación al cerrarse. No ve la pérdida flotante mientras la operación está abierta, así que en los casos que rozan los límites el resultado real puede ser peor.</p>
   </div>
 
   <!-- ROBUSTEZ -->
   <div class="pane" data-pane="robustez" hidden style="display:grid;gap:18px">
-    <div><h2 class="sec">¿Es suerte o es el bot?</h2><p class="sub">Mezclamos las mismas operaciones al azar 2.000 veces, como si hubieran salido en otro orden. Así se ve qué resultados son normales para este bot y cuáles dependieron de la suerte.</p></div>
+    <div><h2 class="sec">Robustness (¿es suerte o es el bot?)</h2><p class="sub">Mezclamos las mismas operaciones al azar 2.000 veces, como si hubieran salido en otro orden. Así se ve qué resultados son normales para este bot y cuáles dependieron de la suerte.</p></div>
     <div class="kpis" id="kpisMC"></div>
-    <section class="card"><h3>100 historias posibles (la amarilla es la real)</h3><div class="chart"><canvas id="chMC" aria-label="Curvas de Monte Carlo"></canvas></div></section>
-    <section class="card"><h3>Peor bajada en cada una de las 2.000 historias</h3><div class="chart sm"><canvas id="chMCdd" aria-label="Distribución de caídas"></canvas></div></section>
-    <div><h2 class="sec">¿Y si en la realidad sale peor?</h2><p class="sub">Prueba de estrés: repetimos las operaciones 1.000 veces, pero peor que en el backtest. Algunas no se abren (la computadora estaba apagada, el broker rechazó la orden), cada una cuesta un poco más (precio peor, comisión) y cada resultado varía un poco al azar. Un bot sólido sigue ganando igual.</p></div>
+    <section class="card"><h3>Monte Carlo Paths (100 historias posibles, la amarilla es la real)</h3><div class="chart"><canvas id="chMC" aria-label="Curvas de Monte Carlo"></canvas></div></section>
+    <section class="card"><h3>Max Drawdown Distribution (peor bajada en cada una de las 2.000 historias)</h3><div class="chart sm"><canvas id="chMCdd" aria-label="Distribución de caídas"></canvas></div></section>
+    <div><h2 class="sec">Stress Test (¿y si en la realidad sale peor?)</h2><p class="sub">Prueba de estrés: repetimos las operaciones 1.000 veces, pero peor que en el backtest. Algunas no se abren (la computadora estaba apagada, el broker rechazó la orden), cada una cuesta un poco más (precio peor, comisión) y cada resultado varía un poco al azar. Un bot sólido sigue ganando igual.</p></div>
     <section class="card">
       <div class="form">
-        <label><span class="label">Operaciones que no se abren (%)</span><input type="number" id="eSaltar" min="0" max="50" step="5" value="10"></label>
-        <label><span class="label">Costo extra por operación (% de la cuenta)</span><input type="number" id="eCosto" min="0" max="1" step="0.01" value="0.05"><span class="hint">0,05 % = 2,50 US$ en 5.000</span></label>
-        <label><span class="label">Variación al azar de cada resultado (± %)</span><input type="number" id="eRuido" min="0" max="50" step="5" value="10"></label>
+        <label><span class="label">Missed Trades (operaciones que no se abren, %)</span><input type="number" id="eSaltar" min="0" max="50" step="5" value="10"></label>
+        <label><span class="label">Extra Cost per Trade (costo extra por operación, % de la cuenta)</span><input type="number" id="eCosto" min="0" max="1" step="0.01" value="0.05"><span class="hint">0,05 % = 2,50 US$ en 5.000</span></label>
+        <label><span class="label">Random Noise (variación al azar de cada resultado, ± %)</span><input type="number" id="eRuido" min="0" max="50" step="5" value="10"></label>
       </div>
     </section>
     <div class="kpis" id="kpisE"></div>
@@ -542,13 +568,13 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
 
   <!-- CARA A CARA -->
   <div class="pane" data-pane="duelo" hidden style="display:grid;gap:18px">
-    <div><h2 class="sec">Cara a cara</h2><p class="sub">Elegí dos informes y se comparan número por número. Gana el que es mejor en más puntos. Lo ideal es que los dos estén probados en las mismas fechas.</p></div>
+    <div><h2 class="sec">Head-to-Head (cara a cara)</h2><p class="sub">Elegí dos informes y se comparan número por número. Gana el que es mejor en más puntos. Lo ideal es que los dos estén probados en las mismas fechas.</p></div>
     <section class="card"><div class="form">
       <label><span class="label">Bot A</span><select id="dA"></select></label>
       <label><span class="label">Bot B</span><select id="dB"></select></label>
     </div></section>
     <div class="kpis" id="kpisD"></div>
-    <section class="card"><h3>Cómo creció la cuenta (100 = capital inicial)</h3><div class="chart"><canvas id="chDuelo" aria-label="Curvas de los dos bots"></canvas></div>
+    <section class="card"><h3>Equity Curve (cómo creció la cuenta, 100 = capital inicial)</h3><div class="chart"><canvas id="chDuelo" aria-label="Curvas de los dos bots"></canvas></div>
       <div class="legend" style="margin-top:10px"><span><i style="background:var(--accent)"></i><b id="dNomA"></b></span><span><i style="background:var(--warn)"></i><b id="dNomB"></b></span></div></section>
     <section class="card"><div class="scroll"><table id="tDuelo"></table></div>
       <p class="note" style="margin-top:10px">El challenge se simula con las reglas y el riesgo elegidos en la pestaña Challenge, igual para los dos.</p></section>
@@ -556,7 +582,7 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
 
   <section class="card" id="zonaCarga">
     <label class="drop" id="drop" tabindex="0" for="archivo">
-      <p><b>Soltá acá uno o varios informes del Probador de MT5</b></p>
+      <p><b>Drop MT5 Strategy Tester reports here (soltá acá uno o varios informes del Probador de MT5)</b></p>
       <p class="muted">Archivos .htm o .html. Si soltás varios, se juntan en una cartera. Se leen en tu navegador y no se suben a ningún lado.</p>
     </label>
     <input type="file" id="archivo" accept=".htm,.html" multiple hidden>
@@ -729,12 +755,12 @@ function estres(r, E, n = 1000) {
 function veredicto(r, mc) {
   const dd = Math.min(r.ddMax, -r.ddEq || 0), anosPos = r.anual.filter(([, v]) => v > 0).length, nA = r.anual.length || 1;
   const c = [
-    [r.ops.length >= 100 ? "ok" : r.ops.length >= 30 ? "warn" : "bad", `${r.ops.length} operaciones`, r.ops.length >= 100 ? "Son suficientes para confiar en los números." : "Son pocas: el resultado puede ser suerte."],
-    [r.pf >= 1.5 ? "ok" : r.pf >= 1.2 ? "warn" : "bad", `Gana ${fmt(r.pf)} por cada 1 que pierde`, r.pf >= 1.5 ? "Gana claramente más de lo que pierde." : r.pf >= 1.2 ? "Gana, pero por poco: un mal año lo puede dejar en cero." : "Casi no gana más de lo que pierde."],
-    [dd > -20 ? "ok" : dd > -35 ? "warn" : "bad", `Peor bajada: ${pct(dd)}`, dd > -20 ? "Una bajada que la mayoría aguanta sin asustarse." : dd > -35 ? "Fuerte: hay que estar preparado para verla sin apagar el bot." : "Muy grande: casi todos apagan el bot antes de que se recupere."],
-    [r.peor > -2 ? "ok" : r.peor > -5 ? "warn" : "bad", `Peor operación: ${pct(r.peor)}`, r.peor > -2 ? "Ninguna operación sola pone en riesgo la cuenta." : "Una sola operación puede hacer mucho daño."],
-    [mc.dd95 > -30 ? "ok" : mc.dd95 > -45 ? "warn" : "bad", `Bajada en un año de mala suerte: ${pct(mc.dd95)}`, "Lo que podría bajar si las pérdidas vinieran todas juntas."],
-    [anosPos / nA >= 0.7 ? "ok" : anosPos / nA >= 0.5 ? "warn" : "bad", `${anosPos} de ${nA} años ganando`, "Si gana seguido o depende de un par de años buenos."],
+    [r.ops.length >= 100 ? "ok" : r.ops.length >= 30 ? "warn" : "bad", `${r.ops.length} trades (operaciones)`, r.ops.length >= 100 ? "Son suficientes para confiar en los números." : "Son pocas: el resultado puede ser suerte."],
+    [r.pf >= 1.5 ? "ok" : r.pf >= 1.2 ? "warn" : "bad", `Profit Factor (gana ${fmt(r.pf)} por cada 1 que pierde)`, r.pf >= 1.5 ? "Gana claramente más de lo que pierde." : r.pf >= 1.2 ? "Gana, pero por poco: un mal año lo puede dejar en cero." : "Casi no gana más de lo que pierde."],
+    [dd > -20 ? "ok" : dd > -35 ? "warn" : "bad", `Max Drawdown (peor bajada): ${pct(dd)}`, dd > -20 ? "Una bajada que la mayoría aguanta sin asustarse." : dd > -35 ? "Fuerte: hay que estar preparado para verla sin apagar el bot." : "Muy grande: casi todos apagan el bot antes de que se recupere."],
+    [r.peor > -2 ? "ok" : r.peor > -5 ? "warn" : "bad", `Worst Trade (peor operación): ${pct(r.peor)}`, r.peor > -2 ? "Ninguna operación sola pone en riesgo la cuenta." : "Una sola operación puede hacer mucho daño."],
+    [mc.dd95 > -30 ? "ok" : mc.dd95 > -45 ? "warn" : "bad", `Bad-Luck Drawdown (bajada en un año de mala suerte): ${pct(mc.dd95)}`, "Lo que podría bajar si las pérdidas vinieran todas juntas."],
+    [anosPos / nA >= 0.7 ? "ok" : anosPos / nA >= 0.5 ? "warn" : "bad", `Winning Years (años ganando): ${anosPos} de ${nA}`, "Si gana seguido o depende de un par de años buenos."],
   ];
   const malos = c.filter(x => x[0] === "bad").length, flojos = c.filter(x => x[0] === "warn").length;
   const base = `Gana en promedio ${pct(r.cagr)} por año, y en su peor momento la cuenta llegó a estar ${fmt(Math.abs(dd), 1)} % abajo.`;
@@ -836,16 +862,16 @@ function render() {
   if (!c || !c.ops.length) { $("count").innerHTML = "<b>0</b> operaciones"; $("lead").textContent = "No hay operaciones con estos filtros. Elegí al menos un mercado o ampliá las fechas."; $("checks").innerHTML = ""; return; }
   const r = calcular(c), mc = montecarlo(r), v = veredicto(r, mc);
   estado.r = r; estado.mc = mc;
-  $("count").innerHTML = `<b>${r.ops.length}</b> operaciones · ${fmt(r.porMes, 1)} por mes`;
+  $("count").innerHTML = `<b>${r.ops.length}</b> trades (operaciones) · ${fmt(r.porMes, 1)} por mes`;
   const nombres = c.sel.map(x => x.nombre), expertos = [...new Set(c.sel.map(x => x.info["Experto"]).filter(Boolean))];
   $("titulo").textContent = c.sel.length > 1 ? `Cartera de ${c.sel.length} mercados` : `${expertos[0] || "Estrategia"} · ${nombres[0]}`;
   $("subtitulo").textContent = `${expertos.join(", ")} · ${nombres.join(", ")} · ${fechaCorta(r.desde)} a ${fechaCorta(r.hasta)} (${fmt(r.anios, 1)} años) · capital ${usd(r.cap)}`;
   $("lead").textContent = v.lead;
   $("checks").innerHTML = v.c.map(([e, b, s]) => `<div class="check ${e}"><b>${b}</b><span>${s}</span></div>`).join("");
-  $("kpis1").innerHTML = kpi("Ganancia total", usd(r.neto), `${pct(r.neto / r.cap * 100)} de la cuenta en todo el período`, cls(r.neto)) + kpi("Ganancia por año", pct(r.cagr), "promedio de cada año, reinvirtiendo lo ganado", cls(r.cagr))
-    + kpi("Gana por cada 1 que pierde", fmt(r.pf), "más de 1 = gana · más de 1,5 = bueno") + kpi("Peor bajada", pct(Math.min(r.ddMax, -r.ddEq || 0)), r.ddEq ? "lo máximo que bajó desde su mejor momento, contando operaciones abiertas" : `lo máximo que bajó desde su mejor momento (${usd(r.ddUsd)})`, "neg");
-  $("kpis2").innerHTML = kpi("Operaciones ganadoras", fmt(r.acierto, 0) + " %", `${r.nG} ganaron · ${r.nP} perdieron`) + kpi("Ganancia promedio", usd(r.esperanza), "por operación, contando las que pierden", cls(r.esperanza))
-    + kpi("Estabilidad", fmt(r.sharpe), "más de 1 = gana de forma pareja (índice de Sharpe)") + kpi("Peor operación", pct(r.peor), "lo que se perdió de la cuenta en una sola", "neg");
+  $("kpis1").innerHTML = kpi("Net Profit (ganancia total)", usd(r.neto), `${pct(r.neto / r.cap * 100)} de la cuenta en todo el período`, cls(r.neto)) + kpi("CAGR (ganancia por año)", pct(r.cagr), "promedio de cada año, reinvirtiendo lo ganado", cls(r.cagr))
+    + kpi("Profit Factor (gana por cada 1 que pierde)", fmt(r.pf), "más de 1 = gana · más de 1,5 = bueno") + kpi("Max Drawdown (peor bajada)", pct(Math.min(r.ddMax, -r.ddEq || 0)), r.ddEq ? "lo máximo que bajó desde su mejor momento, contando operaciones abiertas" : `lo máximo que bajó desde su mejor momento (${usd(r.ddUsd)})`, "neg");
+  $("kpis2").innerHTML = kpi("Win Rate (operaciones ganadoras)", fmt(r.acierto, 0) + " %", `${r.nG} ganaron · ${r.nP} perdieron`) + kpi("Expectancy (ganancia promedio)", usd(r.esperanza), "por operación, contando las que pierden", cls(r.esperanza))
+    + kpi("Sharpe Ratio (estabilidad)", fmt(r.sharpe), "más de 1 = gana de forma pareja (índice de Sharpe)") + kpi("Worst Trade (peor operación)", pct(r.peor), "lo que se perdió de la cuenta en una sola", "neg");
   $("pillBal").textContent = `${usd(r.cap)} → ${usd(r.final)}`;
   $("pillDD").textContent = `Máx ${pct(r.ddMax)}`;
   const tipEquity = { callbacks: { title: it => { const p = r.curva[it[0].dataIndex]; return p.n ? `Operación #${p.n} · ${fechaCorta(p.t)}` : "Inicio"; }, label: it => `Balance: ${usd(it.raw)}` } };
@@ -858,13 +884,13 @@ function render() {
     options: { maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: it => pct(it.raw) } } }, scales: { x: { grid: { display: false } }, y: { ticks: { callback: x => x + "%" } } } } });
 
   // Métricas
-  $("mRent").innerHTML = kv([["Ganancia total", usd(r.neto), cls(r.neto)], ["Suma de todo lo ganado", usd(r.sumG), "pos"], ["Suma de todo lo perdido", usd(-r.sumP), "neg"], ["Gana por cada 1 que pierde", fmt(r.pf)],
-    ["Ganancia promedio por operación", usd(r.esperanza)], ["Ganancia total en %", pct(r.neto / r.cap * 100)], ["Ganancia por año", pct(r.cagr)], ["Ganancia ÷ peor bajada", fmt(r.neto / Math.abs(r.ddUsd || 1))], ["Estabilidad (Sharpe)", fmt(r.sharpe)], ["Estabilidad mirando solo las bajas (Sortino)", fmt(r.sortino)]]);
+  $("mRent").innerHTML = kv([["Net Profit (ganancia total)", usd(r.neto), cls(r.neto)], ["Gross Profit (suma de todo lo ganado)", usd(r.sumG), "pos"], ["Gross Loss (suma de todo lo perdido)", usd(-r.sumP), "neg"], ["Profit Factor (gana por cada 1 que pierde)", fmt(r.pf)],
+    ["Expectancy (ganancia promedio por operación)", usd(r.esperanza)], ["Net Profit % (ganancia total en %)", pct(r.neto / r.cap * 100)], ["CAGR (ganancia por año)", pct(r.cagr)], ["Recovery Factor (ganancia ÷ peor bajada)", fmt(r.neto / Math.abs(r.ddUsd || 1))], ["Sharpe Ratio (estabilidad)", fmt(r.sharpe)], ["Sortino Ratio (estabilidad mirando solo las bajas)", fmt(r.sortino)]]);
   const wr = a => a.length ? fmt(a.filter(o => o.usd > 0).length / a.length * 100, 0) + " %" : "—";
-  $("mOps").innerHTML = kv([["Cantidad de operaciones", r.ops.length], ["Operaciones por mes", fmt(r.porMes, 1)], ["Compras / ventas", `${r.largos.length} / ${r.cortos.length}`], ["Compras que ganaron", wr(r.largos)], ["Ventas que ganaron", wr(r.cortos)],
-    ["Lo que gana una ganadora (promedio)", usd(r.promG), "pos"], ["Lo que pierde una perdedora (promedio)", usd(r.promP), "neg"], ["Una ganadora vale X perdedoras", fmt(Math.abs(r.promG / (r.promP || 1)))], ["Mejor / peor operación", `${usd(r.mejorUsd)} / ${usd(r.peorUsd)}`], ["Cuánto dura una operación", r.horas >= 48 ? fmt(r.horas / 24, 1) + " días" : fmt(r.horas, 1) + " h"]]);
-  $("mRiesgo").innerHTML = kv([["Peor bajada", pct(r.ddMax), "neg"], ["Peor bajada en US$", usd(r.ddUsd), "neg"], ["Peor bajada con operaciones abiertas (MT5)", r.ddEq ? pct(-r.ddEq) : "solo con un informe"], ["Cuánto está abajo hoy", pct(r.ddActual)], ["Lo más que tardó en volver a su mejor punto", fmt(r.ddLargo, 0) + " días"],
-    ["Peor operación", pct(r.peor), "neg"], ["Más ganadoras seguidas", `${r.mG} (${usd(r.mGu)})`], ["Más perdedoras seguidas", `${r.mP} (${usd(r.mPu)})`, "neg"], ["Cobro por dejar abierto de un día a otro (swap)", usd(r.swap)], ["Comisiones", usd(r.com)]]);
+  $("mOps").innerHTML = kv([["Total Trades (cantidad de operaciones)", r.ops.length], ["Trades per Month (operaciones por mes)", fmt(r.porMes, 1)], ["Long / Short (compras / ventas)", `${r.largos.length} / ${r.cortos.length}`], ["Long Win Rate (compras que ganaron)", wr(r.largos)], ["Short Win Rate (ventas que ganaron)", wr(r.cortos)],
+    ["Average Win (lo que gana una ganadora)", usd(r.promG), "pos"], ["Average Loss (lo que pierde una perdedora)", usd(r.promP), "neg"], ["Payoff Ratio (una ganadora vale X perdedoras)", fmt(Math.abs(r.promG / (r.promP || 1)))], ["Best / Worst Trade (mejor / peor operación)", `${usd(r.mejorUsd)} / ${usd(r.peorUsd)}`], ["Average Holding Time (cuánto dura una operación)", r.horas >= 48 ? fmt(r.horas / 24, 1) + " días" : fmt(r.horas, 1) + " h"]]);
+  $("mRiesgo").innerHTML = kv([["Max Drawdown (peor bajada)", pct(r.ddMax), "neg"], ["Max Drawdown $ (peor bajada en US$)", usd(r.ddUsd), "neg"], ["Max Equity Drawdown (peor bajada con operaciones abiertas, MT5)", r.ddEq ? pct(-r.ddEq) : "solo con un informe"], ["Current Drawdown (cuánto está abajo hoy)", pct(r.ddActual)], ["Longest Drawdown (lo más que tardó en volver a su mejor punto)", fmt(r.ddLargo, 0) + " días"],
+    ["Worst Trade (peor operación)", pct(r.peor), "neg"], ["Max Winning Streak (más ganadoras seguidas)", `${r.mG} (${usd(r.mGu)})`], ["Max Losing Streak (más perdedoras seguidas)", `${r.mP} (${usd(r.mPu)})`, "neg"], ["Swap (cobro por dejar abierto de un día a otro)", usd(r.swap)], ["Commissions (comisiones)", usd(r.com)]]);
   grafico("chPnl", { type: "bar", data: { labels: r.ops.map(o => o.n), datasets: [{ data: r.ops.map(o => o.pct), backgroundColor: r.ops.map(o => colorBarra(o.pct)), barPercentage: 1, categoryPercentage: 0.9 }] },
     options: { maintainAspectRatio: false, plugins: { tooltip: { callbacks: { title: it => { const o = r.ops[it[0].dataIndex]; return `#${o.n} · ${o.mercado} · ${fechaCorta(o.fin)}`; }, label: it => `${pct(it.raw, 2)} · ${usd(r.ops[it.dataIndex].usd)}` } } }, scales: { x: ejeX, y: { ticks: { callback: x => x + "%" } } } } });
   const vals = r.ops.map(o => o.pct), lo = Math.floor(Math.min(...vals)), hi = Math.ceil(Math.max(...vals)), paso = Math.max(0.25, Math.ceil((hi - lo) / 30 * 4) / 4), cajas = [];
@@ -873,13 +899,13 @@ function render() {
     options: { maintainAspectRatio: false, plugins: { tooltip: { callbacks: { title: it => `${fmt(cajas[it[0].dataIndex][0], 2)} % a ${fmt(cajas[it[0].dataIndex][0] + paso, 2)} %`, label: it => `${it.raw} operaciones` } } }, scales: { x: ejeX } } });
   renderGrupo();
   const anios = [...new Set(r.mensual.map(([k]) => k.slice(0, 4)))], mes = Object.fromEntries(r.mensual), anual = Object.fromEntries(r.anual);
-  $("tMeses").innerHTML = `<thead><tr><th>Año</th>${MESES.map(n => `<th>${n}</th>`).join("")}<th>Año</th></tr></thead><tbody>${anios.map(a => `<tr><td>${a}</td>${MESES.map((_, i) => {
+  $("tMeses").innerHTML = `<thead><tr><th>Year (año)</th>${MESES.map(n => `<th>${n}</th>`).join("")}<th>Year (año)</th></tr></thead><tbody>${anios.map(a => `<tr><td>${a}</td>${MESES.map((_, i) => {
     const x = mes[`${a}-${String(i + 1).padStart(2, "0")}`];
     return x === undefined ? "<td></td>" : `<td class="${Math.abs(x) < 0.05 ? "muted" : cls(x)}" style="background:${x >= 0 ? "rgba(52,211,153," : "rgba(248,113,113,"}${Math.min(0.45, Math.abs(x) * 0.04)})">${fmt(x, 1)}</td>`;
   }).join("")}<td class="${cls(anual[a])}"><b>${fmt(anual[a] || 0, 1)}</b></td></tr>`).join("")}</tbody>`;
   const porMercado = [...new Set(r.ops.map(x => x.mercado))].map(nombre => { const o = r.ops.filter(x => x.mercado === nombre), g = o.filter(x => x.pct > 0).reduce((a, x) => a + x.pct, 0), p = -o.filter(x => x.pct <= 0).reduce((a, x) => a + x.pct, 0);
     return [nombre, o.length, o.length ? o.filter(x => x.pct > 0).length / o.length * 100 : 0, p ? g / p : 0, g - p, o.reduce((a, x) => a + x.usd, 0)]; });
-  $("tSimbolos").innerHTML = `<thead><tr><th>Mercado</th><th>Operaciones</th><th>Ganadoras</th><th>Gana por cada 1 que pierde</th><th>Ganancia (% de la cuenta)</th><th>Ganancia (US$)</th></tr></thead><tbody>${porMercado.map(m =>
+  $("tSimbolos").innerHTML = `<thead><tr><th>Symbol (mercado)</th><th>Trades (operaciones)</th><th>Win Rate (ganadoras)</th><th>Profit Factor (gana por cada 1 que pierde)</th><th>Profit % (ganancia, % de la cuenta)</th><th>Profit $ (ganancia, US$)</th></tr></thead><tbody>${porMercado.map(m =>
     `<tr><td>${m[0]}</td><td>${m[1]}</td><td>${fmt(m[2], 1)} %</td><td class="${m[3] >= 1 ? "pos" : "neg"}">${fmt(m[3])}</td><td class="${cls(m[4])}">${pct(m[4])}</td><td class="${cls(m[5])}">${usd(m[5])}</td></tr>`).join("")}</tbody>`;
 
   estado.pagina = 0; renderOps(); renderFondeos(); renderMC(); renderEstres(); renderDuelo();
@@ -898,11 +924,11 @@ function renderGrupo() {
 function renderOps() {
   const ops = estado.r.ops, por = 50, total = Math.ceil(ops.length / por);
   estado.pagina = Math.max(0, Math.min(estado.pagina, total - 1));
-  $("opsTitulo").textContent = `${ops.length} operaciones cerradas`;
+  $("opsTitulo").textContent = `${ops.length} closed trades (operaciones cerradas)`;
   $("pagina").textContent = `${estado.pagina + 1} / ${total}`;
   const f = d => d.toISOString().slice(0, 16).replace("T", " ");
-  $("tOps").innerHTML = `<thead><tr><th>#</th><th class="l">Mercado</th><th class="l">Lado</th><th>Entrada</th><th>Salida</th><th>Lotes</th><th>Precio entrada</th><th>Precio salida</th><th>Swap</th><th>Resultado</th><th>% cuenta</th><th>Balance</th></tr></thead><tbody>${ops.slice(estado.pagina * por, (estado.pagina + 1) * por).map(o =>
-    `<tr><td>${o.n}</td><td class="l">${o.mercado}</td><td class="l"><span class="pill ${o.lado === "buy" ? "ok" : "bad"}">${o.lado === "buy" ? "COMPRA" : "VENTA"}</span></td><td>${f(o.inicio)}</td><td>${f(o.fin)}</td><td>${fmt(o.lotes)}</td><td>${fmt(o.entrada)}</td><td>${fmt(o.salida)}</td><td>${fmt(o.swap)}</td><td class="${cls(o.usd)}">${usd(o.usd)}</td><td class="${cls(o.pct)}">${pct(o.pct, 2)}</td><td>${fmt(o.bal, 0)}</td></tr>`).join("")}</tbody>`;
+  $("tOps").innerHTML = `<thead><tr><th>#</th><th class="l">Symbol (mercado)</th><th class="l">Side (lado)</th><th>Entry (entrada)</th><th>Exit (salida)</th><th>Lots (lotes)</th><th>Entry Price (precio entrada)</th><th>Exit Price (precio salida)</th><th>Swap</th><th>P&amp;L (resultado)</th><th>% Account (% cuenta)</th><th>Balance</th></tr></thead><tbody>${ops.slice(estado.pagina * por, (estado.pagina + 1) * por).map(o =>
+    `<tr><td>${o.n}</td><td class="l">${o.mercado}</td><td class="l"><span class="pill ${o.lado === "buy" ? "ok" : "bad"}">${o.lado === "buy" ? "LONG (COMPRA)" : "SHORT (VENTA)"}</span></td><td>${f(o.inicio)}</td><td>${f(o.fin)}</td><td>${fmt(o.lotes)}</td><td>${fmt(o.entrada)}</td><td>${fmt(o.salida)}</td><td>${fmt(o.swap)}</td><td class="${cls(o.usd)}">${usd(o.usd)}</td><td class="${cls(o.pct)}">${pct(o.pct, 2)}</td><td>${fmt(o.bal, 0)}</td></tr>`).join("")}</tbody>`;
 }
 
 function renderFondeos() {
@@ -912,12 +938,12 @@ function renderFondeos() {
   const med = a => { const v = a.filter(x => x != null).sort((u, w) => u - w); return v.length ? v[Math.floor(v.length / 2)] : null; };
   const d1 = med(f1ok.map(x => x.f1.dias)), dTot = med(fondeadas.map(x => (x.f2 ? x.f1.dias + x.f2.dias : x.f1.dias)));
   const tasa = n ? fondeadas.length / n * 100 : 0, cap = +$("fCap").value || 5000;
-  $("kpisF").innerHTML = kpi("Pasa el challenge", fmt(tasa, 0) + " %", `de las veces (${fondeadas.length} de ${n} intentos simulados)`, tasa >= 60 ? "pos" : tasa >= 40 ? "" : "neg")
-    + kpi("Tiempo para pasar", dTot == null ? "—" : fmt(dTot, 0) + " días", `lo normal · la etapa 1 tarda unos ${d1 == null ? "—" : fmt(d1, 0)} días`)
-    + kpi("No pasa la etapa 1", fmt(n ? (n - f1ok.length) / n * 100 : 0, 0) + " %", "de las veces", "neg")
-    + kpi("Riesgo por operación", usd(cap * $("fRc").value / 100), `lo que se pierde si una operación sale mal (${fmt(+$("fRc").value, 2)} % de ${usd(cap)})`);
+  $("kpisF").innerHTML = kpi("Pass Rate (pasa el challenge)", fmt(tasa, 0) + " %", `de las veces (${fondeadas.length} de ${n} intentos simulados)`, tasa >= 60 ? "pos" : tasa >= 40 ? "" : "neg")
+    + kpi("Time to Pass (tiempo para pasar)", dTot == null ? "—" : fmt(dTot, 0) + " días", `lo normal · la etapa 1 tarda unos ${d1 == null ? "—" : fmt(d1, 0)} días`)
+    + kpi("Phase 1 Fail Rate (no pasa la etapa 1)", fmt(n ? (n - f1ok.length) / n * 100 : 0, 0) + " %", "de las veces", "neg")
+    + kpi("Risk per Trade (riesgo por operación)", usd(cap * $("fRc").value / 100), `lo que se pierde si una operación sale mal (${fmt(+$("fRc").value, 2)} % de ${usd(cap)})`);
   const motivo = x => x.res.replace("f2:", "");
-  const fallos = [["Pérdida diaria", "diaria"], ["Pérdida total", "total"], ["Tiempo agotado", "tiempo"]].map(([k, m]) => [k, s.todos.filter(x => x.res !== "fondeada" && motivo(x) === m).length]);
+  const fallos = [["Daily Loss (pérdida diaria)", "diaria"], ["Total Loss (pérdida total)", "total"], ["Time Out (tiempo agotado)", "tiempo"]].map(([k, m]) => [k, s.todos.filter(x => x.res !== "fondeada" && motivo(x) === m).length]);
   grafico("chFallos", { type: "bar", data: { labels: fallos.map(f => f[0]), datasets: [{ data: fallos.map(f => f[1]), backgroundColor: [css("--warn"), css("--loss"), css("--dim")], borderRadius: 6, maxBarThickness: 40 }] },
     options: { indexAxis: "y", maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: it => `${it.raw} intentos (${fmt(n ? it.raw / n * 100 : 0, 0)} %)` } } }, scales: { y: { grid: { display: false } } } } });
   // % que fondea en 12 meses o menos, sobre todos los arranques con al menos 12 meses de historial por delante
@@ -929,11 +955,11 @@ function renderFondeos() {
   grafico("chRiesgo", { type: "line", data: { labels: riesgos.map(x => x + "%"), datasets: [{ data: tasas, borderColor: css("--accent-2"), backgroundColor: css("--accent-2"), pointRadius: riesgos.map(x => x === +$("fRc").value ? 6 : 3), tension: 0.3 }] },
     options: { maintainAspectRatio: false, plugins: { tooltip: { callbacks: { title: it => `Riesgo ${it[0].label} por operación`, label: it => `Fondean en 12 meses o menos: ${fmt(it.raw, 0)} %` } } }, scales: { x: { grid: { display: false }, title: { display: true, text: "riesgo por operación" } }, y: { min: 0, max: 100, ticks: { callback: x => x + "%" } } } } });
   const color = x => x.res === "fondeada" ? "var(--gain)" : x.res === "abierta" ? "var(--dim)" : x.res.startsWith("f2:") ? "var(--warn)" : "var(--loss)";
-  const nombre = x => x.res === "fondeada" ? "Fondeada" : x.res === "abierta" ? "En curso" : (x.res.startsWith("f2:") ? "Quemada en fase 2 · " : "Quemada · ") + { diaria: "pérdida diaria", total: "pérdida total", tiempo: "tiempo agotado" }[motivo(x)];
+  const nombre = x => x.res === "fondeada" ? "Funded (fondeada)" : x.res === "abierta" ? "In progress (en curso)" : (x.res.startsWith("f2:") ? "Blown in Phase 2 (quemada en fase 2) · " : "Blown (quemada) · ") + { diaria: "daily loss (pérdida diaria)", total: "total loss (pérdida total)", tiempo: "time out (tiempo agotado)" }[motivo(x)];
   const largo = x => Math.max(1, Math.min(x.fin, s.dias.length - 1) - x.inicio + 1);
   renderMulti(s.dias, R);
   $("timeline").innerHTML = s.cadena.map(x => `<span style="flex:${largo(x)};background:${color(x)}" title="${fechaCorta(s.dias[x.inicio][0])}: ${nombre(x)}"></span>`).join("");
-  $("tIntentos").innerHTML = `<thead><tr><th>#</th><th class="l">Inicio</th><th class="l">Resultado</th><th>Días fase 1</th><th>Días fase 2</th><th>Días en total</th></tr></thead><tbody>${s.cadena.map((x, i) => {
+  $("tIntentos").innerHTML = `<thead><tr><th>#</th><th class="l">Start (inicio)</th><th class="l">Result (resultado)</th><th>Phase 1 Days (días fase 1)</th><th>Phase 2 Days (días fase 2)</th><th>Total Days (días en total)</th></tr></thead><tbody>${s.cadena.map((x, i) => {
     const a = x.f1.dias, b = x.f2 ? x.f2.dias : null;
     return `<tr><td>${i + 1}</td><td class="l">${fechaCorta(s.dias[x.inicio][0])}</td><td class="l"><span class="pill ${x.res === "fondeada" ? "ok" : x.res === "abierta" ? "info" : x.res.startsWith("f2:") ? "warn" : "bad"}">${nombre(x)}</span></td><td>${a == null ? "—" : fmt(a, 0)}</td><td>${b == null ? "—" : fmt(b, 0)}</td><td>${a == null ? "—" : fmt(a + (b || 0), 0)}</td></tr>`; }).join("")}</tbody>`;
 }
@@ -950,16 +976,16 @@ function renderMulti(dias, R) {
   const filas = multicuenta(dias, R, N, cada, precio, cap, reparto, meses);
   if (!filas.length) { $("kpisM").innerHTML = kpi("Sin datos suficientes", "—", `Hace falta más historial que ${meses} meses${cada ? " más el escalonado" : ""}.`); $("tEscalon").innerHTML = ""; return; }
   const m = resumenM(filas);
-  $("kpisM").innerHTML = kpi("Lo que pagás", usd(precio * N), `${N} challenge${N > 1 ? "s" : ""} de ${usd(cap)} · es lo máximo que podés perder`)
-    + kpi(N > 1 ? "No pasa ninguna" : "No pasa el challenge", fmt(m.ninguna, 0) + " %", N > 1 ? `de las veces · pasan ${fmt(m.fond, 1)} de ${N} en promedio` : "de las veces", m.ninguna > 10 ? "neg" : "")
-    + kpi("Ganancia en un año normal", usd(m.med), `ya descontado lo que pagaste · casi siempre entre ${usd(m.p10)} y ${usd(m.p90)}`, cls(m.med))
-    + kpi("Terminás perdiendo lo que pagaste", fmt(m.pierde, 0) + " %", "de las veces, contando cuentas que pasan y después se pierden", m.pierde > 25 ? "neg" : "");
+  $("kpisM").innerHTML = kpi("Total Fees (lo que pagás)", usd(precio * N), `${N} challenge${N > 1 ? "s" : ""} de ${usd(cap)} · es lo máximo que podés perder`)
+    + kpi(N > 1 ? "Fail Rate (no pasa ninguna)" : "Fail Rate (no pasa el challenge)", fmt(m.ninguna, 0) + " %", N > 1 ? `de las veces · pasan ${fmt(m.fond, 1)} de ${N} en promedio` : "de las veces", m.ninguna > 10 ? "neg" : "")
+    + kpi("Typical Net Profit (ganancia en un año normal)", usd(m.med), `ya descontado lo que pagaste · casi siempre entre ${usd(m.p10)} y ${usd(m.p90)}`, cls(m.med))
+    + kpi("Net Loss Rate (terminás perdiendo lo que pagaste)", fmt(m.pierde, 0) + " %", "de las veces, contando cuentas que pasan y después se pierden", m.pierde > 25 ? "neg" : "");
   const lo = Math.floor(m.netos[0] / 1000) * 1000, hi = Math.ceil(m.netos.at(-1) / 1000) * 1000, paso = Math.max(250, Math.ceil((hi - lo) / 24 / 250) * 250), cajas = [];
   for (let x = lo; x < hi; x += paso) cajas.push([x, m.netos.filter(y => y >= x && y < x + paso).length]);
   grafico("chMulti", { type: "bar", data: { labels: cajas.map(c => fmt(c[0], 0)), datasets: [{ data: cajas.map(c => c[1]), backgroundColor: cajas.map(c => c[0] + paso / 2 >= 0 ? css("--gain") : css("--loss")), borderRadius: 3 }] },
     options: { maintainAspectRatio: false, plugins: { tooltip: { callbacks: { title: it => `${usd(cajas[it[0].dataIndex][0])} a ${usd(cajas[it[0].dataIndex][0] + paso)}`, label: it => `${it.raw} de ${m.n} arranques posibles` } } }, scales: { x: ejeX } } });
   const opciones = [...new Set([0, 7, 14, 30, cada])].sort((a, b) => a - b);
-  $("tEscalon").innerHTML = `<thead><tr><th>Arranque</th><th>Ninguna fondea</th><th>Pierde plata</th><th>Resultado típico</th></tr></thead><tbody>${opciones.map(c => {
+  $("tEscalon").innerHTML = `<thead><tr><th>Start (arranque)</th><th>None Funded (ninguna fondea)</th><th>Loses Money (pierde plata)</th><th>Typical Result (resultado típico)</th></tr></thead><tbody>${opciones.map(c => {
     const f = c === cada ? filas : multicuenta(dias, R, N, c, precio, cap, reparto, meses);
     if (!f.length) return `<tr><td>${c ? `una cada ${c} días` : "todas juntas"}</td><td colspan="3">sin datos suficientes</td></tr>`;
     const x = resumenM(f);
@@ -969,8 +995,8 @@ function renderMulti(dias, R) {
 
 function renderMC() {
   const r = estado.r, mc = estado.mc;
-  $("kpisMC").innerHTML = kpi("Bajada normal", pct(mc.dd50), "la que verías en una historia común", "neg") + kpi("Bajada con mala suerte", pct(mc.dd95), `1 de cada 20 historias baja esto o más · la peor: ${pct(mc.ddPeor)}`, "neg")
-    + kpi("Resultado normal", pct(mc.fin50), `casi siempre entre ${pct(mc.fin5)} y ${pct(mc.fin95)}`, cls(mc.fin50)) + kpi("Terminan perdiendo", fmt(mc.perdida, 0) + " %", "de las 2.000 historias", mc.perdida > 10 ? "neg" : "");
+  $("kpisMC").innerHTML = kpi("Median Drawdown (bajada normal)", pct(mc.dd50), "la que verías en una historia común", "neg") + kpi("Bad-Luck Drawdown (bajada con mala suerte)", pct(mc.dd95), `1 de cada 20 historias baja esto o más · la peor: ${pct(mc.ddPeor)}`, "neg")
+    + kpi("Median Return (resultado normal)", pct(mc.fin50), `casi siempre entre ${pct(mc.fin5)} y ${pct(mc.fin95)}`, cls(mc.fin50)) + kpi("Loss Probability (terminan perdiendo)", fmt(mc.perdida, 0) + " %", "de las 2.000 historias", mc.perdida > 10 ? "neg" : "");
   const real = [100]; r.ops.forEach(o => real.push(real.at(-1) * (1 + o.pct / 100)));
   grafico("chMC", { type: "line", data: { labels: real.map((_, i) => i), datasets: [...mc.curvas.map(cu => ({ data: cu, borderColor: "rgba(76,157,255,0.13)", borderWidth: 1, pointRadius: 0 })),
     { data: real, borderColor: css("--warn"), borderWidth: 2.5, pointRadius: 0 }] },
@@ -998,10 +1024,10 @@ function renderEstres() {
   }
   const peor = suma / 20, indice = Math.round(e.rentables);
   const etiqueta = indice >= 90 ? ["Muy sólido", "pos"] : indice >= 70 ? ["Sólido", ""] : ["Frágil: puede ser suerte", "neg"];
-  $("kpisE").innerHTML = kpi("Índice de solidez", indice + " / 100", `${etiqueta[0]} · en ${indice} de cada 100 historias peores sigue ganando`, etiqueta[1])
-    + kpi("Resultado normal con estrés", pct(e.fin50), `sin estrés: ${pct(estado.mc.fin50)}`, cls(e.fin50))
-    + kpi("Bajada con mala suerte y estrés", pct(e.dd95), `sin estrés: ${pct(estado.mc.dd95)}`, "neg")
-    + kpi("Pasa el challenge con estrés", fmt(peor, 0) + " %", `sin estrés: ${fmt(base.tasa, 0)} % · reglas y riesgo de la pestaña Challenge`, peor >= 60 ? "pos" : peor >= 40 ? "" : "neg");
+  $("kpisE").innerHTML = kpi("Robustness Score (índice de solidez)", indice + " / 100", `${etiqueta[0]} · en ${indice} de cada 100 historias peores sigue ganando`, etiqueta[1])
+    + kpi("Median Return under Stress (resultado normal con estrés)", pct(e.fin50), `sin estrés: ${pct(estado.mc.fin50)}`, cls(e.fin50))
+    + kpi("Bad-Luck Drawdown under Stress (bajada con mala suerte y estrés)", pct(e.dd95), `sin estrés: ${pct(estado.mc.dd95)}`, "neg")
+    + kpi("Pass Rate under Stress (pasa el challenge con estrés)", fmt(peor, 0) + " %", `sin estrés: ${fmt(base.tasa, 0)} % · reglas y riesgo de la pestaña Challenge`, peor >= 60 ? "pos" : peor >= 40 ? "" : "neg");
 }
 
 function carteraDe(rep) {
@@ -1020,12 +1046,12 @@ function renderDuelo() {
     return { n, r, mc, ch: tasaChallenge(r.ops, { ...R, escala: (+$("fRc").value || 0) / (rep.riesgo || +$("fRb").value || 1) }) };
   });
   const filas = [
-    ["Ganancia por año", x => x.r.cagr, pct, 1], ["Gana por cada 1 que pierde", x => x.r.pf, v => fmt(v), 1],
-    ["Peor bajada", x => x.r.ddMax, pct, 1], ["Bajada con mala suerte (1 de cada 20)", x => x.mc.dd95, pct, 1],
-    ["Operaciones ganadoras", x => x.r.acierto, v => fmt(v, 0) + " %", 1], ["Estabilidad (Sharpe)", x => x.r.sharpe, v => fmt(v), 1],
-    ["Más perdedoras seguidas", x => x.r.mP, v => v, -1], ["Peor operación", x => x.r.peor, v => pct(v, 2), 1],
-    ["Pasa el challenge", x => x.ch.tasa, v => fmt(v, 0) + " %", 1], ["Tiempo para pasar", x => x.ch.dias ?? Infinity, v => isFinite(v) ? fmt(v, 0) + " días" : "—", -1],
-    ["Operaciones por mes", x => x.r.porMes, v => fmt(v, 1), 0],
+    ["CAGR (ganancia por año)", x => x.r.cagr, pct, 1], ["Profit Factor (gana por cada 1 que pierde)", x => x.r.pf, v => fmt(v), 1],
+    ["Max Drawdown (peor bajada)", x => x.r.ddMax, pct, 1], ["Bad-Luck Drawdown (bajada con mala suerte, 1 de cada 20)", x => x.mc.dd95, pct, 1],
+    ["Win Rate (operaciones ganadoras)", x => x.r.acierto, v => fmt(v, 0) + " %", 1], ["Sharpe Ratio (estabilidad)", x => x.r.sharpe, v => fmt(v), 1],
+    ["Max Losing Streak (más perdedoras seguidas)", x => x.r.mP, v => v, -1], ["Worst Trade (peor operación)", x => x.r.peor, v => pct(v, 2), 1],
+    ["Pass Rate (pasa el challenge)", x => x.ch.tasa, v => fmt(v, 0) + " %", 1], ["Time to Pass (tiempo para pasar)", x => x.ch.dias ?? Infinity, v => isFinite(v) ? fmt(v, 0) + " días" : "—", -1],
+    ["Trades per Month (operaciones por mes)", x => x.r.porMes, v => fmt(v, 1), 0],
   ];
   const pts = [0, 0];
   const cuerpo = filas.map(([k, f, show, dir]) => {
@@ -1033,12 +1059,12 @@ function renderDuelo() {
     if (g >= 0) pts[g]++;
     return `<tr><td class="l">${k}</td>${[a, b].map((v, i) => `<td${g === i ? ' class="pos"' : ""}>${show(v)}${g === i ? " ✓" : ""}</td>`).join("")}</tr>`;
   }).join("");
-  $("tDuelo").innerHTML = `<thead><tr><th class="l">Qué se mide</th><th>A · ${lados[0].n}</th><th>B · ${lados[1].n}</th></tr></thead><tbody>${cuerpo}</tbody>`;
+  $("tDuelo").innerHTML = `<thead><tr><th class="l">Metric (qué se mide)</th><th>A · ${lados[0].n}</th><th>B · ${lados[1].n}</th></tr></thead><tbody>${cuerpo}</tbody>`;
   const gan = pts[0] === pts[1] ? null : pts[0] > pts[1] ? lados[0] : lados[1];
   const mismoAnio = lados[0].r.desde.getUTCFullYear() === lados[1].r.desde.getUTCFullYear();
-  $("kpisD").innerHTML = kpi("Ganador", gan ? gan.n : "Empate", `${Math.max(...pts)} a ${Math.min(...pts)} en ${filas.length - 1} puntos`, gan ? "pos" : "")
-    + lados.map((x, i) => kpi(`${"AB"[i]} · pasa el challenge`, fmt(x.ch.tasa, 0) + " %", x.ch.dias == null ? "—" : `en unos ${fmt(x.ch.dias, 0)} días`)).join("")
-    + kpi("Fechas", mismoAnio ? "Iguales" : "Distintas", mismoAnio ? "los dos empiezan el mismo año" : "empiezan en años distintos: la comparación es menos justa", mismoAnio ? "" : "neg");
+  $("kpisD").innerHTML = kpi("Winner (ganador)", gan ? gan.n : "Tie (empate)", `${Math.max(...pts)} a ${Math.min(...pts)} en ${filas.length - 1} puntos`, gan ? "pos" : "")
+    + lados.map((x, i) => kpi(`${"AB"[i]} · Pass Rate (pasa el challenge)`, fmt(x.ch.tasa, 0) + " %", x.ch.dias == null ? "—" : `en unos ${fmt(x.ch.dias, 0)} días`)).join("")
+    + kpi("Dates (fechas)", mismoAnio ? "Same (iguales)" : "Different (distintas)", mismoAnio ? "los dos empiezan el mismo año" : "empiezan en años distintos: la comparación es menos justa", mismoAnio ? "" : "neg");
   $("dNomA").textContent = "A · " + lados[0].n; $("dNomB").textContent = "B · " + lados[1].n;
   const mesFin = r => { const m = new Map(); r.curva.forEach(p => m.set(p.t.toISOString().slice(0, 7), p.b / r.cap * 100)); return m; };
   const [ma, mb] = lados.map(x => mesFin(x.r)), meses = [...new Set([...ma.keys(), ...mb.keys()])].sort();
