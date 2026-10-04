@@ -258,6 +258,18 @@ footer { color: var(--dim); font-size: 12px; text-align: center; max-width: 80ch
   </section>
 
   <section>
+    <h2>Pasar los bots a un VPS</h2>
+    <p>Un VPS (Virtual Private Server) es una computadora en internet que nunca se apaga. Así los bots operan las 24 horas sin depender de tu compu. Está todo preparado en la carpeta <b>paquete_vps</b> (con una guía paso a paso en LEEME.txt).</p>
+    <div class="card steps">
+      <div class="step"><p><b>Contratar un VPS con Windows</b>, con 2 GB de memoria como mínimo (mejor 4 GB) y ubicado en Nueva York o Estados Unidos (este). Los más baratos cuestan entre 3 y 15 US$ por mes. La contraseña que te mandan es solo tuya.</p></div>
+      <div class="step"><p><b>Entrar con "Conexión a Escritorio remoto"</b> (viene con Windows) o con la app Microsoft Remote Desktop desde el celular.</p></div>
+      <div class="step"><p><b>Instalar MetaTrader 5 ahí</b>, entrar a la cuenta del challenge y copiar la carpeta paquete_vps. Cargar los dos bots con sus archivos de configuración, igual que en tu compu.</p></div>
+      <div class="step"><p><b>Los bots corren en un solo lugar.</b> Si los prendés en el VPS, apagalos en tu compu, porque si no se abren operaciones duplicadas.</p></div>
+      <div class="step"><p><b>Cerrar la ventana con la X</b> (desconectar), sin usar "Cerrar sesión". El VPS sigue con MetaTrader abierto.</p></div>
+    </div>
+  </section>
+
+  <section>
     <h2>Bot 1: ETH, Bitcoin y oro, en detalle</h2>
     <p>Probé 4 versiones en MetaTrader 5 con precios reales, en dos épocas distintas y con distintos riesgos por operación. Esta es la mejor combinación de cada una para el plan Standard (los números son los de la peor de las dos épocas):</p>
     <div class="card scroll">
