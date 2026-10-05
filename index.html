@@ -206,9 +206,9 @@ td, th { overflow-wrap: normal }
 
   <!-- VEREDICTO (informe opcional que inserta analizador_backtest.py --informe) -->
   <div class="pane informe" data-pane="veredicto"><header style="display:grid;gap:12px">
-    <span class="label">Informe final · Backtest (pruebas con datos del pasado) · actualizado 4 de octubre de 2026</span>
-    <h1>Dos bots que funcionan: <em>Trend Following (tendencia) en ETH, Bitcoin y oro</em>, y <em>Breakout (ruptura) del Nasdaq</em>. Juntos pasan más y más rápido.</h1>
-    <p class="muted">Hicimos el Backtest (prueba con datos del pasado) de 6 ideas, como si las hubiéramos usado en ese momento. Dos funcionaron y cuatro no sirven. Ahora mismo no hay ningún bot operando ni operaciones abiertas en tu Demo Account (cuenta demo). Los dos bots se probaron un rato en la demo y se cerró todo.</p>
+    <span class="label">Informe final · Backtest · actualizado 4 de octubre de 2026</span>
+    <h1>Dos bots que funcionan: <em>Trend Following en ETH, Bitcoin y oro</em>, y <em>Breakout del Nasdaq</em>. Juntos pasan más y más rápido.</h1>
+    <p class="muted">Hicimos el Backtest de 6 ideas, como si las hubiéramos usado en ese momento. Dos funcionaron y cuatro no sirven. Ahora mismo no hay ningún bot operando ni operaciones abiertas en tu cuenta demo. Los dos bots se probaron un rato en la demo y se cerró todo.</p>
   </header>
 
   <section class="card hero">
@@ -219,15 +219,15 @@ td, th { overflow-wrap: normal }
       <div><b class="pos">casi 10 de cada 10</b><span>Pass Rate (veces que pasa el challenge) con los dos bots juntos, en unos 3 meses y medio (2018 a 2026)</span></div>
       <div><b>36 US$</b><span>es lo máximo que podés perder con el challenge de 5.000: lo que pagás</span></div>
     </div>
-    <p>El bot de ETH, Bitcoin y oro es el más probado: anduvo bien de 2018 a 2026 y en MetaTrader 5. El del Nasdaq también ganó en cada uno de los 8 años que probamos (2018 a 2026), incluso en 2022, que fue malo para las criptomonedas, pero todavía <b>no lo vimos funcionar en Live Trading (en vivo)</b>. Como el challenge de 5.000 cuesta poco, lo usamos de prueba en vivo y arrancamos con los dos: si el del Nasdaq falla en algo (por ejemplo, las órdenes), el de criptomonedas sigue andando solo y lo peor que pasa es perder los 36 US$.</p>
-    <p>Lo malo: los dos tienen Losing Streaks (rachas de muchas pérdidas seguidas), y nada de esto asegura que el futuro sea igual al pasado.</p>
+    <p>El bot de ETH, Bitcoin y oro es el más probado: anduvo bien de 2018 a 2026 y en MetaTrader 5. El del Nasdaq también ganó en cada uno de los 8 años que probamos (2018 a 2026), incluso en 2022, que fue malo para las criptomonedas, pero todavía <b>no lo vimos funcionar en vivo</b>. Como el challenge de 5.000 cuesta poco, lo usamos de prueba en vivo y arrancamos con los dos: si el del Nasdaq falla en algo (por ejemplo, las órdenes), el de criptomonedas sigue andando solo y lo peor que pasa es perder los 36 US$.</p>
+    <p>Lo malo: los dos tienen rachas de muchas pérdidas seguidas, y nada de esto asegura que el futuro sea igual al pasado.</p>
   </section>
 
   <section>
     <h2>Los dos bots</h2>
     <div class="list">
-      <div class="item"><span class="pill ok">BOT 1</span><p><b>Trend Following (seguir la tendencia) en ETH, Bitcoin y oro</b> (versión "cuida la cuenta", Risk per Trade (riesgo por operación) 1,25 %). Compra cuando el precio viene subiendo con fuerza y sale cuando la subida se corta. Hace unas 8 Trades (operaciones) por mes y las deja abiertas varios días. Win Rate (operaciones ganadoras): 4 de cada 10, pero las que gana valen mucho más que las que pierde.</p></div>
-      <div class="item"><span class="pill ok">BOT 2</span><p><b>Breakout (ruptura) del Nasdaq</b> (idea de Larry Williams, Risk per Trade 0,75 %). Cuando abre la bolsa de Nueva York (10:30 de Argentina) pone dos Pending Orders (órdenes pendientes): "compro si sube la mitad de lo que se movió ayer" y "vendo si baja la mitad". OCO (One-Cancels-the-Other): si se activa una, cancela la otra. Cierra siempre antes de que termine el día. Hace unas 15 Trades (operaciones) por mes y Win Rate (operaciones ganadoras): 5 de cada 10.</p></div>
+      <div class="item"><span class="pill ok">BOT 1</span><p><b>Trend Following en ETH, Bitcoin y oro</b> (versión "cuida la cuenta", Risk per Trade (riesgo por operación) 1,25 %). Compra cuando el precio viene subiendo con fuerza y sale cuando la subida se corta. Hace unas 8 Trades (operaciones) por mes y las deja abiertas varios días. Win Rate (operaciones ganadoras): 4 de cada 10, pero las que gana valen mucho más que las que pierde.</p></div>
+      <div class="item"><span class="pill ok">BOT 2</span><p><b>Breakout del Nasdaq</b> (idea de Larry Williams, Risk per Trade 0,75 %). Cuando abre la bolsa de Nueva York (10:30 de Argentina) pone dos Pending Orders (órdenes pendientes): "compro si sube la mitad de lo que se movió ayer" y "vendo si baja la mitad". OCO (One-Cancels-the-Other): si se activa una, cancela la otra. Cierra siempre antes de que termine el día. Hace unas 15 Trades (operaciones) por mes y Win Rate (operaciones ganadoras): 5 de cada 10.</p></div>
     </div>
     <p>Se complementan (Diversification, diversificación) porque operan <b>mercados y horarios distintos</b>: cuando uno tiene una mala racha, el otro muchas veces no.</p>
   </section>
@@ -421,12 +421,12 @@ td, th { overflow-wrap: normal }
   <section>
     <h2>Las 6 ideas que probamos</h2>
     <div class="list">
-      <div class="item"><span class="pill ok">SÍ</span><p><b>Trend Following (seguir la tendencia) en ETH, Bitcoin y oro.</b> Funcionó en todos los años que probamos.</p></div>
-      <div class="item"><span class="pill ok">SÍ</span><p><b>Breakout (ruptura) del Nasdaq, Larry Williams.</b> Ganó en todos los años que probamos. Solo es lento; junto al otro bot, ayuda.</p></div>
+      <div class="item"><span class="pill ok">SÍ</span><p><b>Trend Following en ETH, Bitcoin y oro.</b> Funcionó en todos los años que probamos.</p></div>
+      <div class="item"><span class="pill ok">SÍ</span><p><b>Breakout del Nasdaq, Larry Williams.</b> Ganó en todos los años que probamos. Solo es lento; junto al otro bot, ayuda.</p></div>
       <div class="item"><span class="pill bad">NO</span><p><b>Opening Range Breakout, ORB (comprar si el Nasdaq rompe el rango de la primera media hora).</b> En los años que no habíamos mirado ganó muy poco y en 2026 perdió.</p></div>
       <div class="item"><span class="pill bad">NO</span><p><b>SomosETH (el bot de Somosbulls).</b> No se puede probar, y Funding Pips prohíbe usar bots hechos por otros para abrir operaciones: te cerrarían la cuenta.</p></div>
       <div class="item"><span class="pill bad">NO</span><p><b>La estrategia de Fede Esses.</b> Perdió plata en 2025 y en 2026.</p></div>
-      <div class="item"><span class="pill bad">NO</span><p><b>Trend Following (seguir la tendencia) en Stock Indices (índices de bolsa)</b> (Nasdaq, S&amp;P 500 y DAX alemán). Perdió en todos los períodos.</p></div>
+      <div class="item"><span class="pill bad">NO</span><p><b>Trend Following en Stock Indices (índices de bolsa)</b> (Nasdaq, S&amp;P 500 y DAX alemán). Perdió en todos los períodos.</p></div>
     </div>
   </section>
 
@@ -488,7 +488,7 @@ td, th { overflow-wrap: normal }
         <li><b>Si pasás, ojo con la Funded Account (cuenta fondeada):</b> desde enero de 2026 Funding Pips cierra solas las operaciones abiertas el viernes. El bot de criptomonedas deja operaciones abiertas varios días, así que ahí probablemente gane menos (preparo una versión para esa etapa). El del Nasdaq no tiene ese problema porque cierra todos los días.</li>
         <li><b>Las pruebas son un poco optimistas.</b> No ven la Floating Loss (pérdida flotante: cuánto baja una operación mientras está abierta), solo cómo termina. En la realidad, el resultado va a ser algo peor.</li>
         <li><b>Funding Pips puede cobrar distinto que el broker de las pruebas</b> (IC Markets). Si es más caro, el resultado baja.</li>
-        <li><b>Nos saltamos la prueba de 2 o 3 meses en Demo Account (cuenta demo)</b> para los dos bots, y el del Nasdaq nunca operó en vivo. Como el challenge de 5.000 cuesta poco, usarlo como prueba real es razonable, pero el resultado puede ser peor.</li>
+        <li><b>Nos saltamos la prueba de 2 o 3 meses en cuenta demo</b> para los dos bots, y el del Nasdaq nunca operó en vivo. Como el challenge de 5.000 cuesta poco, usarlo como prueba real es razonable, pero el resultado puede ser peor.</li>
         <li><b>Funding Pips permite bots propios:</b> guardá el código de los bots (te lo puedo pasar) por si te piden demostrar que son tuyos.</li>
         <li><b>Que haya funcionado en el pasado no asegura que funcione en el futuro.</b></li>
       </ul>
@@ -516,16 +516,16 @@ td, th { overflow-wrap: normal }
         <div><dt>Drawdown (bajada)</dt><dd>Cuánto bajó la cuenta desde su mejor momento hasta su peor momento siguiente, antes de recuperarse.</dd></div>
         <div><dt>Stop Loss (stop)</dt><dd>El precio donde el bot cierra una operación que sale mal, para que la pérdida no siga creciendo.</dd></div>
         <div><dt>Kill Switch (freno)</dt><dd>Lo que le agregamos a los bots para cumplir las reglas: si pierden demasiado en un día o en total, cierran todo y dejan de operar.</dd></div>
-        <div><dt>Backtest (prueba con datos del pasado)</dt><dd>Hacer funcionar el bot sobre precios de años anteriores, como si estuviéramos en ese momento, para ver cómo le habría ido.</dd></div>
+        <div><dt>Backtest</dt><dd>Hacer funcionar el bot sobre precios de años anteriores, como si estuviéramos en ese momento, para ver cómo le habría ido.</dd></div>
         <div><dt>In-Sample / Out-of-Sample (dentro / fuera de muestra)</dt><dd>In-Sample = los años que miramos para elegir las reglas. Out-of-Sample = años que no miramos, para comprobar que no fue suerte.</dd></div>
         <div><dt>Overfitting (sobreoptimización)</dt><dd>Acomodar el bot al pasado hasta que se vea perfecto. Suele fallar en el futuro.</dd></div>
         <div><dt>Monte Carlo</dt><dd>Mezclar los resultados al azar miles de veces para ver qué es normal y qué es suerte.</dd></div>
-        <div><dt>Trend Following (seguir la tendencia)</dt><dd>Comprar cuando el precio viene subiendo con fuerza y salir cuando la subida se corta.</dd></div>
-        <div><dt>Breakout (ruptura)</dt><dd>Entrar cuando el precio rompe un nivel o rango.</dd></div>
+        <div><dt>Trend Following</dt><dd>Comprar cuando el precio viene subiendo con fuerza y salir cuando la subida se corta.</dd></div>
+        <div><dt>Breakout</dt><dd>Entrar cuando el precio rompe un nivel o rango.</dd></div>
         <div><dt>Spread (diferencia entre compra y venta)</dt><dd>Lo que cobra el broker en cada operación.</dd></div>
         <div><dt>Slippage (deslizamiento)</dt><dd>Cuando la orden se llena a un precio peor que el pedido.</dd></div>
         <div><dt>Swap</dt><dd>Lo que cobra el broker por dejar una operación abierta de un día para el otro.</dd></div>
-        <div><dt>Demo Account (cuenta demo)</dt><dd>Una cuenta con plata de mentira y precios reales. Sirve para ver al bot funcionar sin arriesgar nada.</dd></div>
+        <div><dt>Cuenta demo</dt><dd>Una cuenta con plata de mentira y precios reales. Sirve para ver al bot funcionar sin arriesgar nada.</dd></div>
       </dl>
     </div>
   </section>
@@ -540,7 +540,7 @@ td, th { overflow-wrap: normal }
     <details class="card">
       <summary>¿Cómo leer esta página? (palabras que vas a ver)</summary>
       <dl class="kv" style="margin-top:10px">
-        <dt>Backtest (prueba con datos del pasado)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Hacer funcionar el bot sobre precios de años anteriores para ver cómo le habría ido.</dd>
+        <dt>Backtest</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Hacer funcionar el bot sobre precios de años anteriores para ver cómo le habría ido.</dd>
         <dt>Trade (operación)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Una compra (o venta) desde que entra hasta que sale. Si el bot cierra en partes, cuenta como una sola.</dd>
         <dt>Drawdown (bajada)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Cuánto bajó la cuenta desde su mejor momento antes de recuperarse.</dd>
         <dt>Profit Factor (gana por cada 1 que pierde)</dt><dd style="font-family:var(--display);white-space:normal;text-align:left">Si dice 1,56, por cada dólar perdido ganó 1,56. Más de 1 = gana.</dd>
