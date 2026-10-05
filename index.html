@@ -478,6 +478,30 @@ td, th { overflow-wrap: normal }
   </section>
 
   <section>
+    <h2>Cada cuánto revisar los bots</h2>
+    <p>Estos tiempos son una sugerencia mía, no salen de las pruebas. La idea es mirar seguido para no perderse nada, pero tocar los bots lo menos posible.</p>
+    <div class="card">
+      <ul>
+        <li><b>Todos los días, 1 minuto (solo las primeras 2 semanas):</b> que MetaTrader siga abierto, que "Algo Trading" esté prendido y que el Nasdaq ponga sus 2 órdenes pendientes a la mañana. Si algo falla, es acá donde se ve.</li>
+        <li><b>Una vez por semana, 5 minutos:</b> mirar cuánto lleva cada bot, que no haya operaciones duplicadas y que la computadora o el VPS sigan andando.</li>
+        <li><b>Una vez por mes, 15 minutos:</b> anotar cuánto ganó o perdió cada bot y compararlo con lo que decía la prueba. Si pasó el límite de pérdidas que te pusiste, pausalo y revisalo.</li>
+        <li><b>Cada 3 meses:</b> ver si cada bot va dentro de lo normal. Una racha larga de pérdidas puede ser normal. Una racha mucho peor que la peor de las pruebas, no.</li>
+        <li><b>Cada 6 a 12 meses:</b> volver a correr las pruebas con los datos nuevos y mirar si las reglas de Funding Pips cambiaron (ya cambiaron en enero de 2026).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Qué hacer si algo no anda bien</h3>
+      <ul>
+        <li><b>Antes de cambiar nada, escribí tu límite:</b> por ejemplo, "si el bot está 15 % abajo de su mejor momento o pierde más de 12 operaciones seguidas, lo pauso". Decidirlo en plena mala racha es lo que sale caro.</li>
+        <li><b>Si un bot pasa ese límite:</b> pausalo y volvé a probarlo con datos nuevos. Si sigue ganando en las pruebas, reanudalo. Si ya no gana, sacalo.</li>
+        <li><b>No lo arregles moviendo números hasta que el pasado dé bien.</b> Eso acomoda el bot al pasado y suele fallar después. Si cambiás algo, que sea poco, y probalo en años que no usaste para elegirlo.</li>
+        <li><b>No subas el riesgo después de ganar.</b> Subilo solo después de varios meses de resultados reales, y de a poco.</li>
+        <li><b>Si Funding Pips cambia una regla,</b> pausá los bots y avisame antes de seguir. Puede que haya que ajustarlos.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
     <h2>Lo malo que tenés que saber</h2>
     <div class="card">
       <ul>
