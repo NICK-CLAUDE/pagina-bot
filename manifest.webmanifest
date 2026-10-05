@@ -1,6 +1,6 @@
 {
-  "name": "Bot Challenge",
-  "short_name": "Bot Challenge",
+  "name": "Analyzer",
+  "short_name": "Analyzer",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0a101d",
