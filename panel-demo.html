@@ -277,7 +277,7 @@ dialog .pin{width:100%;margin-bottom:14px}
 <section class="vista" id="v_resultados">
   <div class="card" style="margin-bottom:16px"><div class="tit"><span>Lo esperado frente a lo real</span><span class="mut" style="font-weight:400">por bot, últimas operaciones</span></div>
     <div style="overflow-x:auto"><table class="cmp" id="cmp"></table></div>
-    <p class="nota">"Esperado" sale de las pruebas con datos de 2018 a 2026, en una cuenta de US$ 5.000. Con menos de 20 operaciones todavía no se puede sacar conclusiones: una racha corta puede ser pura suerte.</p>
+    <p class="nota">"Esperado" sale de las pruebas con datos de 2018 a 2026, en una cuenta de $5.000. Con menos de 20 operaciones todavía no se puede sacar conclusiones: una racha corta puede ser pura suerte.</p>
   </div>
   <div class="card" style="margin-bottom:16px"><div class="tit"><span>Calendario</span><span id="t_cal" class="mut"></span></div>
     <div class="cal" id="cal"></div>
@@ -337,8 +337,8 @@ dialog .pin{width:100%;margin-bottom:14px}
 <script>
 const $=id=>document.getElementById(id);
 const nf=(v,d)=>Math.abs(v).toLocaleString("es-AR",{minimumFractionDigits:d,maximumFractionDigits:d});
-const usd=v=>(v<0?"-":"")+"US$ "+nf(v,2);
-const usd0=v=>"US$ "+nf(Math.round(v),0);
+const usd=v=>(v<0?"-":"")+"$"+nf(v,2);
+const usd0=v=>"$"+nf(Math.round(v),0);
 const usdS=v=>(v>0?"+":"")+usd(v);
 const c2=v=>v.toFixed(2).replace(".",",");
 const pct=v=>(v>0?"+":"")+v.toFixed(2).replace(".",",")+"%";
@@ -452,18 +452,18 @@ function calendario(cal,actualizado){
     const v=mapa[k],f=new Date(k*864e5);
     if(v!=null){tot+=v;v>=0?verdes++:rojos++}
     const a=v==null?0:Math.min(1,Math.abs(v)/150),bg=v==null?"":v>=0?`background:rgba(52,211,153,${.08+.32*a})`:`background:rgba(248,113,113,${.08+.32*a})`;
-    h+=`<div class="d${k===hoy?" hoy":""}" style="${bg}"><span class="n">${f.getUTCDate()}/${f.getUTCMonth()+1}</span><b class="${v==null?"mut":cl(v)}">${v==null?"":usdS(v).replace("US$ ","")}</b></div>`;
+    h+=`<div class="d${k===hoy?" hoy":""}" style="${bg}"><span class="n">${f.getUTCDate()}/${f.getUTCMonth()+1}</span><b class="${v==null?"mut":cl(v)}">${v==null?"":usdS(v)}</b></div>`;
   }
   c.innerHTML=h;
   $("t_cal").innerHTML=`5 semanas · <span class="${cl(tot)}">${usdS(tot)}</span> · ${verdes} días verdes, ${rojos} rojos`;
 }
 const DESC={"Tendencia 4H":["ETH · BTC · ORO · SOLO COMPRAS · VELAS DE 4 H",
   ["Idea","compra cripto y oro cuando suben."],["Cómo decide","mira velas de 4 horas y solo compra si el precio está por encima del promedio de los últimos 200 días."],
-  ["Riesgo","1,25 % de la cuenta por operación (unos US$ 62 con US$ 5.000), con Stop Loss desde que abre."],
+  ["Riesgo","1,25 % de la cuenta por operación (unos $62 con $5.000), con Stop Loss desde que abre."],
   ["Frenos","corta todo si pierde 4 % en el día o 9 % en total. Si dos cripto se abren juntas, la segunda arriesga la mitad."]],
  "Williams Nasdaq":["NASDAQ · UNA OPERACIÓN POR DÍA",
   ["Idea","opera la ruptura del Nasdaq una vez por día."],["Cómo decide","a las 10:30 de Nueva York deja órdenes de ruptura. Máximo una operación por día, y todo se cierra a las 15:55."],
-  ["Riesgo","0,75 % de la cuenta por operación (unos US$ 37 con US$ 5.000)."],["Frenos","corta todo si pierde 4 % en el día u 8 % en total."]]};
+  ["Riesgo","0,75 % de la cuenta por operación (unos $37 con $5.000)."],["Frenos","corta todo si pierde 4 % en el día u 8 % en total."]]};
 const fh=t=>{const d=new Date(t*1000);return String(d.getUTCDate()).padStart(2,"0")+"/"+String(d.getUTCMonth()+1).padStart(2,"0")+" "+String(d.getUTCHours()).padStart(2,"0")+":"+String(d.getUTCMinutes()).padStart(2,"0")};
 const dur=s=>s<3600?Math.max(1,Math.floor(s/60))+" min":s<86400?Math.floor(s/3600)+" h "+Math.floor(s%3600/60)+" min":Math.floor(s/86400)+" d "+Math.floor(s%86400/3600)+" h";
 const lote=v=>Number(v).toLocaleString("es-AR",{maximumFractionDigits:2});
@@ -535,6 +535,29 @@ async function enviarControl(bot,accion,cerrar,pin){
   return Object.assign({},DEMO_CTRL);
 }
 // ---------- gráficos tipo TradingView
+class Trazos{ // operaciones dibujadas en su precio exacto: línea entrada→salida, triángulo ▲ compra / ▼ venta, resultado en $
+  constructor(ops,tf){this.ops=ops;this.tf=tf}
+  attached({chart,series}){this.chart=chart;this.series=series}
+  detached(){}
+  updateAllViews(){}
+  paneViews(){const z=this;return [{zOrder:()=>"top",renderer:()=>({draw:target=>target.useMediaCoordinateSpace(sc=>{
+    const ctx=sc.context,ts=z.chart.timeScale(),bar=t=>t-t%z.tf;
+    const X=t=>ts.timeToCoordinate(bar(t)),Y=pr=>z.series.priceToCoordinate(pr);
+    const tri=(x,y,arriba,color,tam,borde)=>{ctx.beginPath();if(arriba){ctx.moveTo(x,y);ctx.lineTo(x-tam,y+tam*1.6);ctx.lineTo(x+tam,y+tam*1.6)}else{ctx.moveTo(x,y);ctx.lineTo(x-tam,y-tam*1.6);ctx.lineTo(x+tam,y-tam*1.6)}
+      ctx.closePath();ctx.fillStyle=color;ctx.fill();if(borde){ctx.lineWidth=1.5;ctx.strokeStyle="#fff";ctx.stroke()}};
+    ctx.font="600 12px system-ui,Segoe UI,Roboto,sans-serif";
+    z.ops.forEach(o=>{
+      const c=o.lado==="compra",x1=X(o.ab),y1=Y(o.pa),col=c?"#089981":"#F23645";
+      if(o.abierta){if(x1!==null&&y1!==null)tri(x1,y1,c,col,7,true);return}
+      const x2=X(o.ci),y2=Y(o.pc),res=o.neto>=0?"#089981":"#F23645";
+      if(x1!==null&&y1!==null&&x2!==null&&y2!==null){ctx.setLineDash([5,4]);ctx.lineWidth=1.5;ctx.strokeStyle=res;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([])}
+      if(x1!==null&&y1!==null)tri(x1,y1,c,col,5,false);
+      if(x2!==null&&y2!==null){ctx.beginPath();ctx.arc(x2,y2,4,0,7);ctx.fillStyle=res;ctx.fill();
+        if(o.etiqueta){const t=(o.neto>=0?"+$":"-$")+Math.abs(Math.round(o.neto));const w=ctx.measureText(t).width+10,ty=y2+(c===(o.neto>=0)?-22:10);
+          ctx.fillStyle=res;ctx.beginPath();ctx.roundRect(x2-w/2,ty,w,18,4);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(t,x2-w/2+5,ty+13)}}
+    });
+  })})}]}
+}
 class ZonaPosicion{ // rectángulos verde (entrada→Take Profit) y rojo (entrada→Stop Loss) desde que abrió hasta el borde derecho
   constructor(p){this.p=p}
   attached({chart,series}){this.chart=chart;this.series=series}
@@ -563,7 +586,7 @@ function armarGraficos(){
     const id=b.replace(/\W/g,"");
     cont.insertAdjacentHTML("beforeend",`<div class="card gbot"><div class="gcab"><h2>${b}</h2><div class="grupo" id="gs_${id}">${bots[b].map((sy,i)=>`<button class="f${i?"":" on"}" data-s="${sy}">${sy} · ${VELAS[sy].tf}</button>`).join("")}</div></div>
       <div class="graf" id="gr_${id}"><div class="gov" id="go_${id}"></div></div>
-      <details class="gayuda"><summary>¿Qué son las líneas?</summary><div class="ley"><span><i style="border-color:#2962FF"></i>precio de entrada (zona verde = hasta el Take Profit, zona roja = hasta el Stop Loss)</span><span><i style="border-color:#f87171;border-top-style:dashed"></i>Stop Loss: ahí cierra perdiendo</span><span><i style="border-color:#34d399;border-top-style:dashed"></i>Take Profit: ahí cierra ganando</span><span>Flecha gris = operación vieja · círculo = dónde cerró y cuánto ganó o perdió</span></div></details>
+      <details class="gayuda"><summary>¿Qué son las líneas?</summary><div class="ley"><span><i style="border-color:#2962FF"></i>precio de entrada (zona verde = hasta el Take Profit, zona roja = hasta el Stop Loss)</span><span><i style="border-color:#f87171;border-top-style:dashed"></i>Stop Loss: ahí cierra perdiendo</span><span><i style="border-color:#34d399;border-top-style:dashed"></i>Take Profit: ahí cierra ganando</span><span>Triángulo = dónde entró (▲ compra, ▼ venta) · línea punteada hasta donde salió · verde ganó, rojo perdió</span></div></details>
       </div>`);
     const ch=LightweightCharts.createChart($("gr_"+id),{autoSize:true,layout:{background:{color:"#0a111d"},textColor:"#9db0c9",fontSize:13,fontFamily:"system-ui,Segoe UI,Roboto,sans-serif"},
       grid:{vertLines:{visible:false},horzLines:{color:"#101a2b"}},rightPriceScale:{borderColor:"#17223a"},timeScale:{borderColor:"#17223a",timeVisible:true,secondsVisible:false,rightOffset:12},
@@ -589,16 +612,12 @@ function pintarGrafico(b){
     L(p.precio,"#2962FF",0,(p.lado==="compra"?"COMPRA ":"VENTA ")+lote(p.lote)+" · ABIERTA");L(p.sl,"#F23645",2,"Stop Loss");L(p.tp,"#089981",2,"Take Profit");
     const z=new ZonaPosicion({t:p.desde-p.desde%tf,precio:p.precio,sl:p.sl,tp:p.tp});g.serie.attachPrimitive(z);g.zonas.push(z);
   });
-  const t0=V.v.length?V.v[0][0]:0,bar=t=>t-t%tf,m=[];
-  (d.historial||[]).filter(h=>h.sim===g.sim&&h.bot===b&&h.ci>=t0).forEach(h=>{
-    const c=h.lado==="compra";
-    if(h.ab>=t0)m.push({time:bar(h.ab),position:c?"belowBar":"aboveBar",color:"#6b7a90",shape:c?"arrowUp":"arrowDown",text:""});
-    m.push({time:bar(h.ci),position:c?"aboveBar":"belowBar",color:h.neto>=0?"#089981":"#F23645",shape:"circle",text:"Cerró "+(h.neto>=0?"+":"")+Math.round(h.neto)});
-  });
-  pos.forEach(p=>{const c=p.lado==="compra";if(p.desde>=t0)m.push({time:bar(p.desde),position:c?"belowBar":"aboveBar",color:c?"#089981":"#F23645",shape:c?"arrowUp":"arrowDown",text:"",size:1.4,abierta:1})});
+  const t0=V.v.length?V.v[0][0]:0;
+  const ops=(d.historial||[]).filter(h=>h.sim===g.sim&&h.bot===b&&h.ci>=t0&&h.pa>0&&h.pc>0).map(h=>Object.assign({},h));
+  ops.forEach((o,i)=>o.etiqueta=i>=ops.length-6);
+  pos.forEach(p=>ops.push({abierta:1,lado:p.lado,ab:p.desde,pa:p.precio}));
+  const tz=new Trazos(ops,tf);g.serie.attachPrimitive(tz);g.zonas.push(tz);
   $("go_"+id).innerHTML=pos.length?"":`<div class="mut">Sin operación abierta en ${g.sim}</div>`;$("go_"+id).innerHTML+=pos.map(p=>`<div><span class="mut" style="font-size:12px;letter-spacing:.04em">OPERACIÓN ABIERTA</span><br>${ladoChip(p.lado)} <b>${lote(p.lote)}</b> lotes<br><span class="mut">entrada</span> <b>${p.precio}</b> · <span class="${cl(p.gan)}"><b>${usdS(p.gan)}</b></span></div>`).join("");
-  m.sort((a,c)=>a.time-c.time);const viejas=m.filter(x=>!x.abierta);viejas.forEach((x,i)=>{x.size=.7;if(i<viejas.length-3)x.text=""});m.forEach(x=>delete x.abierta);
-  g.serie.setMarkers(m);
 }
 async function refrescarGraficos(){
   if(VISTA!=="graficos")return;
@@ -679,6 +698,9 @@ const DV={};(function(){const base={ETHUSD:[2600,14400,2],BTCUSD:[62000,14400,2]
 const pe=DV.ETHUSD.v[188][4],pg=DV.XAUUSD.v[194][4];
 async function leerVelas(){for(const sy in DV){const v=DV[sy].v,u=v[v.length-1],paso=u[4]*0.0009*(Math.random()-0.5);
   u[4]=+(u[4]+paso).toFixed(DV[sy].dig);u[2]=Math.max(u[2],u[4]);u[3]=Math.min(u[3],u[4])}return DV}
+function conPrecios(h){h.forEach(o=>{const V=DV[o.sim];if(!V)return;const tf=V.tf==="M15"?900:14400;
+  const ix=x=>V.v.findIndex(v=>v[0]===x-x%tf);const i1=ix(o.ab),i2=ix(o.ci);if(i1<0||i2<0||i2<=i1)return;
+  o.pa=V.v[i1][4];o.pc=V.v[i2][4];const dir=o.lado==="compra"?1:-1;o.neto=Math.round(dir*(o.pc-o.pa)/o.pa*(o.sim==="USTEC"?20000:2500)*100)/100});return h}
 let DEMO_CTRL={"Tendencia 4H":"activo","Williams Nasdaq":"activo"};const DEMO_AV=[];
 async function leerEstado(){
   flot+=(Math.random()-0.48)*7;
@@ -689,13 +711,13 @@ async function leerEstado(){
    hoy_usd:hoy,hoy_pct:hoy/cap*100,total_usd:pat-cap,total_pct:(pat-cap)/cap*100,meta_pct:8,lim_diario:5,lim_total:10,freno_diario:4,freno_total:9,
    dias_operados:12,dias_minimos:3,nocional:3350,
    bots:[{nombre:"Tendencia 4H",abiertas:2,cerrado:SP1[SP1.length-1],flotante:flot,ops:26,nocional:3350,spark:SP1},
-         {nombre:"Williams Nasdaq",abiertas:1,cerrado:SP2[SP2.length-1],flotante:0,ops:48,nocional:0,spark:SP2}],calendario:calDemo(t),telegram:true,historial:histDemo(t),control:DEMO_CTRL,pin_requerido:false,
-   avisos_enviados:DEMO_AV.concat([{hora:"16:55",texto:"Williams Nasdaq cerró USTEC: perdió US$ 37,70."},{hora:"11:20",texto:"Tendencia 4H abrió ETHUSD (compra, 0.5 lotes)."},{hora:"23:00",texto:"Resumen del día: US$ 42,10 hoy (+0,84 %). Total: US$ 171,30 (+3,43 %). Objetivo: 3,43 de 8 %. Días operados: 11 de 3."}]),
+         {nombre:"Williams Nasdaq",abiertas:1,cerrado:SP2[SP2.length-1],flotante:0,ops:48,nocional:0,spark:SP2}],calendario:calDemo(t),telegram:true,historial:conPrecios(histDemo(t)),control:DEMO_CTRL,pin_requerido:false,
+   avisos_enviados:DEMO_AV.concat([{hora:"16:55",texto:"Williams Nasdaq cerró USTEC: perdió $37,70."},{hora:"11:20",texto:"Tendencia 4H abrió ETHUSD (compra, 0.5 lotes)."},{hora:"23:00",texto:"Resumen del día: $42,10 hoy (+0,84 %). Total: $171,30 (+3,43 %). Objetivo: 3,43 de 8 %. Días operados: 11 de 3."}]),
    posiciones:[{sim:"ETHUSD",lado:"compra",lote:0.5,precio:pe,sl:+(pe*0.965).toFixed(2),tp:+(pe*1.07).toFixed(2),gan:flot*0.6,nocional:1850,bot:"Tendencia 4H",desde:DV.ETHUSD.v[188][0]},
                {sim:"XAUUSD",lado:"compra",lote:0.4,precio:pg,sl:+(pg*0.98).toFixed(2),tp:+(pg*1.04).toFixed(2),gan:flot*0.4,nocional:1500,bot:"Tendencia 4H",desde:DV.XAUUSD.v[194][0]},
                {sim:"USTEC",lado:"venta",lote:0.1,precio:DV.USTEC.v[192][4],sl:+(DV.USTEC.v[192][4]+60).toFixed(1),tp:+(DV.USTEC.v[192][4]-120).toFixed(1),gan:-flot*0.3,nocional:2010,bot:"Williams Nasdaq",desde:DV.USTEC.v[192][0]}],
    cerradas_hoy:[{t:t-7200,sim:"USTEC",bot:"Williams Nasdaq",neto:-37.7},{t:t-20000,sim:"BTCUSD",bot:"Tendencia 4H",neto:62.4}],curva:curva,
-   extra_avisos:[["","WILLIAMS","Hoy cerró la operación del Nasdaq por Stop Loss: -37,70 US$.","Una por día, cierra a las 15:55 de Nueva York"]]};
+   extra_avisos:[["","WILLIAMS","Hoy cerró la operación del Nasdaq por Stop Loss: -37,70 $.","Una por día, cierra a las 15:55 de Nueva York"]]};
 }
 
 async function cargar(){
