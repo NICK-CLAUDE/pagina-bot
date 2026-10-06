@@ -189,6 +189,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none}dialog#fic .ficha{bac
 .hint{color:var(--mut);font-size:15px;margin-top:10px}
 .hist tbody tr,.hist tr[data-i]{cursor:pointer}.hist tr[data-i]:hover td{background:#0d1727}
 @media(max-width:900px){.ficha .fil{grid-template-columns:1fr;gap:2px}.ficha{padding:14px}}
+.f.rst{display:inline-flex;align-items:center;gap:7px;color:var(--tx)}.f.rst svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
 </style>
 </head>
 <body>
@@ -581,8 +582,8 @@ class Trazos{ // operaciones en su precio exacto: flecha + etiqueta COMPRA/VENTA
       if(x1!==null&&y1!==null){z.puntos.push({x:x1,y:y1+(c?10:-10),o:o});z.puntos.push({x:x1,y:y1+(c?31:-31),o:o})}
       if(esSel){const xa=x1,xb=X(o.ci);if(xa!==null&&xb!==null){const W2=Math.max(xb,xa+30);
         const caja=(pr,col2)=>{if(!(pr>0))return;const yy=Y(pr);if(yy===null||y1===null)return;ctx.fillStyle=col2;ctx.fillRect(xa,Math.min(y1,yy),W2-xa,Math.abs(yy-y1))};
-        caja(o.tp,"rgba(8,153,129,.28)");caja(o.sl,"rgba(242,54,69,.28)");
-        [[o.sl,"#F23645"],[o.tp,"#089981"]].forEach(([pr,cc])=>{if(pr>0){const yy=Y(pr);if(yy!==null){ctx.strokeStyle=cc;ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(xa,yy);ctx.lineTo(W2,yy);ctx.stroke();ctx.setLineDash([])}}})}}
+        caja(o.tp,"rgba(8,153,129,.28)");caja(o.sli>0?o.sli:o.sl,"rgba(242,54,69,.28)");
+        [[o.sli>0?o.sli:o.sl,"#F23645"],[o.tp,"#089981"]].forEach(([pr,cc])=>{if(pr>0){const yy=Y(pr);if(yy!==null){ctx.strokeStyle=cc;ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(xa,yy);ctx.lineTo(W2,yy);ctx.stroke();ctx.setLineDash([])}}})}}
       if(o.abierta){if(x1!==null&&y1!==null)flecha(x1,y1,c,col,true,c?"COMPRA":"VENTA");return}
       const x2=X(o.ci),y2=Y(o.pc),res=o.neto>=0?"#089981":"#F23645";
       if(x2!==null&&y2!==null){z.puntos.push({x:x2,y:y2,o:o});z.puntos.push({x:x2,y:y2+(c===(o.neto>=0)?-15:16),o:o})}
@@ -620,7 +621,7 @@ function armarGraficos(){
   Object.keys(bots).forEach(b=>{
     if(GR[b])return;
     const id=b.replace(/\W/g,"");
-    cont.insertAdjacentHTML("beforeend",`<div class="card gbot"><div class="gcab"><h2>${b}</h2><div class="grupo" id="gs_${id}">${bots[b].map((sy,i)=>`<button class="f${i?"":" on"}" data-s="${sy}">${sy} · ${VELAS[sy].tf}</button>`).join("")}</div></div>
+    cont.insertAdjacentHTML("beforeend",`<div class="card gbot"><div class="gcab"><h2>${b}</h2><div class="grupo"><button class="f rst" id="rs_${id}" title="Volver a la vista inicial del gráfico"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Restablecer</button></div><div class="grupo" id="gs_${id}">${bots[b].map((sy,i)=>`<button class="f${i?"":" on"}" data-s="${sy}">${sy} · ${VELAS[sy].tf}</button>`).join("")}</div></div>
       <div class="graf" id="gr_${id}"><div class="gov" id="go_${id}"></div></div>
       <div class="gdet" id="gd_${id}"></div>
       <details class="gayuda"><summary>¿Qué son las líneas?</summary><div class="ley"><span><i style="border-color:#2962FF"></i>precio de entrada (zona verde = hasta el Take Profit, zona roja = hasta el Stop Loss)</span><span><i style="border-color:#f87171;border-top-style:dashed"></i>Stop Loss: ahí cierra perdiendo</span><span><i style="border-color:#34d399;border-top-style:dashed"></i>Take Profit: ahí cierra ganando</span><span>Flecha COMPRA/VENTA = dónde entró · línea punteada hasta el círculo = dónde salió (verde ganó, rojo perdió)</span></div></details>
@@ -630,6 +631,7 @@ function armarGraficos(){
       crosshair:{mode:0},localization:{locale:"es-AR"}});
     const se=ch.addCandlestickSeries({upColor:"#089981",downColor:"#F23645",borderVisible:false,wickUpColor:"#089981",wickDownColor:"#F23645"});
     GR[b]={chart:ch,serie:se,sim:bots[b][0],lineas:[],zonas:[],nuevo:true,sel:null,trazos:null};
+    $("rs_"+id).onclick=()=>{GR[b].nuevo=true;pintarGrafico(b)};
     ch.subscribeClick(p=>{const g=GR[b];if(!p.point||!g.trazos)return;const o=g.trazos.hit(p.point.x,p.point.y);g.sel=o&&!o.abierta?o.ab+"_"+o.ci:null;pintarGrafico(b);if(g.sel&&window.innerWidth<900)abrirFicha(o)});
     document.querySelectorAll(`#gs_${id} .f`).forEach(x=>x.onclick=()=>{GR[b].sim=x.dataset.s;GR[b].nuevo=true;
       document.querySelectorAll(`#gs_${id} .f`).forEach(y=>y.classList.toggle("on",y===x));pintarGrafico(b)});
@@ -641,6 +643,7 @@ function pintarGrafico(b){
   g.serie.applyOptions({priceFormat:{type:"price",precision:dig,minMove:1/Math.pow(10,dig)}});
   g.serie.setData(V.v.map(x=>({time:x[0],open:x[1],high:x[2],low:x[3],close:x[4]})));
   if(g.nuevo){const n=V.v.length,ancho=$("gr_"+id).clientWidth;
+    g.chart.priceScale("right").applyOptions({autoScale:true});
     if(ancho<700)g.chart.timeScale().setVisibleLogicalRange({from:n-55,to:n+10});else g.chart.timeScale().fitContent();g.nuevo=false}
   g.lineas.forEach(l=>g.serie.removePriceLine(l));g.lineas=[];
   g.zonas.forEach(z=>g.serie.detachPrimitive(z));g.zonas=[];
@@ -675,7 +678,7 @@ function analisis(h){
   const V=VELAS&&VELAS[h.sim];if(!V||!(h.pa>0)||!(h.pc>0))return null;
   const tf=TF_SEG[V.tf]||14400,dig=V.dig||2,v=V.v,i0=v.findIndex(x=>x[0]===h.ab-h.ab%tf);if(i0<0)return null;
   const prev=v.slice(Math.max(0,i0-14),i0);const atr=prev.length>=5?prev.reduce((a,x)=>a+(x[2]-x[3]),0)/prev.length:null;
-  const c=h.lado==="compra",d=c?1:-1,slD=h.sl>0?Math.abs(h.pa-h.sl):null,tpD=h.tp>0?Math.abs(h.tp-h.pa):null;
+  const sl0=h.sli>0?h.sli:h.sl,c=h.lado==="compra",d=c?1:-1,slD=sl0>0?Math.abs(h.pa-sl0):null,tpD=h.tp>0?Math.abs(h.tp-h.pa):null;
   const del=v.filter(x=>x[0]>=h.ab-h.ab%tf&&x[0]<=h.ci);
   const fav=del.length?Math.max(0,c?Math.max(...del.map(x=>x[2]))-h.pa:h.pa-Math.min(...del.map(x=>x[3]))):null;
   const con=del.length?Math.max(0,c?h.pa-Math.min(...del.map(x=>x[3])):Math.max(...del.map(x=>x[2]))-h.pa):null;
@@ -683,13 +686,14 @@ function analisis(h){
 }
 function detalleTrade(h,cerrable){
   const a=analisis(h),c=h.lado==="compra",f=n=>Number(n).toFixed(a?a.dig:2),pc=n=>n.toFixed(2).replace(".",",");
-  const gano=h.neto>=0,lect=[];
+  const gano=h.neto>=0,lect=[],movido=h.sli>0&&h.sl>0&&Math.abs(h.sli-h.sl)>Math.abs(h.pa)*0.00002;
   if(a&&a.vecesATR!=null){
     const v=a.vecesATR;
     lect.push(v<0.6?`<b>El Stop Loss estaba muy cerca</b> (${pc(v)} veces lo que se mueve una vela normal). El precio se mueve eso en una sola vela, así que es fácil que lo toque por ruido.`
       :v<1.5?`El Stop Loss estaba a una distancia normal (${pc(v)} veces lo que se mueve una vela).`
       :`El Stop Loss estaba lejos (${pc(v)} veces lo que se mueve una vela): aguanta movimientos grandes, pero si falla se pierde más.`);
   }
+  if(movido)lect.push(`El bot fue <b>moviendo el Stop Loss</b> mientras la operación avanzaba (empezó en ${h.sli} y terminó en ${h.sl}). Así protege la ganancia: por eso el Stop Loss cambia de una operación a otra y dentro de la misma.`);
   if(a&&h.motivo==="sl"){
     if(a.tpD&&a.fav!=null&&a.fav>=0.5*a.tpD)lect.push(`La operación llegó a ir <b>${Math.min(100,Math.round(100*a.fav/a.tpD))} % del camino al Take Profit</b> y después se dio vuelta hasta el Stop Loss.`);
     else if(a.slD&&a.fav!=null&&a.fav<0.25*a.slD)lect.push("Casi nunca fue a favor: el precio se fue en contra desde el principio.");
@@ -705,7 +709,7 @@ function detalleTrade(h,cerrable){
   return `<div class="ficha"><h3>${ladoChip(h.lado)} ${h.sim} <span class="${cl(h.neto)}">${gano?"ganó":"perdió"} ${usdS(h.neto)}</span>${cerrable?'<button class="x" data-cerrar aria-label="Cerrar">×</button>':""}</h3>
     <div class="sub2">${h.bot} · ${lote(h.lote)} lotes · duró ${dur(h.ci-h.ab)}</div>
     ${fil("Entró",`${fhl(h.ab)} a <b>${h.pa||"–"}</b>`)}${fil("Salió",`${fhl(h.ci)} a <b>${h.pc||"–"}</b> · ${MOTIVO[h.motivo]||"–"}`)}
-    ${h.sl>0?fil("Stop Loss",`<b>${h.sl}</b>${a&&a.pctSL!=null?` · a ${pc(a.pctSL)} % del precio de entrada`:""}`):""}
+    ${(h.sli>0||h.sl>0)?fil(movido?"Stop Loss inicial":"Stop Loss",`<b>${h.sli>0?h.sli:h.sl}</b>${a&&a.pctSL!=null?` · a ${pc(a.pctSL)} % del precio de entrada`:""}`):""}${movido?fil("Stop Loss al cerrar",`<b>${h.sl}</b> · lo subió el bot`):""}
     ${h.tp>0?fil("Take Profit",`<b>${h.tp}</b>${a&&a.rr?` · ${pc(a.rr)} de ganancia por cada 1 de riesgo`:""}`):""}
     ${a&&a.fav!=null?fil("Lo mejor que llegó a ir a favor",`${f(a.fav)} puntos`):""}${a&&a.con!=null?fil("Lo peor que fue en contra",`${f(a.con)} puntos`):""}
     <div class="lectura"><div class="tit" style="margin-bottom:8px"><span>Qué pasó</span></div>${lect.map(x=>`<p>${x}</p>`).join("")}</div></div>`;
@@ -783,7 +787,7 @@ async function leerVelas(){for(const sy in DV){const v=DV[sy].v,u=v[v.length-1],
   u[4]=+(u[4]+paso).toFixed(DV[sy].dig);u[2]=Math.max(u[2],u[4]);u[3]=Math.min(u[3],u[4])}return DV}
 function conPrecios(h){h.forEach(o=>{const V=DV[o.sim];if(!V)return;const tf=V.tf==="M15"?900:14400;
   const ix=x=>V.v.findIndex(v=>v[0]===x-x%tf);const i1=ix(o.ab),i2=ix(o.ci);if(i1<0||i2<0||i2<=i1)return;
-  o.pa=V.v[i1][4];o.pc=V.v[i2][4];const dir=o.lado==="compra"?1:-1;const dd=Math.max(Math.abs(o.pc-o.pa),o.pa*0.0012);const gano=dir*(o.pc-o.pa)>=0;o.sl=+(gano?o.pa-dir*dd/1.7:o.pa-dir*dd).toFixed(V.dig);o.tp=+(gano?o.pa+dir*dd:o.pa+dir*dd*1.9).toFixed(V.dig);o.motivo=gano?(o.ci%5===0?"bot":"tp"):"sl";o.neto=Math.round(dir*(o.pc-o.pa)/o.pa*(o.sim==="USTEC"?20000:2500)*100)/100});return h}
+  o.pa=V.v[i1][4];o.pc=V.v[i2][4];const dir=o.lado==="compra"?1:-1;const dd=Math.max(Math.abs(o.pc-o.pa),o.pa*0.0012);const gano=dir*(o.pc-o.pa)>=0;o.sl=+(gano?o.pa-dir*dd/1.7:o.pa-dir*dd).toFixed(V.dig);o.tp=+(gano?o.pa+dir*dd:o.pa+dir*dd*1.9).toFixed(V.dig);o.motivo=gano?(o.ci%5===0?"bot":"tp"):"sl";o.sli=o.sl;if(gano&&o.bot==="Tendencia 4H"&&o.ci%2===0)o.sl=+o.pa.toFixed(V.dig);o.neto=Math.round(dir*(o.pc-o.pa)/o.pa*(o.sim==="USTEC"?20000:2500)*100)/100});return h}
 let HD=null;
 let DEMO_CTRL={"Tendencia 4H":"activo","Williams Nasdaq":"activo"};const DEMO_AV=[];
 async function leerEstado(){
