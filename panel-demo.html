@@ -322,7 +322,7 @@ button:not(:disabled):active{transform:scale(.97)}
 <section class="vista" id="v_historial">
   <div class="card">
     <div class="filtros">
-      <div class="grupo" id="f_bot"><button class="f on" data-b="todos">Todos</button><button class="f" data-b="Tendencia 4H">Tendencia 4H</button><button class="f" data-b="Williams Nasdaq">Williams Nasdaq</button></div>
+      <div class="grupo" id="f_bot"><button class="f on" data-b="todos">Todos</button><button class="f" data-b="Tendencia 4H">Tendencia 4H</button><button class="f" data-b="Williams Ruptura">Williams Nasdaq</button></div>
       <div class="grupo" id="f_res"><button class="f on" data-r="todas">Todas</button><button class="f" data-r="g">Ganadas</button><button class="f" data-r="p">Perdidas</button></div>
       <input class="buscar" id="f_q" type="search" placeholder="Buscar mercado (ej. ETH)" aria-label="Buscar mercado">
     </div>
@@ -476,7 +476,7 @@ function spark(v,col){
   const pts=v.map((y,i)=>(300*i/(v.length-1)).toFixed(1)+","+(42-38*(y-mn)/r).toFixed(1));
   return `<svg viewBox="0 0 300 46" preserveAspectRatio="none"><polygon points="0,46 ${pts.join(" ")} 300,46" fill="${col}" opacity=".12"/><polyline points="${pts.join(" ")}" fill="none" stroke="${col}" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>`;
 }
-const ESPERADO={"Tendencia 4H":{gan:37,pg:128,pp:-45,x1:1.69,racha:17,mes:7},"Williams Nasdaq":{gan:51,pg:30.5,pp:-22.8,x1:1.40,racha:12,mes:17}};
+const ESPERADO={"Tendencia 4H":{gan:37,pg:128,pp:-45,x1:1.69,racha:17,mes:7},"Williams Ruptura":{gan:51,pg:30.5,pp:-22.8,x1:1.40,racha:12,mes:17}};
 function realBot(b){
   const sp=b.spark||[];const r=[];for(let i=1;i<sp.length;i++)r.push(sp[i]-sp[i-1]);
   const g=r.filter(x=>x>0),l=r.filter(x=>x<0),sg=g.reduce((a,c)=>a+c,0),sl=-l.reduce((a,c)=>a+c,0);
@@ -518,13 +518,13 @@ function calendario(cal,actualizado){
   c.innerHTML=h;
   $("t_cal").innerHTML=`5 semanas · <span class="${cl(tot)}">${usdS(tot)}</span> · ${verdes} días verdes, ${rojos} rojos`;
 }
-const DESC={"Tendencia 4H":["ETH · BTC · ORO · SOLO COMPRAS · VELAS DE 4 H",
-  ["Idea","compra cripto y oro cuando suben."],["Cómo decide","mira velas de 4 horas y solo compra si el precio está por encima del promedio de los últimos 200 días."],
+const DESC={"Tendencia 4H":["ETH · BTC · ORO · PETRÓLEO · SOLO COMPRAS · VELAS DE 4 H",
+  ["Idea","compra cripto, oro y petróleo cuando suben."],["Cómo decide","mira velas de 4 horas y solo compra si el precio está por encima del promedio de los últimos 200 días."],
   ["Riesgo","1,25 % de la cuenta por operación (unos $62 con $5.000), con Stop Loss desde que abre."],
   ["Frenos","corta todo si pierde 4 % en el día o 9 % en total. Si dos cripto se abren juntas, la segunda arriesga la mitad."]],
- "Williams Nasdaq":["NASDAQ · UNA OPERACIÓN POR DÍA",
-  ["Idea","opera la ruptura del Nasdaq una vez por día."],["Cómo decide","a las 10:30 de Nueva York deja órdenes de ruptura. Máximo una operación por día, y todo se cierra a las 15:55."],
-  ["Riesgo","0,75 % de la cuenta por operación (unos $37 con $5.000)."],["Frenos","corta todo si pierde 4 % en el día u 8 % en total."]]};
+ "Williams Ruptura":["NASDAQ · S&P 500 · BTC · UNA OPERACIÓN POR DÍA EN CADA UNO",
+  ["Idea","opera la ruptura del día en el Nasdaq, el S&P 500 y BTC: como mucho una operación por día en cada uno."],["Cómo decide","a las 10:30 de Nueva York deja órdenes de ruptura. Máximo una operación por día, y todo se cierra a las 15:55."],
+  ["Riesgo","0,75 % por operación en el Nasdaq (unos $37 con $5.000) y 0,56 % en el S&P 500 y en BTC (unos $28)."],["Frenos","corta todo si pierde 4 % en el día u 8 % en total."]]};
 const fh=t=>{const d=new Date(t*1000);return String(d.getUTCDate()).padStart(2,"0")+"/"+String(d.getUTCMonth()+1).padStart(2,"0")+" "+String(d.getUTCHours()).padStart(2,"0")+":"+String(d.getUTCMinutes()).padStart(2,"0")};
 const dur=s=>s<3600?Math.max(1,Math.floor(s/60))+" min":s<86400?Math.floor(s/3600)+" h "+Math.floor(s%3600/60)+" min":Math.floor(s/86400)+" d "+Math.floor(s%86400/3600)+" h";
 const lote=v=>Number(v).toLocaleString("es-AR",{maximumFractionDigits:2});
@@ -654,19 +654,21 @@ class ZonaPosicion{ // rectángulos verde (entrada→Take Profit) y rojo (entrad
     caja(z.p.tp,"rgba(8,153,129,.22)");caja(z.p.sl,"rgba(242,54,69,.22)");
   })})}]}
 }
-const botDeSimbolo=sy=>/TEC|NAS|NDX|US100/i.test(sy)?"Williams Nasdaq":"Tendencia 4H";
+const simDe=k=>k.split(":")[0];
+const botDeClave=k=>VELAS[k]&&VELAS[k].tf==="H4"?"Tendencia 4H":"Williams Ruptura";
+const velasDe=(sim,bot)=>{if(!VELAS)return null;const k=Object.keys(VELAS).find(k=>simDe(k)===sim&&botDeClave(k)===bot);return k?VELAS[k]:null};
 const TF_SEG={M1:60,M5:300,M15:900,M30:1800,H1:3600,H4:14400,D1:86400};
 const GR={};   // por bot: {chart, serie, sim, lineas:[]}
 let VELAS=null,VISTA="resumen";
 
 function armarGraficos(){
   if(!VELAS||!window.LightweightCharts)return;
-  const bots={};Object.keys(VELAS).forEach(sy=>(bots[botDeSimbolo(sy)]=bots[botDeSimbolo(sy)]||[]).push(sy));
+  const bots={};Object.keys(VELAS).forEach(k=>(bots[botDeClave(k)]=bots[botDeClave(k)]||[]).push(k));
   const cont=$("graficos");
   Object.keys(bots).forEach(b=>{
     if(GR[b])return;
     const id=b.replace(/\W/g,"");
-    cont.insertAdjacentHTML("beforeend",`<div class="card gbot"><div class="gcab"><h2>${b}</h2><div class="grupo"><button class="f rst" id="rs_${id}" title="Volver a la vista inicial del gráfico"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Restablecer</button></div><div class="grupo" id="gs_${id}">${bots[b].map((sy,i)=>`<button class="f${i?"":" on"}" data-s="${sy}">${sy} · ${VELAS[sy].tf}</button>`).join("")}</div></div>
+    cont.insertAdjacentHTML("beforeend",`<div class="card gbot"><div class="gcab"><h2>${b}</h2><div class="grupo"><button class="f rst" id="rs_${id}" title="Volver a la vista inicial del gráfico"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Restablecer</button></div><div class="grupo" id="gs_${id}">${bots[b].map((sy,i)=>`<button class="f${i?"":" on"}" data-s="${sy}">${simDe(sy)} · ${VELAS[sy].tf}</button>`).join("")}</div></div>
       <div class="graf" id="gr_${id}"><div class="gov" id="go_${id}"></div></div>
       <div class="gdet" id="gd_${id}"></div>
       <details class="gayuda"><summary>¿Qué son las líneas?</summary><div class="ley"><span><i style="border-color:#2962FF"></i>precio de entrada (zona verde = hasta el Take Profit, zona roja = hasta el Stop Loss)</span><span><i style="border-color:#f87171;border-top-style:dashed"></i>Stop Loss: ahí cierra perdiendo</span><span><i style="border-color:#34d399;border-top-style:dashed"></i>Take Profit: ahí cierra ganando</span><span>Flecha COMPRA/VENTA = dónde entró · línea punteada hasta el círculo = dónde salió (verde ganó, rojo perdió)</span></div></details>
@@ -692,21 +694,22 @@ function pintarGrafico(b){
     if(ancho<700)g.chart.timeScale().setVisibleLogicalRange({from:n-55,to:n+10});else g.chart.timeScale().fitContent();g.nuevo=false}
   g.lineas.forEach(l=>g.serie.removePriceLine(l));g.lineas=[];
   g.zonas.forEach(z=>g.serie.detachPrimitive(z));g.zonas=[];
-  const pos=(d.posiciones||[]).filter(p=>p.sim===g.sim&&p.bot===b);
+  const sym=simDe(g.sim);
+  const pos=(d.posiciones||[]).filter(p=>p.sim===sym&&p.bot===b);
   pos.forEach(p=>{
     const L=(price,color,style,title)=>{if(price>0)g.lineas.push(g.serie.createPriceLine({price,color,lineWidth:2,lineStyle:style,axisLabelVisible:true,title}))};
     L(p.precio,"#2962FF",0,(p.lado==="compra"?"COMPRA ":"VENTA ")+lote(p.lote)+" · ABIERTA");L(p.sl,"#F23645",2,"Stop Loss");L(p.tp,"#089981",2,"Take Profit");
     const z=new ZonaPosicion({t:p.desde-p.desde%tf,precio:p.precio,sl:p.sl,tp:p.tp});g.serie.attachPrimitive(z);g.zonas.push(z);
   });
   const t0=V.v.length?V.v[0][0]:0;
-  const ops=(d.historial||[]).filter(h=>h.sim===g.sim&&h.bot===b&&h.ci>=t0&&h.pa>0&&h.pc>0).map(h=>Object.assign({},h));
+  const ops=(d.historial||[]).filter(h=>h.sim===sym&&h.bot===b&&h.ci>=t0&&h.pa>0&&h.pc>0).map(h=>Object.assign({},h));
   const nEt=$("gr_"+id).clientWidth<700?3:6;ops.forEach((o,i)=>o.etiqueta=i>=ops.length-nEt);
   pos.forEach(p=>ops.push({abierta:1,lado:p.lado,ab:p.desde,pa:p.precio}));
   const tz=new Trazos(ops,tf,g.sel);g.serie.attachPrimitive(tz);g.zonas.push(tz);g.trazos=tz;
   const selOp=ops.find(o=>!o.abierta&&(o.ab+"_"+o.ci)===g.sel);
   $("gd_"+id).innerHTML=selOp&&window.innerWidth>=900?detalleTrade(selOp,true):'<div class="hint">Tocá una flecha o un círculo del gráfico para ver qué pasó en esa operación.</div>';
   const bc=$("gd_"+id).querySelector("[data-cerrar]");if(bc)bc.onclick=()=>{g.sel=null;pintarGrafico(b)};
-  $("go_"+id).innerHTML=pos.length?"":`<div class="mut">Sin operación abierta en ${g.sim}</div>`;$("go_"+id).innerHTML+=pos.map(p=>`<div><span class="mut" style="font-size:12px;letter-spacing:.04em">OPERACIÓN ABIERTA</span><br>${ladoChip(p.lado)} <b>${lote(p.lote)}</b> lotes<br><span class="mut">entrada</span> <b>${p.precio}</b> · <span class="${cl(p.gan)}"><b>${usdS(p.gan)}</b></span></div>`).join("");
+  $("go_"+id).innerHTML=pos.length?"":`<div class="mut">Sin operación abierta en ${sym}</div>`;$("go_"+id).innerHTML+=pos.map(p=>`<div><span class="mut" style="font-size:12px;letter-spacing:.04em">OPERACIÓN ABIERTA</span><br>${ladoChip(p.lado)} <b>${lote(p.lote)}</b> lotes<br><span class="mut">entrada</span> <b>${p.precio}</b> · <span class="${cl(p.gan)}"><b>${usdS(p.gan)}</b></span></div>`).join("");
 }
 async function refrescarGraficos(){
   if(VISTA!=="graficos")return;
@@ -720,7 +723,7 @@ const ladoChip=l=>l==="compra"?`<span class="ld c">${TRI_UP}COMPRA</span>`:`<spa
 const MOTIVO={sl:"Stop Loss",tp:"Take Profit",bot:"El bot la cerró",mano:"Cerrada a mano",so:"La cerró el broker (falta de margen)",otro:"Otro motivo"};
 const fhl=t=>{const d=new Date(t*1000);return d.getUTCDate()+"/"+(d.getUTCMonth()+1)+" "+String(d.getUTCHours()).padStart(2,"0")+":"+String(d.getUTCMinutes()).padStart(2,"0")};
 function analisis(h){
-  const V=VELAS&&VELAS[h.sim];if(!V||!(h.pa>0)||!(h.pc>0))return null;
+  const V=velasDe(h.sim,h.bot);if(!V||!(h.pa>0)||!(h.pc>0))return null;
   const tf=TF_SEG[V.tf]||14400,dig=V.dig||2,v=V.v,i0=v.findIndex(x=>x[0]===h.ab-h.ab%tf);if(i0<0)return null;
   const prev=v.slice(Math.max(0,i0-14),i0);const atr=prev.length>=5?prev.reduce((a,x)=>a+(x[2]-x[3]),0)/prev.length:null;
   const sl0=h.sli>0?h.sli:h.sl,c=h.lado==="compra",d=c?1:-1,slD=sl0>0?Math.abs(h.pa-sl0):null,tpD=h.tp>0?Math.abs(h.tp-h.pa):null;
@@ -759,7 +762,7 @@ function detalleTrade(h,cerrable){
     ${a&&a.fav!=null?fil("Lo mejor que llegó a ir a favor",`${f(a.fav)} puntos`):""}${a&&a.con!=null?fil("Lo peor que fue en contra",`${f(a.con)} puntos`):""}
     <div class="lectura"><div class="tit" style="margin-bottom:8px"><span>Qué pasó</span></div>${lect.map(x=>`<p>${x}</p>`).join("")}</div></div>`;
 }
-const INFO={"Tendencia 4H":["ETH · BTC · ORO","LARGO · 1,25 %"],"Williams Nasdaq":["NASDAQ","UNA POR DÍA · 0,75 %"]};
+const INFO={"Tendencia 4H":["ETH · BTC · ORO · PETRÓLEO","LARGO · 1,25 %"],"Williams Ruptura":["NASDAQ · S&P 500 · BTC","UNA POR DÍA EN CADA UNO"]};
 const ICONO={verde:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-7"/></svg>',
   amb:'<svg viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18.2v.1"/></svg>',
   rojo:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7"/></svg>'};
@@ -857,8 +860,16 @@ function pintarRecorrido(){
 }
 setTimeout(pintarRecorrido,0);
 
+const NOMBRE_VIEJO=/^Williams Nasdaq$/;
+function normalizar(d){ // el Bot 2 se llamaba "Williams Nasdaq" cuando operaba solo el Nasdaq
+  const n=x=>x&&NOMBRE_VIEJO.test(x)?"Williams Ruptura":x;
+  (d.bots||[]).forEach(b=>b.nombre=n(b.nombre));["posiciones","cerradas_hoy","historial"].forEach(k=>(d[k]||[]).forEach(o=>o.bot=n(o.bot)));
+  if(d.control){const c={};Object.keys(d.control).forEach(k=>c[n(k)]=d.control[k]);d.control=c}
+  return d;
+}
 async function cargar(){
   let d;try{d=await leerEstado()}catch(e){d=null}
+  if(d&&!d.sin_datos)normalizar(d);
   if(!d||d.sin_datos){$("vivo").className="vivo mal";$("vivo_t").textContent="Sin datos";
     $("avisos").innerHTML='<div class="av rojo"><em>SIN DATOS</em>¿Está MT5 abierto con Panel_Estado cargado en un gráfico?</div>';return}
   pintar(d);
