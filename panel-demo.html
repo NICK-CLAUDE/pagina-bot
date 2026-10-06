@@ -535,7 +535,7 @@ async function enviarControl(bot,accion,cerrar,pin){
   return Object.assign({},DEMO_CTRL);
 }
 // ---------- gráficos tipo TradingView
-class Trazos{ // operaciones dibujadas en su precio exacto: línea entrada→salida, triángulo ▲ compra / ▼ venta, resultado en $
+class Trazos{ // operaciones en su precio exacto: flecha + etiqueta COMPRA/VENTA en la entrada, línea punteada hasta la salida y resultado en $
   constructor(ops,tf){this.ops=ops;this.tf=tf}
   attached({chart,series}){this.chart=chart;this.series=series}
   detached(){}
@@ -543,18 +543,20 @@ class Trazos{ // operaciones dibujadas en su precio exacto: línea entrada→sal
   paneViews(){const z=this;return [{zOrder:()=>"top",renderer:()=>({draw:target=>target.useMediaCoordinateSpace(sc=>{
     const ctx=sc.context,ts=z.chart.timeScale(),bar=t=>t-t%z.tf;
     const X=t=>ts.timeToCoordinate(bar(t)),Y=pr=>z.series.priceToCoordinate(pr);
-    const tri=(x,y,arriba,color,tam,borde)=>{ctx.beginPath();if(arriba){ctx.moveTo(x,y);ctx.lineTo(x-tam,y+tam*1.6);ctx.lineTo(x+tam,y+tam*1.6)}else{ctx.moveTo(x,y);ctx.lineTo(x-tam,y-tam*1.6);ctx.lineTo(x+tam,y-tam*1.6)}
-      ctx.closePath();ctx.fillStyle=color;ctx.fill();if(borde){ctx.lineWidth=1.5;ctx.strokeStyle="#fff";ctx.stroke()}};
-    ctx.font="600 12px system-ui,Segoe UI,Roboto,sans-serif";
+    const etiqueta=(x,y,txt,fondo)=>{ctx.font="700 11px system-ui,Segoe UI,Roboto,sans-serif";const w=ctx.measureText(txt).width+10;
+      ctx.fillStyle=fondo;ctx.beginPath();ctx.roundRect(x-w/2,y,w,17,4);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(txt,x-w/2+5,y+12.5)};
+    const flecha=(x,y,compra,color,borde,txt)=>{ // punta en (x,y): compra apunta hacia arriba desde abajo, venta hacia abajo desde arriba
+      const d=compra?1:-1;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-7,y+d*10);ctx.lineTo(x-2.5,y+d*10);ctx.lineTo(x-2.5,y+d*20);ctx.lineTo(x+2.5,y+d*20);ctx.lineTo(x+2.5,y+d*10);ctx.lineTo(x+7,y+d*10);ctx.closePath();
+      ctx.fillStyle=color;ctx.fill();ctx.lineWidth=borde?2:1;ctx.strokeStyle=borde?"#fff":"rgba(0,0,0,.6)";ctx.stroke();
+      if(txt)etiqueta(x,compra?y+23:y-40,txt,color)};
     z.ops.forEach(o=>{
       const c=o.lado==="compra",x1=X(o.ab),y1=Y(o.pa),col=c?"#089981":"#F23645";
-      if(o.abierta){if(x1!==null&&y1!==null)tri(x1,y1,c,col,7,true);return}
+      if(o.abierta){if(x1!==null&&y1!==null)flecha(x1,y1,c,col,true,c?"COMPRA":"VENTA");return}
       const x2=X(o.ci),y2=Y(o.pc),res=o.neto>=0?"#089981":"#F23645";
       if(x1!==null&&y1!==null&&x2!==null&&y2!==null){ctx.setLineDash([5,4]);ctx.lineWidth=1.5;ctx.strokeStyle=res;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([])}
-      if(x1!==null&&y1!==null)tri(x1,y1,c,col,5,false);
-      if(x2!==null&&y2!==null){ctx.beginPath();ctx.arc(x2,y2,4,0,7);ctx.fillStyle=res;ctx.fill();
-        if(o.etiqueta){const t=(o.neto>=0?"+$":"-$")+Math.abs(Math.round(o.neto));const w=ctx.measureText(t).width+10,ty=y2+(c===(o.neto>=0)?-22:10);
-          ctx.fillStyle=res;ctx.beginPath();ctx.roundRect(x2-w/2,ty,w,18,4);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(t,x2-w/2+5,ty+13)}}
+      if(x2!==null&&y2!==null){ctx.beginPath();ctx.arc(x2,y2,4.5,0,7);ctx.fillStyle=res;ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle="#fff";ctx.stroke();
+        if(o.etiqueta)etiqueta(x2,c===(o.neto>=0)?y2-24:y2+8,(o.neto>=0?"+$":"-$")+Math.abs(Math.round(o.neto)),res)}
+      if(x1!==null&&y1!==null)flecha(x1,y1,c,col,false,o.etiqueta?(c?"COMPRA":"VENTA"):"");
     });
   })})}]}
 }
@@ -586,7 +588,7 @@ function armarGraficos(){
     const id=b.replace(/\W/g,"");
     cont.insertAdjacentHTML("beforeend",`<div class="card gbot"><div class="gcab"><h2>${b}</h2><div class="grupo" id="gs_${id}">${bots[b].map((sy,i)=>`<button class="f${i?"":" on"}" data-s="${sy}">${sy} · ${VELAS[sy].tf}</button>`).join("")}</div></div>
       <div class="graf" id="gr_${id}"><div class="gov" id="go_${id}"></div></div>
-      <details class="gayuda"><summary>¿Qué son las líneas?</summary><div class="ley"><span><i style="border-color:#2962FF"></i>precio de entrada (zona verde = hasta el Take Profit, zona roja = hasta el Stop Loss)</span><span><i style="border-color:#f87171;border-top-style:dashed"></i>Stop Loss: ahí cierra perdiendo</span><span><i style="border-color:#34d399;border-top-style:dashed"></i>Take Profit: ahí cierra ganando</span><span>Triángulo = dónde entró (▲ compra, ▼ venta) · línea punteada hasta donde salió · verde ganó, rojo perdió</span></div></details>
+      <details class="gayuda"><summary>¿Qué son las líneas?</summary><div class="ley"><span><i style="border-color:#2962FF"></i>precio de entrada (zona verde = hasta el Take Profit, zona roja = hasta el Stop Loss)</span><span><i style="border-color:#f87171;border-top-style:dashed"></i>Stop Loss: ahí cierra perdiendo</span><span><i style="border-color:#34d399;border-top-style:dashed"></i>Take Profit: ahí cierra ganando</span><span>Flecha COMPRA/VENTA = dónde entró · línea punteada hasta el círculo = dónde salió (verde ganó, rojo perdió)</span></div></details>
       </div>`);
     const ch=LightweightCharts.createChart($("gr_"+id),{autoSize:true,layout:{background:{color:"#0a111d"},textColor:"#9db0c9",fontSize:13,fontFamily:"system-ui,Segoe UI,Roboto,sans-serif"},
       grid:{vertLines:{visible:false},horzLines:{color:"#101a2b"}},rightPriceScale:{borderColor:"#17223a"},timeScale:{borderColor:"#17223a",timeVisible:true,secondsVisible:false,rightOffset:12},
@@ -614,7 +616,7 @@ function pintarGrafico(b){
   });
   const t0=V.v.length?V.v[0][0]:0;
   const ops=(d.historial||[]).filter(h=>h.sim===g.sim&&h.bot===b&&h.ci>=t0&&h.pa>0&&h.pc>0).map(h=>Object.assign({},h));
-  ops.forEach((o,i)=>o.etiqueta=i>=ops.length-6);
+  const nEt=$("gr_"+id).clientWidth<700?3:6;ops.forEach((o,i)=>o.etiqueta=i>=ops.length-nEt);
   pos.forEach(p=>ops.push({abierta:1,lado:p.lado,ab:p.desde,pa:p.precio}));
   const tz=new Trazos(ops,tf);g.serie.attachPrimitive(tz);g.zonas.push(tz);
   $("go_"+id).innerHTML=pos.length?"":`<div class="mut">Sin operación abierta en ${g.sim}</div>`;$("go_"+id).innerHTML+=pos.map(p=>`<div><span class="mut" style="font-size:12px;letter-spacing:.04em">OPERACIÓN ABIERTA</span><br>${ladoChip(p.lado)} <b>${lote(p.lote)}</b> lotes<br><span class="mut">entrada</span> <b>${p.precio}</b> · <span class="${cl(p.gan)}"><b>${usdS(p.gan)}</b></span></div>`).join("");
