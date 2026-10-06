@@ -103,6 +103,44 @@ th{color:var(--mut);font-size:16px;border-top:0}
 .chip.amb{background:#33270c;color:var(--amb)}.chip.rojo{background:#3a1515;color:var(--rojo)}.chip.gris{background:#16213a;color:var(--mut)}
 .reglas li{margin:8px 0}
 @media(max-width:900px){.cal{gap:4px}.cal .d{min-height:54px;padding:4px 5px}.cal .d b{font-size:12px}}
+
+.sw{display:inline-flex;align-items:center;gap:10px;background:none;border:0;color:var(--tx);cursor:pointer;font:inherit;font-size:16px;font-weight:600;padding:4px 0}
+.sw i{width:50px;height:28px;border-radius:99px;background:#3a1515;position:relative;flex:none;transition:background .2s}
+.sw i:after{content:"";position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:var(--rojo);transition:transform .2s cubic-bezier(.2,.8,.2,1),background .2s}
+.sw[aria-checked=true] i{background:#0c3a2a}.sw[aria-checked=true] i:after{transform:translateX(22px);background:var(--verde)}
+.sw:disabled{opacity:.5;cursor:wait}
+.mini{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:4px 0 14px}
+.mini div{background:#0a111d;border:1px solid var(--ln);border-radius:10px;padding:10px 12px}
+.mini small{display:block;font-size:14px;color:var(--mut)}.mini b{font-size:20px}
+details{border-top:1px solid var(--ln);padding-top:12px;margin-top:4px}
+summary{cursor:pointer;font-weight:600;color:#c9d5e6;font-size:16px;list-style:none;display:flex;align-items:center;gap:8px}
+summary::-webkit-details-marker{display:none}
+summary:before{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .2s}
+details[open] summary:before{transform:rotate(45deg)}
+.lnk{background:none;border:0;color:var(--azul);font:inherit;font-size:16px;cursor:pointer;padding:8px 0;font-weight:600}
+.lnk:hover{text-decoration:underline;text-underline-offset:3px}
+.filtros{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-bottom:14px}
+.grupo{display:flex;gap:6px;flex-wrap:wrap}
+.f{background:#0a111d;border:1px solid var(--ln);color:var(--mut);border-radius:99px;padding:8px 14px;font:inherit;font-size:15px;cursor:pointer}
+.f:hover{color:var(--tx)}.f.on{background:#0f2236;border-color:#1f4a6e;color:var(--tx)}
+.buscar{background:#0a111d;border:1px solid var(--ln);color:var(--tx);border-radius:10px;padding:9px 14px;font:inherit;font-size:16px;min-width:220px}
+.buscar::placeholder{color:#7f92ab}
+.hist th{cursor:pointer;user-select:none;white-space:nowrap}.hist th:hover{color:var(--tx)}
+.hist th.ord{color:var(--tx)}.hist td{white-space:nowrap}
+.hist td.r{text-align:right}.hist th.r{text-align:right}
+.res{display:flex;flex-wrap:wrap;gap:6px 22px;margin-bottom:12px;font-size:16px}
+dialog{background:var(--card);color:var(--tx);border:1px solid var(--ln);border-radius:16px;padding:24px;max-width:460px;width:calc(100% - 32px);box-shadow:0 24px 60px rgba(0,0,0,.55)}
+dialog::backdrop{background:rgba(3,6,12,.7);backdrop-filter:blur(3px)}
+dialog h3{margin:0 0 10px;font-size:22px}dialog p{margin:0 0 14px;color:#d0dbea}
+dialog label{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px;cursor:pointer}
+dialog input[type=checkbox]{width:20px;height:20px;margin-top:2px;accent-color:var(--rojo)}
+dialog .pin{width:100%;margin-bottom:14px}
+.acc{display:flex;justify-content:flex-end;gap:10px;margin-top:6px}
+.btn{border-radius:10px;padding:11px 18px;font:inherit;font-size:16px;font-weight:600;cursor:pointer;border:1px solid var(--ln);background:#0a111d;color:var(--tx)}
+.btn.rojo{background:#3a1515;border-color:#7f2b2b;color:#fecaca}.btn.verde{background:#0c3a2a;border-color:#1d6b4f;color:#bbf7d0}
+.solo-mov{display:none;font-size:13px;font-weight:400}
+.err{color:var(--rojo);min-height:1.2em;margin:0 0 6px}
+@media(max-width:900px){.hist .opc{display:none}.solo-mov{display:block}.mini{grid-template-columns:1fr 1fr}.buscar{min-width:0;width:100%}}
 </style>
 </head>
 <body>
@@ -111,6 +149,7 @@ th{color:var(--mut);font-size:16px;border-top:0}
   <div class="marca"><svg viewBox="0 0 24 24"><polyline points="2,13 6,13 9,4 15,20 18,13 22,13"/></svg>BOTS <span style="font-size:12px;color:#fbbf24;border:1px solid #6b5316;border-radius:99px;padding:1px 7px;margin-left:4px">SIMULACIÓN</span></div>
   <button data-v="resumen" class="on"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Resumen</button>
   <button data-v="bots"><svg viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z"/></svg>Bots</button>
+  <button data-v="historial"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>Historial</button>
   <button data-v="resultados"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-6 11h16L14 9V3"/></svg>Resultados</button>
   <button data-v="reglas"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Reglas</button>
   <button data-v="alertas"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alertas</button>
@@ -161,18 +200,7 @@ th{color:var(--mut);font-size:16px;border-top:0}
 
 <!-- BOTS -->
 <section class="vista" id="v_bots">
-  <div class="bots">
-    <div class="card bot"><div class="top"><div><h2>Bot 1 · Tendencia 4H</h2><div class="tipo">ETH · BTC · ORO · SOLO COMPRAS · VELAS DE 4 H</div></div></div>
-      <p class="d"><span class="mut">Idea:</span> compra cripto y oro cuando suben.</p>
-      <p class="d"><span class="mut">Cómo decide:</span> mira velas de 4 horas y solo compra si el precio está por encima del promedio de los últimos 200 días.</p>
-      <p class="d"><span class="mut">Riesgo:</span> 1,25 % de la cuenta por operación (unos US$ 62 con US$ 5.000), con Stop Loss desde que abre.</p>
-      <p class="d"><span class="mut">Frenos:</span> corta todo si pierde 4 % en el día o 9 % en total. Si dos cripto se abren juntas, la segunda arriesga la mitad.</p></div>
-    <div class="card bot"><div class="top"><div><h2>Bot 2 · Williams Ruptura</h2><div class="tipo">NASDAQ · UNA OPERACIÓN POR DÍA</div></div></div>
-      <p class="d"><span class="mut">Idea:</span> opera la ruptura del Nasdaq una vez por día.</p>
-      <p class="d"><span class="mut">Cómo decide:</span> a las 10:30 de Nueva York deja órdenes de ruptura. Máximo una operación por día, y todo se cierra a las 15:55.</p>
-      <p class="d"><span class="mut">Riesgo:</span> 0,75 % de la cuenta por operación (unos US$ 37 con US$ 5.000).</p>
-      <p class="d"><span class="mut">Frenos:</span> corta todo si pierde 4 % en el día u 8 % en total.</p></div>
-  </div>
+  <div class="bots" id="bots_det"></div>
   <div class="card"><div class="tit"><span>Qué esperar según las pruebas con datos pasados (2018-26)</span></div>
     <div class="kpis">
       <div class="kpi"><b>98 de cada 100</b><small>pasan el challenge</small></div>
@@ -181,6 +209,20 @@ th{color:var(--mut);font-size:16px;border-top:0}
       <div class="kpi"><b>Gana 1,5 por 1</b><small>lo que gana vs lo que pierde</small></div>
     </div>
     <p class="nota">Son simulaciones con el pasado, no una promesa. Los dos bots están pensados para operar juntos, sin intervenir a mano.</p>
+  </div>
+</section>
+
+<!-- HISTORIAL -->
+<section class="vista" id="v_historial">
+  <div class="card">
+    <div class="filtros">
+      <div class="grupo" id="f_bot"><button class="f on" data-b="todos">Todos</button><button class="f" data-b="Tendencia 4H">Tendencia 4H</button><button class="f" data-b="Williams Nasdaq">Williams Nasdaq</button></div>
+      <div class="grupo" id="f_res"><button class="f on" data-r="todas">Todas</button><button class="f" data-r="g">Ganadas</button><button class="f" data-r="p">Perdidas</button></div>
+      <input class="buscar" id="f_q" type="search" placeholder="Buscar mercado (ej. ETH)" aria-label="Buscar mercado">
+    </div>
+    <div class="res" id="h_res"></div>
+    <div style="overflow-x:auto"><table class="hist" id="h_tab"></table></div>
+    <button class="lnk" id="h_mas" hidden>Mostrar más</button>
   </div>
 </section>
 
@@ -235,6 +277,14 @@ th{color:var(--mut);font-size:16px;border-top:0}
 
 <p class="nota" id="pie">ESTO ES UNA SIMULACIÓN con números inventados. Este panel solo mira: no abre ni cierra operaciones. La pérdida de hoy se mide desde la medianoche del servidor (reinicio de la firma) sobre el saldo de ese momento; es una aproximación, confirmá el valor exacto en Funding Pips.</p>
 </main>
+<dialog id="dlg">
+  <h3 id="dlg_t"></h3>
+  <p id="dlg_p"></p>
+  <label id="dlg_cl"><input type="checkbox" id="dlg_c"><span id="dlg_cs"></span></label>
+  <input class="buscar pin" id="dlg_pin" type="password" inputmode="numeric" placeholder="Clave del panel" hidden>
+  <p class="err" id="dlg_e"></p>
+  <div class="acc"><button class="btn" id="dlg_no">Cancelar</button><button class="btn" id="dlg_si"></button></div>
+</dialog>
 </div>
 
 <script>
@@ -248,7 +298,7 @@ const pct=v=>(v>0?"+":"")+v.toFixed(2).replace(".",",")+"%";
 const cl=v=>v>0?"verde":v<0?"rojo":"";
 const hhmm=t=>new Date(t*1000).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"});
 const fecha=t=>{const d=new Date(t*1000);return String(d.getUTCMonth()+1).padStart(2,"0")+"-"+String(d.getUTCDate()).padStart(2,"0")};
-const TITULOS={resumen:"Resumen",bots:"Bots",resultados:"Resultados",reglas:"Reglas",alertas:"Alertas"};
+const TITULOS={resumen:"Resumen",bots:"Bots",historial:"Historial",resultados:"Resultados",reglas:"Reglas",alertas:"Alertas"};
 document.querySelectorAll("#menu button").forEach(b=>b.onclick=()=>irA(b.dataset.v));
 function irA(v){
   document.querySelectorAll("#menu button").forEach(x=>x.classList.toggle("on",x.dataset.v===v));
@@ -354,13 +404,90 @@ function calendario(cal,actualizado){
   c.innerHTML=h;
   $("t_cal").innerHTML=`5 semanas · <span class="${cl(tot)}">${usdS(tot)}</span> · ${verdes} días verdes, ${rojos} rojos`;
 }
+const DESC={"Tendencia 4H":["ETH · BTC · ORO · SOLO COMPRAS · VELAS DE 4 H",
+  ["Idea","compra cripto y oro cuando suben."],["Cómo decide","mira velas de 4 horas y solo compra si el precio está por encima del promedio de los últimos 200 días."],
+  ["Riesgo","1,25 % de la cuenta por operación (unos US$ 62 con US$ 5.000), con Stop Loss desde que abre."],
+  ["Frenos","corta todo si pierde 4 % en el día o 9 % en total. Si dos cripto se abren juntas, la segunda arriesga la mitad."]],
+ "Williams Nasdaq":["NASDAQ · UNA OPERACIÓN POR DÍA",
+  ["Idea","opera la ruptura del Nasdaq una vez por día."],["Cómo decide","a las 10:30 de Nueva York deja órdenes de ruptura. Máximo una operación por día, y todo se cierra a las 15:55."],
+  ["Riesgo","0,75 % de la cuenta por operación (unos US$ 37 con US$ 5.000)."],["Frenos","corta todo si pierde 4 % en el día u 8 % en total."]]};
+const fh=t=>{const d=new Date(t*1000);return String(d.getUTCDate()).padStart(2,"0")+"/"+String(d.getUTCMonth()+1).padStart(2,"0")+" "+String(d.getUTCHours()).padStart(2,"0")+":"+String(d.getUTCMinutes()).padStart(2,"0")};
+const dur=s=>s<3600?Math.max(1,Math.floor(s/60))+" min":s<86400?Math.floor(s/3600)+" h "+Math.floor(s%3600/60)+" min":Math.floor(s/86400)+" d "+Math.floor(s%86400/3600)+" h";
+const lote=v=>Number(v).toLocaleString("es-AR",{maximumFractionDigits:2});
+const estadoBot=(d,n)=>((d.control||{})[n]||"activo");
+function botsDetalle(d){
+  const ok=d.conectado&&d.algo_terminal&&d.algo_cuenta;
+  $("bots_det").innerHTML=(d.bots||[]).map(b=>{
+    const act=estadoBot(d,b.nombre)!=="pausado",tot=(b.cerrado||0)+(b.flotante||0),r=realBot(b),j=juicio(ESPERADO[b.nombre]||{},r),ds=DESC[b.nombre]||[""];
+    const ult=(d.historial||[]).filter(h=>h.bot===b.nombre).slice(-5).reverse();
+    return `<div class="card bot"><div class="top"><div><h2>${b.nombre}</h2><div class="tipo">${ds[0]}</div></div>
+      <button class="sw" role="switch" aria-checked="${act}" data-bot="${b.nombre}"><i></i><span>${act?(ok?"Encendido":"Encendido (MT5 sin trading automático)"):"Pausado"}</span></button></div>
+      <div style="margin-top:8px"><span class="chip ${j[0]}">${j[1]}</span></div>
+      <div class="eq num ${cl(tot)}">${usdS(tot)}<small>${pct(100*tot/d.capital)}</small></div>
+      ${spark(b.spark,tot>=0?"#34d399":"#f87171")}
+      <div class="mini"><div><small>Operaciones</small><b class="num">${b.ops||0}</b></div><div><small>Ganadoras</small><b class="num">${Math.round(r.gan)} %</b></div>
+        <div><small>Gana por 1</small><b class="num">${r.x1.toFixed(2).replace(".",",")}</b></div><div><small>Abiertas</small><b class="num">${b.abiertas||0}</b></div></div>
+      <div class="tit" style="margin-bottom:4px"><span>Últimas operaciones</span></div>
+      ${ult.length?ult.map(h=>`<div class="op"><span class="h">${fh(h.ci)}</span><span class="s">${h.sim}</span><span class="g ${cl(h.neto)}">${h.neto>=0?"ganó":"perdió"} ${usdS(h.neto)}</span><span class="mut">${dur(h.ci-h.ab)}</span></div>`).join(""):'<div class="vacio">Sin operaciones cerradas todavía.</div>'}
+      <button class="lnk" data-hist="${b.nombre}">Ver todo el historial de este bot</button>
+      <details><summary>Cómo funciona</summary>${ds.slice(1).map(x=>`<p class="d"><span class="mut">${x[0]}:</span> ${x[1]}</p>`).join("")}</details></div>`}).join("");
+  document.querySelectorAll("#bots_det .sw").forEach(x=>x.onclick=()=>pedirCambio(x.dataset.bot,x.getAttribute("aria-checked")==="true"?"pausar":"reanudar"));
+  document.querySelectorAll("#bots_det [data-hist]").forEach(x=>x.onclick=()=>{HF.bot=x.dataset.hist;HF.max=50;marcarFiltros();irA("historial")});
+}
+const HF={bot:"todos",res:"todas",q:"",orden:"ci",desc:true,max:50};
+function marcarFiltros(){
+  document.querySelectorAll("#f_bot .f").forEach(x=>x.classList.toggle("on",x.dataset.b===HF.bot));
+  document.querySelectorAll("#f_res .f").forEach(x=>x.classList.toggle("on",x.dataset.r===HF.res));
+}
+document.querySelectorAll("#f_bot .f").forEach(x=>x.onclick=()=>{HF.bot=x.dataset.b;HF.max=50;marcarFiltros();if(ULT)historial(ULT)});
+document.querySelectorAll("#f_res .f").forEach(x=>x.onclick=()=>{HF.res=x.dataset.r;HF.max=50;marcarFiltros();if(ULT)historial(ULT)});
+$("f_q").oninput=e=>{HF.q=e.target.value.trim().toUpperCase();HF.max=50;if(ULT)historial(ULT)};
+$("h_mas").onclick=()=>{HF.max+=50;if(ULT)historial(ULT)};
+function historial(d){
+  let h=(d.historial||[]).filter(x=>(HF.bot==="todos"||x.bot===HF.bot)&&(HF.res==="todas"||(HF.res==="g"?x.neto>0:x.neto<0))&&(!HF.q||x.sim.toUpperCase().includes(HF.q)));
+  const k={ci:x=>x.ci,bot:x=>x.bot,sim:x=>x.sim,lado:x=>x.lado,lote:x=>x.lote,dur:x=>x.ci-x.ab,neto:x=>x.neto}[HF.orden];
+  h=h.slice().sort((a,b)=>{const va=k(a),vb=k(b);return (va<vb?-1:va>vb?1:0)*(HF.desc?-1:1)});
+  const g=h.filter(x=>x.neto>0),tot=h.reduce((a,x)=>a+x.neto,0),sg=g.reduce((a,x)=>a+x.neto,0),sp=-h.filter(x=>x.neto<0).reduce((a,x)=>a+x.neto,0);
+  $("h_res").innerHTML=`<span><b>${h.length}</b> operaciones</span><span><b>${h.length?Math.round(100*g.length/h.length):0} %</b> ganadoras</span><span>Resultado <b class="${cl(tot)}">${usdS(tot)}</b></span><span>Gana <b>${sp?(sg/sp).toFixed(2).replace(".",","):"–"}</b> por cada 1 que pierde</span>`;
+  const cols=[["ci","Cierre"],["bot","Bot"],["sim","Mercado"],["lado","Lado"],["lote","Lote","r"],["dur","Duración","r"],["neto","Resultado","r"]];
+  $("h_tab").innerHTML=`<tr>${cols.map(c=>`<th class="${c[2]||""}${["bot","lado","lote","dur"].includes(c[0])?" opc":""}${HF.orden===c[0]?" ord":""}" data-o="${c[0]}">${c[1]}${HF.orden===c[0]?(HF.desc?" ↓":" ↑"):""}</th>`).join("")}</tr>`+
+    (h.length?h.slice(0,HF.max).map(x=>`<tr><td>${fh(x.ci)}</td><td class="opc">${x.bot}</td><td><b>${x.sim}</b><div class="solo-mov mut">${x.bot}</div></td><td class="opc">${x.lado}</td><td class="r opc">${lote(x.lote)}</td><td class="r opc">${dur(x.ci-x.ab)}</td><td class="r ${cl(x.neto)}"><b>${usdS(x.neto)}</b></td></tr>`).join("")
+     :`<tr><td colspan="7" class="vacio">No hay operaciones con estos filtros.</td></tr>`);
+  $("h_mas").hidden=h.length<=HF.max;
+  document.querySelectorAll("#h_tab th").forEach(th=>th.onclick=()=>{const o=th.dataset.o;HF.desc=HF.orden===o?!HF.desc:true;HF.orden=o;historial(ULT)});
+}
+let PEDIDO=null;
+function pedirCambio(bot,accion){
+  const d=ULT||{};const quien=bot==="todos"?"los dos bots":bot;
+  const ab=(d.posiciones||[]).filter(p=>bot==="todos"||p.bot===bot).length;
+  PEDIDO={bot,accion};
+  $("dlg_t").textContent=accion==="pausar"?`¿Pausar ${quien}?`:`¿Volver a encender ${quien}?`;
+  $("dlg_p").textContent=accion==="pausar"?"No va a abrir operaciones nuevas hasta que lo vuelvas a encender. Las que ya están abiertas siguen con su Stop Loss.":"Vuelve a operar normalmente con sus reglas de siempre.";
+  $("dlg_cl").hidden=accion!=="pausar"||!ab;$("dlg_c").checked=false;
+  $("dlg_cs").textContent=`Cerrar también ${ab===1?"su operación abierta":"sus "+ab+" operaciones abiertas"} ahora`;
+  $("dlg_pin").hidden=!d.pin_requerido;$("dlg_pin").value="";$("dlg_e").textContent="";
+  $("dlg_si").textContent=accion==="pausar"?"Pausar":"Encender";$("dlg_si").className="btn "+(accion==="pausar"?"rojo":"verde");
+  $("dlg").showModal();
+}
+$("dlg_no").onclick=()=>$("dlg").close();
+$("dlg_si").onclick=async()=>{
+  $("dlg_si").disabled=true;
+  try{const c=await enviarControl(PEDIDO.bot,PEDIDO.accion,$("dlg_c").checked,$("dlg_pin").value);if(ULT){ULT.control=c;pintar(ULT)}$("dlg").close()}
+  catch(e){$("dlg_e").textContent=e.message}
+  $("dlg_si").disabled=false;
+};
+async function enviarControl(bot,accion,cerrar,pin){
+  const bs=bot==="todos"?Object.keys(DEMO_CTRL):[bot];bs.forEach(b=>DEMO_CTRL[b]=accion==="pausar"?"pausado":"activo");
+  DEMO_AV.unshift({hora:new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"}),texto:"Desde el panel: "+bs.join(", ")+" -> "+(accion==="pausar"?"PAUSADO":"ACTIVO")+(cerrar?" y cerrar sus operaciones.":".")+" (simulación)"});
+  return Object.assign({},DEMO_CTRL);
+}
 const INFO={"Tendencia 4H":["ETH · BTC · ORO","LARGO · 1,25 %"],"Williams Nasdaq":["NASDAQ","UNA POR DÍA · 0,75 %"]};
 function pintar(d){
   ULT=d;
   const ok=d.conectado&&d.algo_terminal&&d.algo_cuenta;
   $("vivo").className="vivo"+(ok?"":" mal");$("vivo_t").textContent=ok?"En vivo":"Revisar";
-  const bots=d.bots||[];const enc=ok?bots.length:0;
-  $("subt").textContent=(ok?"En vivo · ":"Revisar · ")+bots.length+" bots · "+enc+" encendidos"+(d.posiciones.length?" · "+d.posiciones.length+" operación(es) abierta(s)":"");
+  const bots=d.bots||[];const enc=ok?bots.filter(b=>estadoBot(d,b.nombre)!=="pausado").length:0;
+  $("subt").textContent=(ok?"En vivo · ":"Revisar · ")+bots.length+" bots · "+enc+(enc===1?" encendido":" encendidos")+(d.posiciones.length?" · "+d.posiciones.length+" operación(es) abierta(s)":"");
   $("k_cap").textContent=usd(d.patrimonio);$("k_cap2").textContent="Capital inicial "+usd(d.capital);
   $("k_tot").textContent=usdS(d.total_usd);$("k_tot").className="num "+cl(d.total_usd);
   $("k_tot2").textContent=pct(d.total_pct)+" del capital";$("k_tot2").className=cl(d.total_pct);
@@ -382,12 +509,12 @@ function pintar(d){
   $("expo").innerHTML=sims.length?sims.map(s=>`<div class="exp"><div class="r"><span class="mono">${s}</span><span class="mono mut">${usd0(por[s])} · ${noc?Math.round(100*por[s]/noc):0}%</span></div><div class="pista"><i style="width:${noc?100*por[s]/noc:0}%"></i></div></div>`).join(""):'<div class="vacio">Sin posiciones abiertas</div>';
   $("bots_res").innerHTML=bots.map(b=>{
     const tot=(b.cerrado||0)+(b.flotante||0),inf=INFO[b.nombre]||["",""],pos=d.posiciones.find(p=>p.bot===b.nombre);
-    return `<div class="card bot"><div class="top"><div><h2>${b.nombre}</h2><div class="tipo">${inf[1]}</div></div><span class="ins${ok?"":" mal"}">${ok?"ENCENDIDO":"APAGADO"}</span></div>
+    return `<div class="card bot"><div class="top"><div><h2>${b.nombre}</h2><div class="tipo">${inf[1]}</div></div>${(()=>{const pa=estadoBot(d,b.nombre)==="pausado";return `<span class="ins${ok&&!pa?"":" mal"}">${!ok?"APAGADO":pa?"PAUSADO":"ENCENDIDO"}</span>`})()}</div>
       ${(()=>{const j=juicio(ESPERADO[b.nombre]||{},realBot(b));return `<div style="margin-top:8px"><span class="chip ${j[0]}">${j[1]}</span></div>`})()}
       <div class="eq num ${cl(tot)}">${usdS(tot)}<small>${pct(100*tot/d.capital)}</small></div>
       ${spark(b.spark,tot>=0?"#34d399":"#f87171")}
       <div class="datos"><div><small>Mercados</small>${inf[0]}</div><div><small>Operaciones cerradas</small><span class="mono">${b.ops||0}</span></div>
-      <div><small>Posición</small>${pos?`<span class="mono">${pos.sim} ${pos.lado} ${pos.lote}</span>`:'<span class="mut">sin operación abierta</span>'}</div>
+      <div><small>Posición</small>${pos?`<span class="mono">${pos.sim} ${pos.lado} ${lote(pos.lote)}</span>`:'<span class="mut">sin operación abierta</span>'}</div>
       <div><small>Exposición</small><span class="mono">${usd0(b.nocional||0)}</span></div></div></div>`}).join("");
   $("abiertas").innerHTML=d.posiciones.length?d.posiciones.map(p=>`<div class="op"><span class="h mono">${hhmm(p.desde||0)}</span><span class="s mono">${p.sim}</span><span class="g mono ${cl(p.gan)}">${p.lado} ${usdS(p.gan)}</span><span class="mut">${p.bot}</span></div>`).join(""):'<div class="vacio">Ninguna abierta</div>';
   $("cerradas").innerHTML=d.cerradas_hoy.length?d.cerradas_hoy.map(p=>`<div class="op"><span class="h mono">${hhmm(p.t)}</span><span class="s mono">${p.sim}</span><span class="g mono ${cl(p.neto)}">${p.neto>=0?"ganó":"perdió"} ${usdS(p.neto)}</span><span class="mut">${p.bot}</span></div>`).join(""):'<div class="vacio">Ninguna todavía</div>';
@@ -397,12 +524,14 @@ function pintar(d){
   $("t_curva").textContent=(d.curva||[]).length+" cierres";
   resultados(d.curva);
   comparar(bots);
+  botsDetalle(d);
+  historial(d);
   calendario(d.calendario,d.actualizado);
   const tg=$("tg_estado");tg.textContent=d.telegram?"Activado":"Sin configurar";tg.className="chip"+(d.telegram?"":" amb");
   const ae=d.avisos_enviados||[];
   $("avisos_env").innerHTML=ae.length?ae.map(a=>`<div class="op"><span class="h">${a.hora}</span><span>${a.texto}</span></div>`).join(""):'<div class="vacio">Todavía no hubo avisos.</div>';
 }
-$("panico").onclick=()=>alert("El botón Apagar bots todavía no está conectado. Cuando lo esté, va a cerrar todas las operaciones abiertas y apagar los dos bots, pidiéndote confirmación antes.");
+$("panico").onclick=()=>pedirCambio("todos","pausar");
 
 // ---- SIMULACIÓN: datos inventados que se mueven solos (en el panel real vienen de MT5) ----
 let flot=-22.3;
@@ -410,6 +539,10 @@ const SEMILLA=[0,38,22,75,60,120,95,150,210,185,240,300,270,335,310,390,365,420,
 function serie(n,pg,pp,pgan,sem){let x=sem,c=0;const o=[0];for(let i=0;i<n;i++){x=(x*9301+49297)%233280;const r=x/233280;c+=r<pgan?pg*(0.5+r):pp*(0.6+r*0.6);o.push(Math.round(c*100)/100)}return o}
 const SP1=serie(26,128,-45,0.38,7),SP2=serie(48,30.5,-22.8,0.52,11);
 function calDemo(t){const o=[],h=Math.floor(t/86400);let x=5;for(let k=h-34;k<=h;k++){const dw=(new Date(k*864e5).getUTCDay()+6)%7;if(dw>=5&&k%3)continue;x=(x*9301+49297)%233280;const r=x/233280;o.push([k*86400,Math.round((r-0.42)*180*100)/100])}return o}
+const SIMS1=["ETHUSD","BTCUSD","XAUUSD"];
+function histDemo(t){const o=[];const mk=(sp,bot,sims,cada,durMin,durMax)=>{let ci=t-sp.length*cada;for(let i=1;i<sp.length;i++){ci+=cada*(0.6+((i*37)%10)/12);const d=durMin+((i*53)%100)/100*(durMax-durMin);o.push({ab:Math.round(ci-d),ci:Math.round(ci),sim:sims[i%sims.length],bot:bot,lado:"compra",lote:bot==="Tendencia 4H"?0.4+((i*7)%5)/10:0.1,neto:Math.round((sp[i]-sp[i-1])*100)/100})}};
+  mk(SP1,"Tendencia 4H",SIMS1,86400*1.2,4*3600,60*3600);mk(SP2,"Williams Nasdaq",["USTEC"],86400*0.65,1200,5*3600);return o.sort((a,b)=>a.ci-b.ci)}
+let DEMO_CTRL={"Tendencia 4H":"activo","Williams Nasdaq":"activo"};const DEMO_AV=[];
 async function leerEstado(){
   flot+=(Math.random()-0.48)*7;
   const t=Math.floor(Date.now()/1000),cap=5000,F=0.33,saldo=cap+640*F,pat=saldo+flot;
@@ -419,8 +552,8 @@ async function leerEstado(){
    hoy_usd:hoy,hoy_pct:hoy/cap*100,total_usd:pat-cap,total_pct:(pat-cap)/cap*100,meta_pct:8,lim_diario:5,lim_total:10,freno_diario:4,freno_total:9,
    dias_operados:12,dias_minimos:3,nocional:3350,
    bots:[{nombre:"Tendencia 4H",abiertas:2,cerrado:SP1[SP1.length-1],flotante:flot,ops:26,nocional:3350,spark:SP1},
-         {nombre:"Williams Nasdaq",abiertas:0,cerrado:SP2[SP2.length-1],flotante:0,ops:48,nocional:0,spark:SP2}],calendario:calDemo(t),telegram:true,
-   avisos_enviados:[{hora:"16:55",texto:"Williams Nasdaq cerró USTEC: perdió US$ 37,70."},{hora:"11:20",texto:"Tendencia 4H abrió ETHUSD (compra, 0.5 lotes)."},{hora:"23:00",texto:"Resumen del día: US$ 42,10 hoy (+0,84 %). Total: US$ 171,30 (+3,43 %). Objetivo: 3,43 de 8 %. Días operados: 11 de 3."}],
+         {nombre:"Williams Nasdaq",abiertas:0,cerrado:SP2[SP2.length-1],flotante:0,ops:48,nocional:0,spark:SP2}],calendario:calDemo(t),telegram:true,historial:histDemo(t),control:DEMO_CTRL,pin_requerido:false,
+   avisos_enviados:DEMO_AV.concat([{hora:"16:55",texto:"Williams Nasdaq cerró USTEC: perdió US$ 37,70."},{hora:"11:20",texto:"Tendencia 4H abrió ETHUSD (compra, 0.5 lotes)."},{hora:"23:00",texto:"Resumen del día: US$ 42,10 hoy (+0,84 %). Total: US$ 171,30 (+3,43 %). Objetivo: 3,43 de 8 %. Días operados: 11 de 3."}]),
    posiciones:[{sim:"ETHUSD",lado:"compra",lote:0.5,gan:flot*0.6,nocional:1850,bot:"Tendencia 4H",desde:t-5400},
                {sim:"XAUUSD",lado:"compra",lote:0.4,gan:flot*0.4,nocional:1500,bot:"Tendencia 4H",desde:t-26000}],
    cerradas_hoy:[{t:t-7200,sim:"USTEC",bot:"Williams Nasdaq",neto:-37.7},{t:t-20000,sim:"BTCUSD",bot:"Tendencia 4H",neto:62.4}],curva:curva,
