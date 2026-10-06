@@ -152,6 +152,29 @@ dialog .pin{width:100%;margin-bottom:14px}
 .gpos .op{font-size:15px}
 .credito{font-size:13px;color:var(--mut)}.credito a{color:var(--mut)}
 @media(max-width:900px){.graf{height:330px}}
+
+.ld{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:7px;font-weight:700;font-size:13px;letter-spacing:.02em;white-space:nowrap}
+.ld svg{width:10px;height:10px;fill:currentColor}
+.ld.c{background:#0c2a22;color:var(--verde)}.ld.v{background:#3a1515;color:var(--rojo)}
+.graf{position:relative}
+.gov{position:absolute;left:10px;top:10px;z-index:3;display:flex;flex-direction:column;gap:6px;max-width:calc(100% - 90px);pointer-events:none}
+.gov div{background:rgba(10,17,29,.88);border:1px solid var(--ln);border-radius:10px;padding:8px 12px;font-size:14px;line-height:1.35;backdrop-filter:blur(4px)}
+.gov b{font-weight:700}
+.gexp{font-size:14px;color:#c9d5e6;margin:10px 0 2px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center}
+#mas,#masmenu{display:none}
+@media(max-width:900px){
+ .side [data-v=resultados],.side [data-v=reglas],.side [data-v=alertas]{display:none}
+ #mas{display:flex}
+ #masmenu.abierto{display:flex;position:fixed;right:10px;bottom:82px;z-index:11;flex-direction:column;background:#0d1523;border:1px solid var(--ln);border-radius:14px;padding:6px;box-shadow:0 16px 40px rgba(0,0,0,.5);min-width:200px}
+ .side #masmenu button{flex-direction:row;justify-content:flex-start;min-height:0;flex:none;display:flex;align-items:center;gap:12px;background:none;border:0;color:var(--tx);font:inherit;font-size:17px;padding:14px 16px;border-radius:10px;text-align:left;cursor:pointer}
+ #masmenu button.on{background:#0f2236}
+ #masmenu svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
+ .cab{align-items:center}.cab p{font-size:15px}.cab h1{font-size:26px}
+ .panico{padding:9px 12px;font-size:15px}
+ .gov{max-width:calc(100% - 70px)}.gov div{font-size:13px;padding:6px 9px}
+ .gcab h2{font-size:18px}
+}
+.gayuda{border-top:0;padding-top:6px;margin-top:6px}.gayuda summary{font-size:15px;color:var(--mut);font-weight:500}
 </style>
 </head>
 <body>
@@ -165,6 +188,12 @@ dialog .pin{width:100%;margin-bottom:14px}
   <button data-v="resultados"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-6 11h16L14 9V3"/></svg>Resultados</button>
   <button data-v="reglas"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Reglas</button>
   <button data-v="alertas"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alertas</button>
+  <button id="mas" aria-haspopup="true"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>Más</button>
+  <div id="masmenu">
+    <button data-m="resultados"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-6 11h16L14 9V3"/></svg>Resultados</button>
+    <button data-m="reglas"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>Reglas</button>
+    <button data-m="alertas"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg>Alertas</button>
+  </div>
   <div class="vivo" id="vivo"><i></i><span id="vivo_t">conectando…</span></div>
 </nav>
 
@@ -317,9 +346,14 @@ const cl=v=>v>0?"verde":v<0?"rojo":"";
 const hhmm=t=>new Date(t*1000).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"});
 const fecha=t=>{const d=new Date(t*1000);return String(d.getUTCMonth()+1).padStart(2,"0")+"-"+String(d.getUTCDate()).padStart(2,"0")};
 const TITULOS={resumen:"Resumen",bots:"Bots",graficos:"Gráficos",historial:"Historial",resultados:"Resultados",reglas:"Reglas",alertas:"Alertas"};
-document.querySelectorAll("#menu button").forEach(b=>b.onclick=()=>irA(b.dataset.v));
+document.querySelectorAll("#menu button[data-v]").forEach(b=>b.onclick=()=>irA(b.dataset.v));
+$("mas").onclick=e=>{e.stopPropagation();$("masmenu").classList.toggle("abierto")};
+document.querySelectorAll("#masmenu button").forEach(b=>b.onclick=()=>{$("masmenu").classList.remove("abierto");irA(b.dataset.m)});
+document.addEventListener("click",()=>$("masmenu").classList.remove("abierto"));
 function irA(v){
-  document.querySelectorAll("#menu button").forEach(x=>x.classList.toggle("on",x.dataset.v===v));
+  document.querySelectorAll("#menu button[data-v]").forEach(x=>x.classList.toggle("on",x.dataset.v===v));
+  const enMas=["resultados","reglas","alertas"].includes(v);$("mas").classList.toggle("on",enMas);
+  document.querySelectorAll("#masmenu button").forEach(x=>x.classList.toggle("on",x.dataset.m===v));
   document.querySelectorAll(".vista").forEach(x=>x.classList.toggle("on",x.id==="v_"+v));
   $("titulo").textContent=TITULOS[v]||v;
   VISTA=v;if(v==="graficos")refrescarGraficos();
@@ -447,7 +481,7 @@ function botsDetalle(d){
       <div class="mini"><div><small>Operaciones</small><b class="num">${b.ops||0}</b></div><div><small>Ganadoras</small><b class="num">${Math.round(r.gan)} %</b></div>
         <div><small>Gana por 1</small><b class="num">${r.x1.toFixed(2).replace(".",",")}</b></div><div><small>Abiertas</small><b class="num">${b.abiertas||0}</b></div></div>
       <div class="tit" style="margin-bottom:4px"><span>Últimas operaciones</span></div>
-      ${ult.length?ult.map(h=>`<div class="op"><span class="h">${fh(h.ci)}</span><span class="s">${h.sim}</span><span class="g ${cl(h.neto)}">${h.neto>=0?"ganó":"perdió"} ${usdS(h.neto)}</span><span class="mut">${dur(h.ci-h.ab)}</span></div>`).join(""):'<div class="vacio">Sin operaciones cerradas todavía.</div>'}
+      ${ult.length?ult.map(h=>`<div class="op"><span class="h">${fh(h.ci)}</span><span class="s">${h.sim}</span>${ladoChip(h.lado)}<span class="g ${cl(h.neto)}">${h.neto>=0?"ganó":"perdió"} ${usdS(h.neto)}</span><span class="mut">${dur(h.ci-h.ab)}</span></div>`).join(""):'<div class="vacio">Sin operaciones cerradas todavía.</div>'}
       <button class="lnk" data-hist="${b.nombre}">Ver todo el historial de este bot</button>
       <details><summary>Cómo funciona</summary>${ds.slice(1).map(x=>`<p class="d"><span class="mut">${x[0]}:</span> ${x[1]}</p>`).join("")}</details></div>`}).join("");
   document.querySelectorAll("#bots_det .sw").forEach(x=>x.onclick=()=>pedirCambio(x.dataset.bot,x.getAttribute("aria-checked")==="true"?"pausar":"reanudar"));
@@ -470,7 +504,7 @@ function historial(d){
   $("h_res").innerHTML=`<span><b>${h.length}</b> operaciones</span><span><b>${h.length?Math.round(100*g.length/h.length):0} %</b> ganadoras</span><span>Resultado <b class="${cl(tot)}">${usdS(tot)}</b></span><span>Gana <b>${sp?(sg/sp).toFixed(2).replace(".",","):"–"}</b> por cada 1 que pierde</span>`;
   const cols=[["ci","Cierre"],["bot","Bot"],["sim","Mercado"],["lado","Lado"],["lote","Lote","r"],["dur","Duración","r"],["neto","Resultado","r"]];
   $("h_tab").innerHTML=`<tr>${cols.map(c=>`<th class="${c[2]||""}${["bot","lado","lote","dur"].includes(c[0])?" opc":""}${HF.orden===c[0]?" ord":""}" data-o="${c[0]}">${c[1]}${HF.orden===c[0]?(HF.desc?" ↓":" ↑"):""}</th>`).join("")}</tr>`+
-    (h.length?h.slice(0,HF.max).map(x=>`<tr><td>${fh(x.ci)}</td><td class="opc">${x.bot}</td><td><b>${x.sim}</b><div class="solo-mov mut">${x.bot}</div></td><td class="opc">${x.lado}</td><td class="r opc">${lote(x.lote)}</td><td class="r opc">${dur(x.ci-x.ab)}</td><td class="r ${cl(x.neto)}"><b>${usdS(x.neto)}</b></td></tr>`).join("")
+    (h.length?h.slice(0,HF.max).map(x=>`<tr><td>${fh(x.ci)}</td><td class="opc">${x.bot}</td><td><b>${x.sim}</b><div class="solo-mov">${ladoChip(x.lado)} <span class="mut">${x.bot}</span></div></td><td class="opc">${ladoChip(x.lado)}</td><td class="r opc">${lote(x.lote)}</td><td class="r opc">${dur(x.ci-x.ab)}</td><td class="r ${cl(x.neto)}"><b>${usdS(x.neto)}</b></td></tr>`).join("")
      :`<tr><td colspan="7" class="vacio">No hay operaciones con estos filtros.</td></tr>`);
   $("h_mas").hidden=h.length<=HF.max;
   document.querySelectorAll("#h_tab th").forEach(th=>th.onclick=()=>{const o=th.dataset.o;HF.desc=HF.orden===o?!HF.desc:true;HF.orden=o;historial(ULT)});
@@ -514,11 +548,11 @@ function armarGraficos(){
     if(GR[b])return;
     const id=b.replace(/\W/g,"");
     cont.insertAdjacentHTML("beforeend",`<div class="card gbot"><div class="gcab"><h2>${b}</h2><div class="grupo" id="gs_${id}">${bots[b].map((sy,i)=>`<button class="f${i?"":" on"}" data-s="${sy}">${sy} · ${VELAS[sy].tf}</button>`).join("")}</div></div>
-      <div class="graf" id="gr_${id}"></div>
-      <div class="ley"><span><i style="border-color:#38bdf8"></i>Entrada</span><span><i style="border-color:#f87171;border-top-style:dashed"></i>Stop Loss</span><span><i style="border-color:#34d399;border-top-style:dashed"></i>Take Profit</span><span>▲ abrió · ● cerró (verde ganó, rojo perdió)</span></div>
-      <div class="gpos" id="gp_${id}"></div></div>`);
+      <div class="graf" id="gr_${id}"><div class="gov" id="go_${id}"></div></div>
+      <details class="gayuda"><summary>¿Qué son las líneas?</summary><div class="ley"><span><i style="border-color:#e7edf6"></i>precio de entrada</span><span><i style="border-color:#f87171;border-top-style:dashed"></i>Stop Loss: ahí cierra perdiendo</span><span><i style="border-color:#34d399;border-top-style:dashed"></i>Take Profit: ahí cierra ganando</span><span>Flecha = abrió · cuadradito = cerró, con lo que ganó o perdió</span></div></details>
+      </div>`);
     const ch=LightweightCharts.createChart($("gr_"+id),{autoSize:true,layout:{background:{color:"#0a111d"},textColor:"#9db0c9",fontSize:13,fontFamily:"system-ui,Segoe UI,Roboto,sans-serif"},
-      grid:{vertLines:{color:"#121c2e"},horzLines:{color:"#121c2e"}},rightPriceScale:{borderColor:"#17223a"},timeScale:{borderColor:"#17223a",timeVisible:true,secondsVisible:false},
+      grid:{vertLines:{visible:false},horzLines:{color:"#101a2b"}},rightPriceScale:{borderColor:"#17223a"},timeScale:{borderColor:"#17223a",timeVisible:true,secondsVisible:false},
       crosshair:{mode:0},localization:{locale:"es-AR"}});
     const se=ch.addCandlestickSeries({upColor:"#34d399",downColor:"#f87171",borderVisible:false,wickUpColor:"#34d399",wickDownColor:"#f87171"});
     GR[b]={chart:ch,serie:se,sim:bots[b][0],lineas:[],nuevo:true};
@@ -531,22 +565,24 @@ function pintarGrafico(b){
   const V=VELAS[g.sim],dig=V.dig||2,tf=TF_SEG[V.tf]||14400,id=b.replace(/\W/g,"");
   g.serie.applyOptions({priceFormat:{type:"price",precision:dig,minMove:1/Math.pow(10,dig)}});
   g.serie.setData(V.v.map(x=>({time:x[0],open:x[1],high:x[2],low:x[3],close:x[4]})));
-  if(g.nuevo){g.chart.timeScale().fitContent();g.nuevo=false}
+  if(g.nuevo){const n=V.v.length,ancho=$("gr_"+id).clientWidth;
+    if(ancho<700)g.chart.timeScale().setVisibleLogicalRange({from:n-60,to:n+2});else g.chart.timeScale().fitContent();g.nuevo=false}
   g.lineas.forEach(l=>g.serie.removePriceLine(l));g.lineas=[];
   const pos=(d.posiciones||[]).filter(p=>p.sim===g.sim&&p.bot===b);
   pos.forEach(p=>{
     const L=(price,color,style,title)=>{if(price>0)g.lineas.push(g.serie.createPriceLine({price,color,lineWidth:2,lineStyle:style,axisLabelVisible:true,title}))};
-    L(p.precio,"#38bdf8",0,`${p.lado} ${lote(p.lote)}`);L(p.sl,"#f87171",2,"Stop Loss");L(p.tp,"#34d399",2,"Take Profit");
+    L(p.precio,"#e7edf6",0,(p.lado==="compra"?"COMPRA ":"VENTA ")+lote(p.lote));L(p.sl,"#f87171",2,"Stop Loss");L(p.tp,"#34d399",2,"Take Profit");
   });
   const t0=V.v.length?V.v[0][0]:0,bar=t=>t-t%tf,m=[];
   (d.historial||[]).filter(h=>h.sim===g.sim&&h.bot===b&&h.ci>=t0).forEach(h=>{
-    if(h.ab>=t0)m.push({time:bar(h.ab),position:h.lado==="compra"?"belowBar":"aboveBar",color:"#38bdf8",shape:h.lado==="compra"?"arrowUp":"arrowDown",text:""});
-    m.push({time:bar(h.ci),position:"aboveBar",color:h.neto>=0?"#34d399":"#f87171",shape:"circle",text:usdS(h.neto).replace("US$ ","")});
+    const c=h.lado==="compra";
+    if(h.ab>=t0)m.push({time:bar(h.ab),position:c?"belowBar":"aboveBar",color:c?"#34d399":"#f87171",shape:c?"arrowUp":"arrowDown",text:c?"Compra":"Venta"});
+    m.push({time:bar(h.ci),position:c?"aboveBar":"belowBar",color:h.neto>=0?"#34d399":"#f87171",shape:"square",text:"Cerró "+(h.neto>=0?"+":"")+Math.round(h.neto)});
   });
-  pos.forEach(p=>{if(p.desde>=t0)m.push({time:bar(p.desde),position:p.lado==="compra"?"belowBar":"aboveBar",color:"#38bdf8",shape:p.lado==="compra"?"arrowUp":"arrowDown",text:"abierta"})});
-  g.serie.setMarkers(m.sort((a,c)=>a.time-c.time));
-  $("gp_"+id).innerHTML=pos.length?`<div class="tit" style="margin:8px 0 0"><span>Abiertas en ${g.sim}</span></div>`+pos.map(p=>`<div class="op"><span class="s">${p.lado} ${lote(p.lote)}</span><span>entrada <b>${p.precio}</b></span><span class="rojo">SL ${p.sl||"–"}</span><span class="verde">TP ${p.tp||"–"}</span><span class="g ${cl(p.gan)}"><b>${usdS(p.gan)}</b></span></div>`).join("")
-    :`<div class="vacio" style="padding-top:8px">Sin operaciones abiertas en ${g.sim}.</div>`;
+  pos.forEach(p=>{const c=p.lado==="compra";if(p.desde>=t0)m.push({time:bar(p.desde),position:c?"belowBar":"aboveBar",color:c?"#34d399":"#f87171",shape:c?"arrowUp":"arrowDown",text:(c?"Compra":"Venta")+" abierta"})});
+  $("go_"+id).innerHTML=pos.length?"":`<div class="mut">Sin operación abierta en ${g.sim}</div>`;$("go_"+id).innerHTML+=pos.map(p=>`<div>${ladoChip(p.lado)} <b>${lote(p.lote)}</b> lotes<br><span class="mut">entrada</span> <b>${p.precio}</b> · <span class="${cl(p.gan)}"><b>${usdS(p.gan)}</b></span></div>`).join("");
+  m.sort((a,c)=>a.time-c.time);m.forEach((x,i)=>{x.size=.7;if(i<m.length-3||/abierta/.test(x.text))x.text=""});
+  g.serie.setMarkers(m);
 }
 async function refrescarGraficos(){
   if(VISTA!=="graficos")return;
@@ -554,13 +590,15 @@ async function refrescarGraficos(){
   if(!VELAS||!Object.keys(VELAS).length){$("graficos").innerHTML='<div class="card vacio">Todavía no llegan velas: ¿está Panel_Estado cargado en MT5?</div>';return}
   armarGraficos();Object.keys(GR).forEach(pintarGrafico);
 }
+const TRI_UP='<svg viewBox="0 0 10 10"><path d="M5 1l4 8H1z"/></svg>',TRI_DN='<svg viewBox="0 0 10 10"><path d="M1 1h8L5 9z"/></svg>';
+const ladoChip=l=>l==="compra"?`<span class="ld c">${TRI_UP}COMPRA</span>`:`<span class="ld v">${TRI_DN}VENTA</span>`;
 const INFO={"Tendencia 4H":["ETH · BTC · ORO","LARGO · 1,25 %"],"Williams Nasdaq":["NASDAQ","UNA POR DÍA · 0,75 %"]};
 function pintar(d){
   ULT=d;
   const ok=d.conectado&&d.algo_terminal&&d.algo_cuenta;
   $("vivo").className="vivo"+(ok?"":" mal");$("vivo_t").textContent=ok?"En vivo":"Revisar";
   const bots=d.bots||[];const enc=ok?bots.filter(b=>estadoBot(d,b.nombre)!=="pausado").length:0;
-  $("subt").textContent=(ok?"En vivo · ":"Revisar · ")+bots.length+" bots · "+enc+(enc===1?" encendido":" encendidos")+(d.posiciones.length?" · "+d.posiciones.length+" operación(es) abierta(s)":"");
+  $("subt").textContent=(ok?"En vivo · ":"Revisar · ")+bots.length+" bots · "+enc+(enc===1?" encendido":" encendidos")+(d.posiciones.length?" · "+d.posiciones.length+(d.posiciones.length===1?" abierta":" abiertas"):"");
   $("k_cap").textContent=usd(d.patrimonio);$("k_cap2").textContent="Capital inicial "+usd(d.capital);
   $("k_tot").textContent=usdS(d.total_usd);$("k_tot").className="num "+cl(d.total_usd);
   $("k_tot2").textContent=pct(d.total_pct)+" del capital";$("k_tot2").className=cl(d.total_pct);
@@ -589,7 +627,7 @@ function pintar(d){
       <div class="datos"><div><small>Mercados</small>${inf[0]}</div><div><small>Operaciones cerradas</small><span class="mono">${b.ops||0}</span></div>
       <div><small>Posición</small>${pos?`<span class="mono">${pos.sim} ${pos.lado} ${lote(pos.lote)}</span>`:'<span class="mut">sin operación abierta</span>'}</div>
       <div><small>Exposición</small><span class="mono">${usd0(b.nocional||0)}</span></div></div></div>`}).join("");
-  $("abiertas").innerHTML=d.posiciones.length?d.posiciones.map(p=>`<div class="op"><span class="h mono">${hhmm(p.desde||0)}</span><span class="s mono">${p.sim}</span><span class="g mono ${cl(p.gan)}">${p.lado} ${usdS(p.gan)}</span><span class="mut">${p.bot}</span></div>`).join(""):'<div class="vacio">Ninguna abierta</div>';
+  $("abiertas").innerHTML=d.posiciones.length?d.posiciones.map(p=>`<div class="op"><span class="h mono">${hhmm(p.desde||0)}</span><span class="s mono">${p.sim}</span>${ladoChip(p.lado)}<span class="g mono ${cl(p.gan)}">${usdS(p.gan)}</span><span class="mut">${p.bot}</span></div>`).join(""):'<div class="vacio">Ninguna abierta</div>';
   $("cerradas").innerHTML=d.cerradas_hoy.length?d.cerradas_hoy.map(p=>`<div class="op"><span class="h mono">${hhmm(p.t)}</span><span class="s mono">${p.sim}</span><span class="g mono ${cl(p.neto)}">${p.neto>=0?"ganó":"perdió"} ${usdS(p.neto)}</span><span class="mut">${p.bot}</span></div>`).join(""):'<div class="vacio">Ninguna todavía</div>';
   $("avisos").innerHTML=avisos(d).map(x=>`<div class="av ${x[0]}"><em>${x[1]}</em>${x[2]}${x[3]?`<small>${x[3]}</small>`:""}</div>`).join("");
   area(d.curva,"curva",{ejes:true,ref:d.capital});
@@ -613,7 +651,7 @@ function serie(n,pg,pp,pgan,sem){let x=sem,c=0;const o=[0];for(let i=0;i<n;i++){
 const SP1=serie(26,128,-45,0.38,7),SP2=serie(48,30.5,-22.8,0.52,11);
 function calDemo(t){const o=[],h=Math.floor(t/86400);let x=5;for(let k=h-34;k<=h;k++){const dw=(new Date(k*864e5).getUTCDay()+6)%7;if(dw>=5&&k%3)continue;x=(x*9301+49297)%233280;const r=x/233280;o.push([k*86400,Math.round((r-0.42)*180*100)/100])}return o}
 const SIMS1=["ETHUSD","BTCUSD","XAUUSD"];
-function histDemo(t){const o=[];const mk=(sp,bot,sims,cada,durMin,durMax)=>{let ci=t-sp.length*cada;for(let i=1;i<sp.length;i++){ci+=cada*(0.6+((i*37)%10)/12);const d=durMin+((i*53)%100)/100*(durMax-durMin);o.push({ab:Math.round(ci-d),ci:Math.round(ci),sim:sims[i%sims.length],bot:bot,lado:"compra",lote:bot==="Tendencia 4H"?0.4+((i*7)%5)/10:0.1,neto:Math.round((sp[i]-sp[i-1])*100)/100})}};
+function histDemo(t){const o=[];const mk=(sp,bot,sims,cada,durMin,durMax)=>{let ci=t-sp.length*cada;for(let i=1;i<sp.length;i++){ci+=cada*(0.6+((i*37)%10)/12);const d=durMin+((i*53)%100)/100*(durMax-durMin);o.push({ab:Math.round(ci-d),ci:Math.round(ci),sim:sims[i%sims.length],bot:bot,lado:bot==="Tendencia 4H"||i%3?"compra":"venta",lote:bot==="Tendencia 4H"?0.4+((i*7)%5)/10:0.1,neto:Math.round((sp[i]-sp[i-1])*100)/100})}};
   mk(SP1,"Tendencia 4H",SIMS1,86400*1.2,4*3600,60*3600);mk(SP2,"Williams Nasdaq",["USTEC"],86400*0.65,1200,5*3600);return o.sort((a,b)=>a.ci-b.ci)}
 const DV={};(function(){const base={ETHUSD:[2600,14400,2],BTCUSD:[62000,14400,2],XAUUSD:[2650,14400,2],USTEC:[20100,900,1]};let x=3;
   const now=Math.floor(Date.now()/1000);
@@ -635,10 +673,11 @@ async function leerEstado(){
    hoy_usd:hoy,hoy_pct:hoy/cap*100,total_usd:pat-cap,total_pct:(pat-cap)/cap*100,meta_pct:8,lim_diario:5,lim_total:10,freno_diario:4,freno_total:9,
    dias_operados:12,dias_minimos:3,nocional:3350,
    bots:[{nombre:"Tendencia 4H",abiertas:2,cerrado:SP1[SP1.length-1],flotante:flot,ops:26,nocional:3350,spark:SP1},
-         {nombre:"Williams Nasdaq",abiertas:0,cerrado:SP2[SP2.length-1],flotante:0,ops:48,nocional:0,spark:SP2}],calendario:calDemo(t),telegram:true,historial:histDemo(t),control:DEMO_CTRL,pin_requerido:false,
+         {nombre:"Williams Nasdaq",abiertas:1,cerrado:SP2[SP2.length-1],flotante:0,ops:48,nocional:0,spark:SP2}],calendario:calDemo(t),telegram:true,historial:histDemo(t),control:DEMO_CTRL,pin_requerido:false,
    avisos_enviados:DEMO_AV.concat([{hora:"16:55",texto:"Williams Nasdaq cerró USTEC: perdió US$ 37,70."},{hora:"11:20",texto:"Tendencia 4H abrió ETHUSD (compra, 0.5 lotes)."},{hora:"23:00",texto:"Resumen del día: US$ 42,10 hoy (+0,84 %). Total: US$ 171,30 (+3,43 %). Objetivo: 3,43 de 8 %. Días operados: 11 de 3."}]),
    posiciones:[{sim:"ETHUSD",lado:"compra",lote:0.5,precio:pe,sl:+(pe*0.965).toFixed(2),tp:+(pe*1.07).toFixed(2),gan:flot*0.6,nocional:1850,bot:"Tendencia 4H",desde:DV.ETHUSD.v[188][0]},
-               {sim:"XAUUSD",lado:"compra",lote:0.4,precio:pg,sl:+(pg*0.98).toFixed(2),tp:+(pg*1.04).toFixed(2),gan:flot*0.4,nocional:1500,bot:"Tendencia 4H",desde:DV.XAUUSD.v[194][0]}],
+               {sim:"XAUUSD",lado:"compra",lote:0.4,precio:pg,sl:+(pg*0.98).toFixed(2),tp:+(pg*1.04).toFixed(2),gan:flot*0.4,nocional:1500,bot:"Tendencia 4H",desde:DV.XAUUSD.v[194][0]},
+               {sim:"USTEC",lado:"venta",lote:0.1,precio:DV.USTEC.v[192][4],sl:+(DV.USTEC.v[192][4]+60).toFixed(1),tp:+(DV.USTEC.v[192][4]-120).toFixed(1),gan:-flot*0.3,nocional:2010,bot:"Williams Nasdaq",desde:DV.USTEC.v[192][0]}],
    cerradas_hoy:[{t:t-7200,sim:"USTEC",bot:"Williams Nasdaq",neto:-37.7},{t:t-20000,sim:"BTCUSD",bot:"Tendencia 4H",neto:62.4}],curva:curva,
    extra_avisos:[["","WILLIAMS","Hoy cerró la operación del Nasdaq por Stop Loss: -37,70 US$.","Una por día, cierra a las 15:55 de Nueva York"]]};
 }
