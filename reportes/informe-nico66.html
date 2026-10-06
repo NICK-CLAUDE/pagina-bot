@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pruebas en nico66</title>
+<style>
+:root { --bg: #f6f7f9; --card: #fff; --text: #1d2330; --muted: #5b6475; --line: #e2e5ea; --ok: #12805c; --warn: #b26a00; --bad: #c0392b; --acc: #2563eb; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0f141b; --card: #171e28; --text: #e6e9ef; --muted: #9aa4b5; --line: #2a3442; --ok: #3ccf91; --warn: #f0ad4e; --bad: #ff6b5e; --acc: #6ea8ff; } }
+:root[data-theme="dark"] { --bg: #0f141b; --card: #171e28; --text: #e6e9ef; --muted: #9aa4b5; --line: #2a3442; --ok: #3ccf91; --warn: #f0ad4e; --bad: #ff6b5e; --acc: #6ea8ff; }
+* { box-sizing: border-box }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif }
+main { max-width: 860px; margin: 0 auto; padding: 24px 16px 60px }
+h1 { font-size: 26px; margin: 0 0 6px }
+h2 { font-size: 20px; margin: 32px 0 10px }
+p.sub { color: var(--muted); margin: 0 0 18px }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin: 12px 0 }
+.veredicto { border-left: 5px solid var(--ok) }
+.tabla { overflow-x: auto }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 520px }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap }
+th:first-child, td:first-child { text-align: left; white-space: normal }
+th { color: var(--muted); font-weight: 600; font-size: 13px }
+tr.destacado td { font-weight: 700 }
+.ok { color: var(--ok) } .warn { color: var(--warn) } .bad { color: var(--bad) }
+ul { padding-left: 20px; margin: 6px 0 } li { margin: 6px 0 }
+small, .nota { color: var(--muted); font-size: 13.5px }
+a { color: var(--acc) }
+</style>
+</head>
+<body>
+<main>
+  <h1>Pruebas de los bots en las herramientas de nico66</h1>
+  <p class="sub">Backtest Analyzer, Monte Carlo y Battle Bots (nico66fx.github.io) · datos de MetaTrader 5 (IC Markets) de 2018 a octubre de 2026 · cuenta de 5.000 US$ · 5 de octubre de 2026</p>
+
+  <div class="card veredicto">
+    <p><b>🟢 Veredicto: los dos bots juntos siguen siendo la mejor opción.</b> Con las reglas de Funding Pips, la herramienta de nico66 da que <b>pasan 8 de cada 10 challenges, en unos 4 meses</b>. Mi simulador daba 10 de cada 10. La diferencia se explica casi entera porque nico66 no conoce el freno del Bot 1 que <b>baja el riesgo a la mitad</b> cuando la cuenta cae un 5 %, y ese freno es justo el que evita los challenges perdidos. Lo realista es esperar <b>entre 8 y 10 de cada 10</b>. En el peor caso se pierden los 36 US$ de la cuota.</p>
+  </div>
+
+  <h2>Qué se probó</h2>
+  <div class="card">
+    <ul>
+      <li><b>Bot 1</b> (ETH, Bitcoin y oro, velas de 4 horas, riesgo 1,25 %): de junio de 2018 a octubre de 2026.</li>
+      <li><b>Bot 2</b> (Nasdaq, una operación por día, riesgo 0,75 %): de enero de 2018 a octubre de 2026.</li>
+      <li><b>Los dos juntos</b> en la misma cuenta, como van a correr en el challenge.</li>
+      <li><b>Bot 1 versión cuenta fondeada</b> (cierra todo el viernes y usa cripto 1:1).</li>
+      <li><b>RSI2</b>, un bot que ya habíamos descartado, para confirmar.</li>
+    </ul>
+    <p>Son 8 años que incluyen la caída de las criptomonedas de 2018, el COVID de 2020 y el año malo de 2022. No pude agregar 2014 a 2017: MetaTrader se trabó armando los datos del Nasdaq (generó 24 GB sin avanzar) y lo frené a tu pedido. Además, los datos de cripto de 2016 y 2017 tienen huecos y errores. Ocho años alcanzan de sobra para estas pruebas.</p>
+    <p class="nota">Los informes se cargaron con <b>riesgo fijo en dólares</b>: cada operación tiene el tamaño que tendría con la cuenta en 5.000 US$, como pasa en un challenge, que siempre arranca desde el depósito. Sin ese ajuste, nico66 ve las operaciones de cuando la cuenta ya había crecido a 13.000 o 19.000 US$ como si arriesgaran 2 o 3 veces más, y da resultados injustamente malos: 4 o 5 de cada 10.</p>
+  </div>
+
+  <h2>Resultados de 8 años (Backtest Analyzer)</h2>
+  <div class="card tabla">
+    <table>
+      <tr><th></th><th>Ganancia</th><th>Gana por cada 1 que pierde</th><th>Max Drawdown (peor bajada)</th><th>Por año</th><th>Bajada más larga</th></tr>
+      <tr><td>Bot 1</td><td>+12.880 US$</td><td>1,66</td><td class="warn">15 % (1.750 US$)</td><td>17 %</td><td>389 días</td></tr>
+      <tr><td>Bot 2</td><td>+8.160 US$</td><td>1,40</td><td class="ok">7,4 % (480 US$)</td><td>12 %</td><td>130 días</td></tr>
+      <tr class="destacado"><td>Los dos juntos</td><td>+21.040 US$</td><td>1,53</td><td class="ok">7,4 % (1.240 US$)</td><td>21 %</td><td>303 días</td></tr>
+      <tr><td>Bot 1 versión fondeada</td><td>+8.660 US$</td><td>1,31</td><td class="bad">18 % (1.740 US$)</td><td>13 %</td><td>614 días</td></tr>
+    </table>
+    <p class="nota">Juntos ganan lo mismo que la suma de los dos, pero con la peor bajada del bot más tranquilo. Esto pasa porque cripto y Nasdaq casi nunca tienen la mala racha al mismo tiempo. Por eso conviene correrlos juntos.</p>
+  </div>
+
+  <h2>Simulación del challenge (pestaña Fondeos)</h2>
+  <div class="card tabla">
+    <p>Reglas cargadas: objetivo 8 % y 5 %, pérdida máxima 5 % por día y 10 % en total (fija), 3 días mínimos, sin límite de tiempo. nico66 encadena intentos: cuando uno se pasa o se quema, el siguiente arranca en la operación de al lado.</p>
+    <table>
+      <tr><th></th><th>nico66: pasa</th><th>Se quemó por</th><th>Días hasta la cuenta fondeada</th><th>Mi simulador: pasa</th><th>Días</th></tr>
+      <tr><td>Bot 1</td><td>13 de 19 (7 de cada 10)</td><td>6 por Max Drawdown</td><td>~165</td><td>86 de cada 100</td><td>127</td></tr>
+      <tr><td>Bot 2</td><td class="ok">11 de 11 (10 de cada 10)</td><td>ninguno</td><td class="warn">~255</td><td>100 de cada 100</td><td>244</td></tr>
+      <tr class="destacado"><td>Los dos juntos</td><td class="ok">22 de 27 (8 de cada 10)</td><td>5 por Max Drawdown</td><td>~115</td><td>98 de cada 100</td><td>110</td></tr>
+      <tr><td>Bot 1 versión fondeada</td><td>11 de 21 (5 de cada 10)</td><td>10 por Max Drawdown</td><td>~125</td><td colspan="2">no se usa para el challenge</td></tr>
+    </table>
+    <p class="nota">Ningún intento se perdió por la pérdida diaria. Todos los quemados fueron por bajar el 10 % total, que es lo que el freno de "mitad de riesgo" del Bot 1 vuelve más difícil.</p>
+  </div>
+
+  <h2>Por qué nico66 da menos que mi simulador</h2>
+  <div class="card">
+    <ul>
+      <li><b>El freno de mitad de riesgo.</b> El Bot 1 real baja el riesgo a la mitad cuando la cuenta cae un 5 % desde su máximo. nico66 solo ve las operaciones, sin ese freno, así que en las malas rachas pierde el doble de lo que perdería el bot de verdad. Esa es la causa principal.</li>
+      <li><b>Cómo arranca cada intento.</b> nico66 empieza el próximo challenge justo después de uno quemado, o sea, en plena mala racha. Mi simulador arranca uno nuevo cada semana del historial. Las dos formas son válidas, y la de nico66 es más dura.</li>
+      <li><b>Los días coinciden:</b> unos 115 días con nico66 y 110 con mi simulador para los dos juntos. Eso confirma que las dos miden lo mismo.</li>
+    </ul>
+  </div>
+
+  <h2>Monte Carlo: qué tan mala puede ser una racha</h2>
+  <div class="card tabla">
+    <p>Se remezclaron al azar las operaciones de los 8 años 5.000 veces, como si el futuro trajera las mismas operaciones en otro orden.</p>
+    <table>
+      <tr><th></th><th>Peor bajada del backtest</th><th>Peor bajada típica</th><th>Peor bajada en el 5 % de los peores casos</th><th>Terminan ganando</th><th>Robustez</th></tr>
+      <tr><td>Bot 1</td><td>15 %</td><td>13 %</td><td class="bad">25 %</td><td>100 %</td><td>100/100</td></tr>
+      <tr><td>Bot 2</td><td>7 %</td><td>7 %</td><td class="warn">13 %</td><td>100 %</td><td>100/100</td></tr>
+      <tr class="destacado"><td>Los dos juntos</td><td>7 %</td><td>10 %</td><td class="warn">19 %</td><td>100 %</td><td>93/100</td></tr>
+    </table>
+    <p class="nota">Estas bajadas son a lo largo de 8 años enteros y sin el freno de mitad de riesgo, no en los 3 o 4 meses de un challenge. Igual muestran algo útil: el Bot 1 solo es el que más se sacude, y juntos se sacuden mucho menos. En todas las versiones, el 100 % de los escenarios termina ganando.</p>
+  </div>
+
+  <h2>Battle Bots: Bot 1 contra Bot 2</h2>
+  <div class="card">
+    <p>Empate 4 a 4. El <b>Bot 1 gana más</b>: 89 US$ por operación ganadora contra 31, y 1,66 contra 1,40 por cada 1 que pierde. El <b>Bot 2 es más seguro</b>: su peor bajada es la mitad (7,4 % contra 15 %) y su peor operación perdió 44 US$ contra 88. Por eso se complementan: el Bot 1 aporta la velocidad y el Bot 2 la calma.</p>
+  </div>
+
+  <h2>Errores de la herramienta que conviene saber</h2>
+  <div class="card">
+    <ul>
+      <li><b>Win Rate (porcentaje de operaciones ganadoras):</b> nico66 muestra 24 a 25 %, pero cuenta la entrada y la salida de cada operación como si fueran dos. Las cifras reales son del 44 % para el Bot 1 y del 51 % para el Bot 2.</li>
+      <li><b>Rachas</b> ("4 perdedoras seguidas"): no sirven por el mismo motivo. Las rachas reales las mide mi simulador.</li>
+      <li><b>Lote medio:</b> no se usa. El tamaño se ajustó con "proporcional al capital".</li>
+    </ul>
+  </div>
+
+  <h2>Descartados (confirmado)</h2>
+  <div class="card">
+    <p>🔴 <b>RSI2</b> (compra después de bajadas fuertes): en 8 años ganó 88 US$ en el S&amp;P 500, perdió 175 US$ en el Nasdaq y perdió 98 US$ en el oro. No pasó ningún challenge en la simulación. Sigue descartado.</p>
+  </div>
+
+  <h2>Qué significa para el challenge</h2>
+  <div class="card">
+    <ul>
+      <li><b>Arrancar con los dos bots juntos</b>, tal como está preparado el paquete para la Mac.</li>
+      <li><b>Tiempo esperado:</b> unos 4 meses para las dos etapas (más o menos 2 para la primera y 1 y medio para la segunda). Puede ser bastante menos o bastante más.</li>
+      <li><b>Peor caso razonable:</b> se quema la cuenta y se pierden los 36 US$ de la cuota. Pasa 1 o 2 de cada 10 veces.</li>
+      <li><b>La versión fondeada del Bot 1 da bastante menos</b> (5 de cada 10 en esta prueba y peor bajada del 18 %). Antes de llegar a la cuenta fondeada, conviene probar esa versión con menos riesgo.</li>
+    </ul>
+  </div>
+
+  <p class="nota">Lo que funcionó en el pasado no asegura que funcione en el futuro. Las pruebas usan precios de IC Markets; Funding Pips puede tener costos algo distintos.</p>
+</main>
+</body>
+</html>
