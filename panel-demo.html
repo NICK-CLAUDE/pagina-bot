@@ -41,7 +41,7 @@ button{transition:background .15s,color .15s,border-color .15s}
 .cel span{font-size:17px;font-weight:600}
 .cuad{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
 .card{background:var(--card);border:1px solid var(--ln);border-radius:14px;padding:20px 22px}
-.tit{display:flex;justify-content:space-between;margin-bottom:14px;font-weight:600;font-size:18px;color:#c9d5e6}
+.tit{display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:space-between;margin-bottom:14px;font-weight:600;font-size:18px;color:#c9d5e6}
 svg.gr{width:100%;height:0;min-height:260px;flex:1;display:block}
 .cuad>.card:first-child{display:flex;flex-direction:column}
 .exp{margin-bottom:14px}.exp .r{display:flex;justify-content:space-between;font-size:17px;margin-bottom:6px}
@@ -91,6 +91,18 @@ th{color:var(--mut);font-size:16px;border-top:0}
  svg.gr{min-height:220px}
  .panico{padding:10px 14px}
 }
+
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal .dn{font-size:13px;color:var(--mut);text-align:center;padding-bottom:2px}
+.cal .d{min-height:66px;border-radius:10px;background:#0a111d;border:1px solid var(--ln);padding:6px 8px;display:flex;flex-direction:column;justify-content:space-between}
+.cal .d .n{font-size:13px;color:var(--mut)}.cal .d b{font-size:14px;font-weight:600;text-align:right}
+.cal .d.vac{background:transparent;border-color:transparent}
+.cal .d.hoy{outline:2px solid var(--azul);outline-offset:-2px}
+.cmp td:nth-child(n+2){text-align:right;white-space:nowrap}.cmp th:nth-child(n+2){text-align:right}
+.chip{display:inline-block;font-size:13px;font-weight:600;padding:3px 10px;border-radius:99px;background:#0c2a22;color:var(--verde)}
+.chip.amb{background:#33270c;color:var(--amb)}.chip.rojo{background:#3a1515;color:var(--rojo)}.chip.gris{background:#16213a;color:var(--mut)}
+.reglas li{margin:8px 0}
+@media(max-width:900px){.cal{gap:4px}.cal .d{min-height:54px;padding:4px 5px}.cal .d b{font-size:12px}}
 </style>
 </head>
 <body>
@@ -101,6 +113,7 @@ th{color:var(--mut);font-size:16px;border-top:0}
   <button data-v="bots"><svg viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z"/></svg>Bots</button>
   <button data-v="resultados"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-6 11h16L14 9V3"/></svg>Resultados</button>
   <button data-v="reglas"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Reglas</button>
+  <button data-v="alertas"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alertas</button>
   <div class="vivo" id="vivo"><i></i><span id="vivo_t">conectando…</span></div>
 </nav>
 
@@ -173,6 +186,13 @@ th{color:var(--mut);font-size:16px;border-top:0}
 
 <!-- RESULTADOS -->
 <section class="vista" id="v_resultados">
+  <div class="card" style="margin-bottom:16px"><div class="tit"><span>Lo esperado frente a lo real</span><span class="mut" style="font-weight:400">por bot, últimas operaciones</span></div>
+    <div style="overflow-x:auto"><table class="cmp" id="cmp"></table></div>
+    <p class="nota">"Esperado" sale de las pruebas con datos de 2018 a 2026, en una cuenta de US$ 5.000. Con menos de 20 operaciones todavía no se puede sacar conclusiones: una racha corta puede ser pura suerte.</p>
+  </div>
+  <div class="card" style="margin-bottom:16px"><div class="tit"><span>Calendario</span><span id="t_cal" class="mut"></span></div>
+    <div class="cal" id="cal"></div>
+  </div>
   <div class="card" style="margin-bottom:14px"><div class="tit"><span>Resumen de las operaciones cerradas</span><span id="t_res" class="mut"></span></div><div class="kpis" id="kpis_res"></div></div>
   <div class="card"><div class="tit"><span>Curva de la cuenta</span></div><svg class="gr" id="curva2"></svg></div>
   <p class="nota">Se calcula con los últimos cierres que lee el panel. El detalle completo está en el historial de MT5.</p>
@@ -195,6 +215,24 @@ th{color:var(--mut);font-size:16px;border-top:0}
   </div>
 </section>
 
+<!-- ALERTAS -->
+<section class="vista" id="v_alertas">
+  <div class="dos">
+    <div class="card"><div class="tit"><span>Avisos al celular (Telegram)</span><span id="tg_estado" class="chip gris">…</span></div>
+      <p style="margin:0 0 10px">Te llega un mensaje cuando:</p>
+      <ul class="reglas" style="margin:0;padding-left:20px">
+        <li>un bot abre o cierra una operación (con cuánto ganó o perdió);</li>
+        <li>la pérdida de hoy llega al 3 % (la firma corta al 5 %);</li>
+        <li>la pérdida total llega al 6 % (la firma corta al 10 %);</li>
+        <li>MT5 pierde la conexión, se apaga el trading automático, o MT5 deja de responder 3 minutos;</li>
+        <li>todas las noches a las 23 h, con el resumen del día.</li>
+      </ul>
+      <p class="nota">Cómo activarlo: crear un bot en Telegram con @BotFather y poner el token y tu número de chat en el archivo <b>panel/.env</b> (los pasos están en LEEME.txt). Sin eso, los avisos solo aparecen acá y en la consola.</p>
+    </div>
+    <div class="card"><div class="tit"><span>Últimos avisos</span></div><div id="avisos_env"></div></div>
+  </div>
+</section>
+
 <p class="nota" id="pie">ESTO ES UNA SIMULACIÓN con números inventados. Este panel solo mira: no abre ni cierra operaciones. La pérdida de hoy se mide desde la medianoche del servidor (reinicio de la firma) sobre el saldo de ese momento; es una aproximación, confirmá el valor exacto en Funding Pips.</p>
 </main>
 </div>
@@ -210,7 +248,7 @@ const pct=v=>(v>0?"+":"")+v.toFixed(2).replace(".",",")+"%";
 const cl=v=>v>0?"verde":v<0?"rojo":"";
 const hhmm=t=>new Date(t*1000).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"});
 const fecha=t=>{const d=new Date(t*1000);return String(d.getUTCMonth()+1).padStart(2,"0")+"-"+String(d.getUTCDate()).padStart(2,"0")};
-const TITULOS={resumen:"Resumen",bots:"Bots",resultados:"Resultados",reglas:"Reglas"};
+const TITULOS={resumen:"Resumen",bots:"Bots",resultados:"Resultados",reglas:"Reglas",alertas:"Alertas"};
 document.querySelectorAll("#menu button").forEach(b=>b.onclick=()=>irA(b.dataset.v));
 function irA(v){
   document.querySelectorAll("#menu button").forEach(x=>x.classList.toggle("on",x.dataset.v===v));
@@ -274,6 +312,48 @@ function spark(v,col){
   const pts=v.map((y,i)=>(300*i/(v.length-1)).toFixed(1)+","+(42-38*(y-mn)/r).toFixed(1));
   return `<svg viewBox="0 0 300 46" preserveAspectRatio="none"><polygon points="0,46 ${pts.join(" ")} 300,46" fill="${col}" opacity=".12"/><polyline points="${pts.join(" ")}" fill="none" stroke="${col}" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>`;
 }
+const ESPERADO={"Tendencia 4H":{gan:37,pg:128,pp:-45,x1:1.69,racha:17,mes:7},"Williams Nasdaq":{gan:51,pg:30.5,pp:-22.8,x1:1.40,racha:12,mes:17}};
+function realBot(b){
+  const sp=b.spark||[];const r=[];for(let i=1;i<sp.length;i++)r.push(sp[i]-sp[i-1]);
+  const g=r.filter(x=>x>0),l=r.filter(x=>x<0),sg=g.reduce((a,c)=>a+c,0),sl=-l.reduce((a,c)=>a+c,0);
+  let racha=0,m=0;r.forEach(x=>{m=x<0?m+1:0;racha=Math.max(racha,m)});
+  return {n:r.length,gan:r.length?100*g.length/r.length:0,pg:g.length?sg/g.length:0,pp:l.length?-sl/l.length:0,x1:sl?sg/sl:0,racha:racha,actual:m};
+}
+function juicio(e,r){
+  if(r.n<20)return ["gris","Pocos datos ("+r.n+" de 20)"];
+  if(r.racha>e.racha*1.5||(r.n>=40&&r.x1<0.8))return ["rojo","Revisar: muy lejos de lo esperado"];
+  if(r.racha>e.racha||r.x1<1||r.gan<e.gan-15)return ["amb","Atención: peor que lo esperado"];
+  return ["","Como se esperaba"];
+}
+function comparar(bots){
+  const fila=(t,f)=>`<tr><td>${t}</td>${bots.map(b=>f(ESPERADO[b.nombre]||{},realBot(b))).join("")}</tr>`;
+  const par=(e,r,fmt)=>`<td><span class="mut">${e}</span></td><td><b>${r}</b></td>`;
+  let h=`<tr><th></th>${bots.map(b=>`<th colspan="2" style="text-align:center">${b.nombre}</th>`).join("")}</tr>`;
+  h+=`<tr><th></th>${bots.map(()=>`<th>Esperado</th><th>Real</th>`).join("")}</tr>`;
+  h+=fila("Operaciones",(e,r)=>par(`~${e.mes}/mes`,r.n));
+  h+=fila("Ganadoras",(e,r)=>par(e.gan+" %",Math.round(r.gan)+" %"));
+  h+=fila("Ganancia promedio",(e,r)=>par(usd0(e.pg),usd0(r.pg)));
+  h+=fila("Pérdida promedio",(e,r)=>par(usd0(e.pp),usd0(r.pp)));
+  h+=fila("Gana por cada 1 que pierde",(e,r)=>par(String(e.x1).replace(".",","),r.x1.toFixed(2).replace(".",",")));
+  h+=fila("Peor racha de pérdidas seguidas",(e,r)=>par(e.racha,r.racha));
+  h+=`<tr><td>Veredicto</td>${bots.map(b=>{const j=juicio(ESPERADO[b.nombre]||{},realBot(b));return `<td colspan="2" style="text-align:right"><span class="chip ${j[0]}">${j[1]}</span></td>`}).join("")}</tr>`;
+  $("cmp").innerHTML=h;
+}
+function calendario(cal,actualizado){
+  const c=$("cal");const mapa={};(cal||[]).forEach(x=>mapa[Math.floor(x[0]/86400)]=x[1]);
+  const hoy=Math.floor(actualizado/86400);const dowHoy=(new Date(hoy*864e5).getUTCDay()+6)%7;
+  const inicio=hoy-dowHoy-28;let h=["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"].map(x=>`<div class="dn">${x}</div>`).join("");
+  let tot=0,verdes=0,rojos=0;
+  for(let k=inicio;k<inicio+35;k++){
+    if(k>hoy){h+='<div class="d vac"></div>';continue}
+    const v=mapa[k],f=new Date(k*864e5);
+    if(v!=null){tot+=v;v>=0?verdes++:rojos++}
+    const a=v==null?0:Math.min(1,Math.abs(v)/150),bg=v==null?"":v>=0?`background:rgba(52,211,153,${.08+.32*a})`:`background:rgba(248,113,113,${.08+.32*a})`;
+    h+=`<div class="d${k===hoy?" hoy":""}" style="${bg}"><span class="n">${f.getUTCDate()}/${f.getUTCMonth()+1}</span><b class="${v==null?"mut":cl(v)}">${v==null?"":usdS(v).replace("US$ ","")}</b></div>`;
+  }
+  c.innerHTML=h;
+  $("t_cal").innerHTML=`5 semanas · <span class="${cl(tot)}">${usdS(tot)}</span> · ${verdes} días verdes, ${rojos} rojos`;
+}
 const INFO={"Tendencia 4H":["ETH · BTC · ORO","LARGO · 1,25 %"],"Williams Nasdaq":["NASDAQ","UNA POR DÍA · 0,75 %"]};
 function pintar(d){
   ULT=d;
@@ -303,6 +383,7 @@ function pintar(d){
   $("bots_res").innerHTML=bots.map(b=>{
     const tot=(b.cerrado||0)+(b.flotante||0),inf=INFO[b.nombre]||["",""],pos=d.posiciones.find(p=>p.bot===b.nombre);
     return `<div class="card bot"><div class="top"><div><h2>${b.nombre}</h2><div class="tipo">${inf[1]}</div></div><span class="ins${ok?"":" mal"}">${ok?"ENCENDIDO":"APAGADO"}</span></div>
+      ${(()=>{const j=juicio(ESPERADO[b.nombre]||{},realBot(b));return `<div style="margin-top:8px"><span class="chip ${j[0]}">${j[1]}</span></div>`})()}
       <div class="eq num ${cl(tot)}">${usdS(tot)}<small>${pct(100*tot/d.capital)}</small></div>
       ${spark(b.spark,tot>=0?"#34d399":"#f87171")}
       <div class="datos"><div><small>Mercados</small>${inf[0]}</div><div><small>Operaciones cerradas</small><span class="mono">${b.ops||0}</span></div>
@@ -315,12 +396,20 @@ function pintar(d){
   area(d.curva,"curva2",{ejes:true,ref:d.capital});
   $("t_curva").textContent=(d.curva||[]).length+" cierres";
   resultados(d.curva);
+  comparar(bots);
+  calendario(d.calendario,d.actualizado);
+  const tg=$("tg_estado");tg.textContent=d.telegram?"Activado":"Sin configurar";tg.className="chip"+(d.telegram?"":" amb");
+  const ae=d.avisos_enviados||[];
+  $("avisos_env").innerHTML=ae.length?ae.map(a=>`<div class="op"><span class="h">${a.hora}</span><span>${a.texto}</span></div>`).join(""):'<div class="vacio">Todavía no hubo avisos.</div>';
 }
 $("panico").onclick=()=>alert("El botón Apagar bots todavía no está conectado. Cuando lo esté, va a cerrar todas las operaciones abiertas y apagar los dos bots, pidiéndote confirmación antes.");
 
 // ---- SIMULACIÓN: datos inventados que se mueven solos (en el panel real vienen de MT5) ----
 let flot=-22.3;
 const SEMILLA=[0,38,22,75,60,120,95,150,210,185,240,300,270,335,310,390,365,420,400,455,430,500,470,520,505,560,540,590,610,640,620];
+function serie(n,pg,pp,pgan,sem){let x=sem,c=0;const o=[0];for(let i=0;i<n;i++){x=(x*9301+49297)%233280;const r=x/233280;c+=r<pgan?pg*(0.5+r):pp*(0.6+r*0.6);o.push(Math.round(c*100)/100)}return o}
+const SP1=serie(26,128,-45,0.38,7),SP2=serie(48,30.5,-22.8,0.52,11);
+function calDemo(t){const o=[],h=Math.floor(t/86400);let x=5;for(let k=h-34;k<=h;k++){const dw=(new Date(k*864e5).getUTCDay()+6)%7;if(dw>=5&&k%3)continue;x=(x*9301+49297)%233280;const r=x/233280;o.push([k*86400,Math.round((r-0.42)*180*100)/100])}return o}
 async function leerEstado(){
   flot+=(Math.random()-0.48)*7;
   const t=Math.floor(Date.now()/1000),cap=5000,F=0.33,saldo=cap+640*F,pat=saldo+flot;
@@ -329,8 +418,9 @@ async function leerEstado(){
   return {actualizado:t,conectado:true,algo_terminal:true,algo_cuenta:true,capital:cap,saldo:saldo,patrimonio:pat,flotante:flot,realizado:saldo-cap,
    hoy_usd:hoy,hoy_pct:hoy/cap*100,total_usd:pat-cap,total_pct:(pat-cap)/cap*100,meta_pct:8,lim_diario:5,lim_total:10,freno_diario:4,freno_total:9,
    dias_operados:12,dias_minimos:3,nocional:3350,
-   bots:[{nombre:"Tendencia 4H",abiertas:2,cerrado:150,flotante:flot,ops:9,nocional:3350,spark:[0,14,8,30,23,50,43,73,100,86,117,150]},
-         {nombre:"Williams Nasdaq",abiertas:0,cerrado:61,flotante:0,ops:11,nocional:0,spark:[0,-37,6,25,13,32,20,43,31,53,40,61]}],
+   bots:[{nombre:"Tendencia 4H",abiertas:2,cerrado:SP1[SP1.length-1],flotante:flot,ops:26,nocional:3350,spark:SP1},
+         {nombre:"Williams Nasdaq",abiertas:0,cerrado:SP2[SP2.length-1],flotante:0,ops:48,nocional:0,spark:SP2}],calendario:calDemo(t),telegram:true,
+   avisos_enviados:[{hora:"16:55",texto:"Williams Nasdaq cerró USTEC: perdió US$ 37,70."},{hora:"11:20",texto:"Tendencia 4H abrió ETHUSD (compra, 0.5 lotes)."},{hora:"23:00",texto:"Resumen del día: US$ 42,10 hoy (+0,84 %). Total: US$ 171,30 (+3,43 %). Objetivo: 3,43 de 8 %. Días operados: 11 de 3."}],
    posiciones:[{sim:"ETHUSD",lado:"compra",lote:0.5,gan:flot*0.6,nocional:1850,bot:"Tendencia 4H",desde:t-5400},
                {sim:"XAUUSD",lado:"compra",lote:0.4,gan:flot*0.4,nocional:1500,bot:"Tendencia 4H",desde:t-26000}],
    cerradas_hoy:[{t:t-7200,sim:"USTEC",bot:"Williams Nasdaq",neto:-37.7},{t:t-20000,sim:"BTCUSD",bot:"Tendencia 4H",neto:62.4}],curva:curva,
