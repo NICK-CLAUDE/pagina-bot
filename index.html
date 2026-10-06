@@ -247,7 +247,7 @@ details.mas > summary { cursor: pointer; font-weight: 700; color: var(--text) }
     <div class="card steps">
       <div class="step"><p><b>Comprar el 2 Step Standard de 5.000</b> (MT5, pérdida diaria de 5 %).</p></div>
       <div class="step"><p><b>En la Mac, seguir la guía LEEME_MAC.txt:</b> el Bot 1 en un gráfico de ETHUSD H4 con <b>challenge_5k_etapa1.set</b> y el Bot 2 en un gráfico del Nasdaq M1 con <b>challenge_5k_nasdaq_etapa1.set</b>. Activar "Algo Trading".</p></div>
-      <div class="step"><p><b>No tocar las operaciones.</b> Las rachas de pérdidas son normales; los bots se frenan solos antes de los límites de Funding Pips.</p></div>
+      <div class="step"><p><b>No tocar las operaciones.</b> Las rachas de pérdidas son normales; los bots se frenan solos antes de los límites de Funding Pips. El freno diario es compartido: si la cuenta pierde 4 % en un día, el primer bot que lo ve cierra todo lo de los dos.</p></div>
       <div class="step"><p><b>Al llegar a +8 %, los bots se detienen solos.</b> En la etapa 2, cargar los archivos <b>_etapa2.set</b>. Funding Pips pide 3 días con operaciones: si faltan, abrir y cerrar una operación mínima a mano.</p></div>
     </div>
   </section>
@@ -255,6 +255,7 @@ details.mas > summary { cursor: pointer; font-weight: 700; color: var(--text) }
   <section>
     <h2>Qué mirar los primeros días</h2>
     <div class="card"><ul>
+      <li><b>Al cargar cada bot:</b> arriba a la izquierda de su gráfico tiene que decir "revisión al arrancar: OK". Si dice "HAY QUE REVISAR", sale una alerta con el problema: mandame una captura.</li>
       <li><b>Todos los días, 1 minuto:</b> que MetaTrader siga abierto con "Algo Trading" prendido, y que a las 10:30 de Argentina el Nasdaq ponga sus 2 órdenes pendientes.</li>
       <li><b>Si algo se ve raro en un bot, apagá solo ese</b> y mandame lo que dice la pestaña "Expertos".</li>
     </ul></div>
