@@ -107,7 +107,7 @@ th{color:var(--mut);font-size:14px;border-top:0}
 <main class="main">
 <div class="cab">
   <div><h1 id="titulo">Resumen</h1><p id="subt">…</p></div>
-  <button class="panico" id="panico"><svg viewBox="0 0 24 24"><polygon points="8,2 16,2 22,8 22,16 16,22 8,22 2,16 2,8"/><line x1="12" y1="7" x2="12" y2="13"/><line x1="12" y1="16.5" x2="12" y2="17"/></svg>Pánico</button>
+  <button class="panico" id="panico"><svg viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M6.4 6.6a8 8 0 1 0 11.2 0"/></svg>Apagar bots</button>
 </div>
 
 <!-- RESUMEN -->
@@ -316,7 +316,7 @@ function pintar(d){
   $("t_curva").textContent=(d.curva||[]).length+" cierres";
   resultados(d.curva);
 }
-$("panico").onclick=()=>alert("El botón de pánico todavía no está conectado. Cuando lo esté, va a cerrar todas las operaciones y apagar los bots.");
+$("panico").onclick=()=>alert("El botón Apagar bots todavía no está conectado. Cuando lo esté, va a cerrar todas las operaciones abiertas y apagar los dos bots, pidiéndote confirmación antes.");
 
 // ---- SIMULACIÓN: datos inventados que se mueven solos (en el panel real vienen de MT5) ----
 let flot=-22.3;
