@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Panel de bots (simulación)</title><meta name="robots" content="noindex">
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"></script>
 <style>
 :root{--bg:#080d16;--side:#0a111c;--card:#0d1523;--ln:#17223a;--tx:#f1f5fb;--mut:#9db0c9;--verde:#34d399;--rojo:#f87171;--amb:#fbbf24;--azul:#38bdf8}
 *{box-sizing:border-box}
@@ -141,6 +142,16 @@ dialog .pin{width:100%;margin-bottom:14px}
 .solo-mov{display:none;font-size:13px;font-weight:400}
 .err{color:var(--rojo);min-height:1.2em;margin:0 0 6px}
 @media(max-width:900px){.hist .opc{display:none}.solo-mov{display:block}.mini{grid-template-columns:1fr 1fr}.buscar{min-width:0;width:100%}}
+
+.gbot{margin-bottom:16px}
+.gcab{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.gcab h2{margin:0;font-size:20px}
+.graf{height:440px;border-radius:10px;overflow:hidden;background:#0a111d;border:1px solid var(--ln)}
+.ley{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--mut);margin:10px 0 4px}
+.ley i{display:inline-block;width:18px;height:0;border-top:2px solid;vertical-align:middle;margin-right:6px}
+.gpos .op{font-size:15px}
+.credito{font-size:13px;color:var(--mut)}.credito a{color:var(--mut)}
+@media(max-width:900px){.graf{height:330px}}
 </style>
 </head>
 <body>
@@ -149,6 +160,7 @@ dialog .pin{width:100%;margin-bottom:14px}
   <div class="marca"><svg viewBox="0 0 24 24"><polyline points="2,13 6,13 9,4 15,20 18,13 22,13"/></svg>BOTS <span style="font-size:12px;color:#fbbf24;border:1px solid #6b5316;border-radius:99px;padding:1px 7px;margin-left:4px">SIMULACIÓN</span></div>
   <button data-v="resumen" class="on"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Resumen</button>
   <button data-v="bots"><svg viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z"/></svg>Bots</button>
+  <button data-v="graficos"><svg viewBox="0 0 24 24"><path d="M6 3v18M12 5v14M18 7v10"/><rect x="4" y="7" width="4" height="8"/><rect x="10" y="9" width="4" height="6"/><rect x="16" y="10" width="4" height="4"/></svg>Gráficos</button>
   <button data-v="historial"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>Historial</button>
   <button data-v="resultados"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-6 11h16L14 9V3"/></svg>Resultados</button>
   <button data-v="reglas"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Reglas</button>
@@ -210,6 +222,12 @@ dialog .pin{width:100%;margin-bottom:14px}
     </div>
     <p class="nota">Son simulaciones con el pasado, no una promesa. Los dos bots están pensados para operar juntos, sin intervenir a mano.</p>
   </div>
+</section>
+
+<!-- GRÁFICOS -->
+<section class="vista" id="v_graficos">
+  <div id="graficos"></div>
+  <p class="credito">Velas en la hora del servidor de MT5. Gráficos hechos con <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noopener">TradingView Lightweight Charts</a>.</p>
 </section>
 
 <!-- HISTORIAL -->
@@ -298,12 +316,13 @@ const pct=v=>(v>0?"+":"")+v.toFixed(2).replace(".",",")+"%";
 const cl=v=>v>0?"verde":v<0?"rojo":"";
 const hhmm=t=>new Date(t*1000).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"});
 const fecha=t=>{const d=new Date(t*1000);return String(d.getUTCMonth()+1).padStart(2,"0")+"-"+String(d.getUTCDate()).padStart(2,"0")};
-const TITULOS={resumen:"Resumen",bots:"Bots",historial:"Historial",resultados:"Resultados",reglas:"Reglas",alertas:"Alertas"};
+const TITULOS={resumen:"Resumen",bots:"Bots",graficos:"Gráficos",historial:"Historial",resultados:"Resultados",reglas:"Reglas",alertas:"Alertas"};
 document.querySelectorAll("#menu button").forEach(b=>b.onclick=()=>irA(b.dataset.v));
 function irA(v){
   document.querySelectorAll("#menu button").forEach(x=>x.classList.toggle("on",x.dataset.v===v));
   document.querySelectorAll(".vista").forEach(x=>x.classList.toggle("on",x.id==="v_"+v));
   $("titulo").textContent=TITULOS[v]||v;
+  VISTA=v;if(v==="graficos")refrescarGraficos();
   if(ULT)pintar(ULT);
 }
 let ULT=null;
@@ -481,6 +500,60 @@ async function enviarControl(bot,accion,cerrar,pin){
   DEMO_AV.unshift({hora:new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"}),texto:"Desde el panel: "+bs.join(", ")+" -> "+(accion==="pausar"?"PAUSADO":"ACTIVO")+(cerrar?" y cerrar sus operaciones.":".")+" (simulación)"});
   return Object.assign({},DEMO_CTRL);
 }
+// ---------- gráficos tipo TradingView
+const botDeSimbolo=sy=>/TEC|NAS|NDX|US100/i.test(sy)?"Williams Nasdaq":"Tendencia 4H";
+const TF_SEG={M1:60,M5:300,M15:900,M30:1800,H1:3600,H4:14400,D1:86400};
+const GR={};   // por bot: {chart, serie, sim, lineas:[]}
+let VELAS=null,VISTA="resumen";
+
+function armarGraficos(){
+  if(!VELAS||!window.LightweightCharts)return;
+  const bots={};Object.keys(VELAS).forEach(sy=>(bots[botDeSimbolo(sy)]=bots[botDeSimbolo(sy)]||[]).push(sy));
+  const cont=$("graficos");
+  Object.keys(bots).forEach(b=>{
+    if(GR[b])return;
+    const id=b.replace(/\W/g,"");
+    cont.insertAdjacentHTML("beforeend",`<div class="card gbot"><div class="gcab"><h2>${b}</h2><div class="grupo" id="gs_${id}">${bots[b].map((sy,i)=>`<button class="f${i?"":" on"}" data-s="${sy}">${sy} · ${VELAS[sy].tf}</button>`).join("")}</div></div>
+      <div class="graf" id="gr_${id}"></div>
+      <div class="ley"><span><i style="border-color:#38bdf8"></i>Entrada</span><span><i style="border-color:#f87171;border-top-style:dashed"></i>Stop Loss</span><span><i style="border-color:#34d399;border-top-style:dashed"></i>Take Profit</span><span>▲ abrió · ● cerró (verde ganó, rojo perdió)</span></div>
+      <div class="gpos" id="gp_${id}"></div></div>`);
+    const ch=LightweightCharts.createChart($("gr_"+id),{autoSize:true,layout:{background:{color:"#0a111d"},textColor:"#9db0c9",fontSize:13,fontFamily:"system-ui,Segoe UI,Roboto,sans-serif"},
+      grid:{vertLines:{color:"#121c2e"},horzLines:{color:"#121c2e"}},rightPriceScale:{borderColor:"#17223a"},timeScale:{borderColor:"#17223a",timeVisible:true,secondsVisible:false},
+      crosshair:{mode:0},localization:{locale:"es-AR"}});
+    const se=ch.addCandlestickSeries({upColor:"#34d399",downColor:"#f87171",borderVisible:false,wickUpColor:"#34d399",wickDownColor:"#f87171"});
+    GR[b]={chart:ch,serie:se,sim:bots[b][0],lineas:[],nuevo:true};
+    document.querySelectorAll(`#gs_${id} .f`).forEach(x=>x.onclick=()=>{GR[b].sim=x.dataset.s;GR[b].nuevo=true;
+      document.querySelectorAll(`#gs_${id} .f`).forEach(y=>y.classList.toggle("on",y===x));pintarGrafico(b)});
+  });
+}
+function pintarGrafico(b){
+  const g=GR[b],d=ULT;if(!g||!VELAS||!VELAS[g.sim]||!d)return;
+  const V=VELAS[g.sim],dig=V.dig||2,tf=TF_SEG[V.tf]||14400,id=b.replace(/\W/g,"");
+  g.serie.applyOptions({priceFormat:{type:"price",precision:dig,minMove:1/Math.pow(10,dig)}});
+  g.serie.setData(V.v.map(x=>({time:x[0],open:x[1],high:x[2],low:x[3],close:x[4]})));
+  if(g.nuevo){g.chart.timeScale().fitContent();g.nuevo=false}
+  g.lineas.forEach(l=>g.serie.removePriceLine(l));g.lineas=[];
+  const pos=(d.posiciones||[]).filter(p=>p.sim===g.sim&&p.bot===b);
+  pos.forEach(p=>{
+    const L=(price,color,style,title)=>{if(price>0)g.lineas.push(g.serie.createPriceLine({price,color,lineWidth:2,lineStyle:style,axisLabelVisible:true,title}))};
+    L(p.precio,"#38bdf8",0,`${p.lado} ${lote(p.lote)}`);L(p.sl,"#f87171",2,"Stop Loss");L(p.tp,"#34d399",2,"Take Profit");
+  });
+  const t0=V.v.length?V.v[0][0]:0,bar=t=>t-t%tf,m=[];
+  (d.historial||[]).filter(h=>h.sim===g.sim&&h.bot===b&&h.ci>=t0).forEach(h=>{
+    if(h.ab>=t0)m.push({time:bar(h.ab),position:h.lado==="compra"?"belowBar":"aboveBar",color:"#38bdf8",shape:h.lado==="compra"?"arrowUp":"arrowDown",text:""});
+    m.push({time:bar(h.ci),position:"aboveBar",color:h.neto>=0?"#34d399":"#f87171",shape:"circle",text:usdS(h.neto).replace("US$ ","")});
+  });
+  pos.forEach(p=>{if(p.desde>=t0)m.push({time:bar(p.desde),position:p.lado==="compra"?"belowBar":"aboveBar",color:"#38bdf8",shape:p.lado==="compra"?"arrowUp":"arrowDown",text:"abierta"})});
+  g.serie.setMarkers(m.sort((a,c)=>a.time-c.time));
+  $("gp_"+id).innerHTML=pos.length?`<div class="tit" style="margin:8px 0 0"><span>Abiertas en ${g.sim}</span></div>`+pos.map(p=>`<div class="op"><span class="s">${p.lado} ${lote(p.lote)}</span><span>entrada <b>${p.precio}</b></span><span class="rojo">SL ${p.sl||"–"}</span><span class="verde">TP ${p.tp||"–"}</span><span class="g ${cl(p.gan)}"><b>${usdS(p.gan)}</b></span></div>`).join("")
+    :`<div class="vacio" style="padding-top:8px">Sin operaciones abiertas en ${g.sim}.</div>`;
+}
+async function refrescarGraficos(){
+  if(VISTA!=="graficos")return;
+  try{VELAS=await leerVelas()}catch(e){return}
+  if(!VELAS||!Object.keys(VELAS).length){$("graficos").innerHTML='<div class="card vacio">Todavía no llegan velas: ¿está Panel_Estado cargado en MT5?</div>';return}
+  armarGraficos();Object.keys(GR).forEach(pintarGrafico);
+}
 const INFO={"Tendencia 4H":["ETH · BTC · ORO","LARGO · 1,25 %"],"Williams Nasdaq":["NASDAQ","UNA POR DÍA · 0,75 %"]};
 function pintar(d){
   ULT=d;
@@ -542,6 +615,16 @@ function calDemo(t){const o=[],h=Math.floor(t/86400);let x=5;for(let k=h-34;k<=h
 const SIMS1=["ETHUSD","BTCUSD","XAUUSD"];
 function histDemo(t){const o=[];const mk=(sp,bot,sims,cada,durMin,durMax)=>{let ci=t-sp.length*cada;for(let i=1;i<sp.length;i++){ci+=cada*(0.6+((i*37)%10)/12);const d=durMin+((i*53)%100)/100*(durMax-durMin);o.push({ab:Math.round(ci-d),ci:Math.round(ci),sim:sims[i%sims.length],bot:bot,lado:"compra",lote:bot==="Tendencia 4H"?0.4+((i*7)%5)/10:0.1,neto:Math.round((sp[i]-sp[i-1])*100)/100})}};
   mk(SP1,"Tendencia 4H",SIMS1,86400*1.2,4*3600,60*3600);mk(SP2,"Williams Nasdaq",["USTEC"],86400*0.65,1200,5*3600);return o.sort((a,b)=>a.ci-b.ci)}
+const DV={};(function(){const base={ETHUSD:[2600,14400,2],BTCUSD:[62000,14400,2],XAUUSD:[2650,14400,2],USTEC:[20100,900,1]};let x=3;
+  const now=Math.floor(Date.now()/1000);
+  for(const sy in base){const [p0,tf,dig]=base[sy];let c=p0,v=[];const t0=now-now%tf-199*tf;
+    for(let i=0;i<200;i++){x=(x*9301+49297)%233280;const r=x/233280;const vol=p0*(tf>3600?0.012:0.0012);const o=c;c=o+(r-0.47)*vol*2;
+      x=(x*9301+49297)%233280;const h=Math.max(o,c)+x/233280*vol*0.6;x=(x*9301+49297)%233280;const l=Math.min(o,c)-x/233280*vol*0.6;
+      v.push([t0+i*tf,+o.toFixed(dig),+h.toFixed(dig),+l.toFixed(dig),+c.toFixed(dig)])}
+    DV[sy]={tf:tf===900?"M15":"H4",dig:dig,v:v}}})();
+const pe=DV.ETHUSD.v[188][4],pg=DV.XAUUSD.v[194][4];
+async function leerVelas(){for(const sy in DV){const v=DV[sy].v,u=v[v.length-1],paso=u[4]*0.0009*(Math.random()-0.5);
+  u[4]=+(u[4]+paso).toFixed(DV[sy].dig);u[2]=Math.max(u[2],u[4]);u[3]=Math.min(u[3],u[4])}return DV}
 let DEMO_CTRL={"Tendencia 4H":"activo","Williams Nasdaq":"activo"};const DEMO_AV=[];
 async function leerEstado(){
   flot+=(Math.random()-0.48)*7;
@@ -554,8 +637,8 @@ async function leerEstado(){
    bots:[{nombre:"Tendencia 4H",abiertas:2,cerrado:SP1[SP1.length-1],flotante:flot,ops:26,nocional:3350,spark:SP1},
          {nombre:"Williams Nasdaq",abiertas:0,cerrado:SP2[SP2.length-1],flotante:0,ops:48,nocional:0,spark:SP2}],calendario:calDemo(t),telegram:true,historial:histDemo(t),control:DEMO_CTRL,pin_requerido:false,
    avisos_enviados:DEMO_AV.concat([{hora:"16:55",texto:"Williams Nasdaq cerró USTEC: perdió US$ 37,70."},{hora:"11:20",texto:"Tendencia 4H abrió ETHUSD (compra, 0.5 lotes)."},{hora:"23:00",texto:"Resumen del día: US$ 42,10 hoy (+0,84 %). Total: US$ 171,30 (+3,43 %). Objetivo: 3,43 de 8 %. Días operados: 11 de 3."}]),
-   posiciones:[{sim:"ETHUSD",lado:"compra",lote:0.5,gan:flot*0.6,nocional:1850,bot:"Tendencia 4H",desde:t-5400},
-               {sim:"XAUUSD",lado:"compra",lote:0.4,gan:flot*0.4,nocional:1500,bot:"Tendencia 4H",desde:t-26000}],
+   posiciones:[{sim:"ETHUSD",lado:"compra",lote:0.5,precio:pe,sl:+(pe*0.965).toFixed(2),tp:+(pe*1.07).toFixed(2),gan:flot*0.6,nocional:1850,bot:"Tendencia 4H",desde:DV.ETHUSD.v[188][0]},
+               {sim:"XAUUSD",lado:"compra",lote:0.4,precio:pg,sl:+(pg*0.98).toFixed(2),tp:+(pg*1.04).toFixed(2),gan:flot*0.4,nocional:1500,bot:"Tendencia 4H",desde:DV.XAUUSD.v[194][0]}],
    cerradas_hoy:[{t:t-7200,sim:"USTEC",bot:"Williams Nasdaq",neto:-37.7},{t:t-20000,sim:"BTCUSD",bot:"Tendencia 4H",neto:62.4}],curva:curva,
    extra_avisos:[["","WILLIAMS","Hoy cerró la operación del Nasdaq por Stop Loss: -37,70 US$.","Una por día, cierra a las 15:55 de Nueva York"]]};
 }
@@ -567,7 +650,7 @@ async function cargar(){
   pintar(d);
 }
 {const h=location.hash.slice(1);if(TITULOS[h])irA(h)}
-cargar();setInterval(cargar,4000);
+cargar();setInterval(()=>{cargar().then(refrescarGraficos)},4000);
 </script>
 </body>
 </html>
