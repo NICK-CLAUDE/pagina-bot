@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080d16">
 <title>Panel de bots (ejemplo)</title><meta name="robots" content="noindex">
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"></script>
 <style>
@@ -130,9 +131,9 @@ details[open] summary:before{transform:rotate(45deg)}
 .hist th.ord{color:var(--tx)}.hist td{white-space:nowrap}
 .hist td.r{text-align:right}.hist th.r{text-align:right}
 .res{display:flex;flex-wrap:wrap;gap:6px 22px;margin-bottom:12px;font-size:16px}
-dialog{background:var(--card);color:var(--tx);border:1px solid var(--ln);border-radius:16px;padding:24px;max-width:460px;width:calc(100% - 32px);box-shadow:0 24px 60px rgba(0,0,0,.55)}
+dialog{background:var(--card);color:var(--tx);border:1px solid var(--ln);border-radius:16px;padding:24px;max-width:460px;width:calc(100% - 32px);box-shadow:0 14px 30px rgba(0,0,0,.5)}
 dialog::backdrop{background:rgba(3,6,12,.7);backdrop-filter:blur(3px)}
-dialog h3{margin:0 0 10px;font-size:22px}dialog p{margin:0 0 14px;color:#d0dbea}
+dialog h2{margin:0 0 10px;font-size:22px}dialog p{margin:0 0 14px;color:#d0dbea}
 dialog label{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px;cursor:pointer}
 dialog input[type=checkbox]{width:20px;height:20px;margin-top:2px;accent-color:var(--rojo)}
 dialog .pin{width:100%;margin-bottom:14px}
@@ -190,6 +191,52 @@ dialog#fic{background:transparent;border:0;box-shadow:none}dialog#fic .ficha{bac
 .hist tbody tr,.hist tr[data-i]{cursor:pointer}.hist tr[data-i]:hover td{background:#0d1727}
 @media(max-width:900px){.ficha .fil{grid-template-columns:1fr;gap:2px}.ficha{padding:14px}}
 .f.rst{display:inline-flex;align-items:center;gap:7px;color:var(--tx)}.f.rst svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ---- mejoras de diseño ---- */
+.main{max-width:1400px;margin-inline:auto;width:100%}
+.cab{flex-wrap:wrap;align-items:center}.cab>div:first-child{flex:1;min-width:220px}
+.cab h1{letter-spacing:-.01em}
+.vista.on{animation:ent .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes ent{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.vista.on{animation:none}*{transition:none!important}}
+button:not(:disabled):active{transform:scale(.97)}
+.estado{display:flex;gap:16px;align-items:center;padding:18px 22px;border-radius:14px;margin-bottom:14px;background:#0b261f;border:1px solid #14503c}
+.estado svg{flex:none;width:34px;height:34px;stroke:var(--verde);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.estado b{display:block;font-size:22px;line-height:1.25;margin-bottom:2px}
+.estado span{color:#cfdbea;font-size:17px;display:block;max-width:80ch}
+.estado.amb{background:#2b2209;border-color:#5c4511}.estado.amb svg{stroke:var(--amb)}
+.estado.rojo{background:#34130f;border-color:#7f2b2b}.estado.rojo svg{stroke:var(--rojo)}
+.cel small{display:block}.cel span.mut{display:block;margin-top:2px;font-size:16px;font-weight:500}
+.det{margin:-2px 2px 16px;color:var(--mut);font-size:16px;display:flex;flex-wrap:wrap;gap:4px 22px}
+.det b{color:var(--tx);font-weight:600}
+.segm{display:inline-flex;background:#0a111d;border:1px solid var(--ln);border-radius:12px;padding:4px;gap:2px}
+.segm button{background:none;border:0;color:var(--mut);font:inherit;font-size:16px;font-weight:600;padding:9px 16px;border-radius:9px;cursor:pointer;min-height:40px}
+.cuad{align-items:start}.cuad svg.gr{height:340px;min-height:340px;flex:none}
+.segm button:hover{color:var(--tx)}.segm button.on{background:#14304d;color:var(--tx)}
+@media(max-width:900px){
+ body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+ .side{height:calc(72px + env(safe-area-inset-bottom));padding-bottom:calc(6px + env(safe-area-inset-bottom))}
+ #masmenu.abierto{bottom:calc(82px + env(safe-area-inset-bottom))}
+ .f{min-height:44px}.estado{padding:16px;gap:12px}.estado svg{width:28px;height:28px}.estado b{font-size:20px}.estado span{font-size:16px}
+ .cab>div:first-child{flex-basis:100%;order:1}.cab .segm{order:3}.cab .panico{order:2;margin-left:auto}
+ .cel b{font-size:26px}.det{font-size:15px}.cuad svg.gr{height:240px;min-height:240px}
+}
+</style>
+<style>
+#recorrido{margin-bottom:14px}
+.rtop{display:flex;gap:14px;align-items:center;margin-bottom:18px}.rtop svg{flex:none;width:40px;height:40px;stroke:var(--verde);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.rtop b{display:block;font-size:26px;line-height:1.2;color:var(--verde)}.rtop span{color:var(--mut);font-size:17px}
+.tl{margin:0 4px 24px}.tlb{display:flex;gap:4px;height:12px}.tlb i{border-radius:99px;background:#0f6b4d}.tlb i+i{background:#34d399}
+.tll{position:relative;height:24px;margin-top:8px;font-size:15px;color:var(--mut)}.tll span{position:absolute}
+.rfs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rf{background:#0a111d;border:1px solid var(--ln);border-radius:12px;padding:16px 18px}
+.rft{display:flex;align-items:center;gap:8px;margin-bottom:6px}.rft svg{width:20px;height:20px;stroke:var(--verde);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}.rft b{font-size:18px}
+.rfn{font-size:34px;font-weight:700;line-height:1.15}.rfp{font-size:16px;margin-bottom:10px}
+.rf dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}.rf dt{font-size:14px;color:var(--mut)}.rf dd{margin:0;font-weight:600;font-size:17px}
+.rsig{margin:14px 0 4px;font-size:16px}
+.rsem th,.rsem td{padding:8px 6px;font-size:16px}.rsem th{color:var(--mut)}.rsem .r{text-align:right}.rsem tr:first-child th{border-top:0}
+.scroll{overflow-x:auto}
+@media(max-width:900px){.rfs{grid-template-columns:1fr}.rfn{font-size:30px}.rtop b{font-size:22px}}
 </style>
 </head>
 <body>
@@ -212,31 +259,28 @@ dialog#fic{background:transparent;border:0;box-shadow:none}dialog#fic .ficha{bac
   <div class="vivo" id="vivo"><i></i><span id="vivo_t">conectando…</span></div>
 </nav>
 
-<main class="main"><div id="selfase" style="display:flex;gap:10px;margin-bottom:14px"></div>
+<main class="main">
 <div class="cab">
   <div><h1 id="titulo">Resumen</h1><p id="subt">…</p></div>
-  <button class="panico" id="panico"><svg viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M6.4 6.6a8 8 0 1 0 11.2 0"/></svg>Apagar bots</button>
+  <div class="segm" id="selfase" role="group" aria-label="Fase que se muestra"></div><button class="panico" id="panico"><svg viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M6.4 6.6a8 8 0 1 0 11.2 0"/></svg>Apagar bots</button>
 </div>
 
 <!-- RESUMEN -->
 <section class="vista on" id="v_resumen">
+  <div class="estado" id="estado"></div>
   <div class="fila f4">
-    <div class="cel"><small>Capital total</small><b class="num" id="k_cap">–</b><span id="k_cap2" class="mut"></span></div>
-    <div class="cel"><small>Resultado total</small><b class="num" id="k_tot">–</b><span id="k_tot2" class="mut"></span></div>
-    <div class="cel"><small>Realizado (cerradas)</small><b class="num" id="k_real">–</b></div>
-    <div class="cel"><small>Flotante (abiertas)</small><b class="num" id="k_flot">–</b></div>
+    <div class="cel"><small>Tu cuenta ahora</small><b class="num" id="k_cap">–</b><span id="k_cap2" class="mut"></span></div>
+    <div class="cel"><small>Ganancia total</small><b class="num" id="k_tot">–</b><span id="k_tot2" class="mut"></span></div>
+    <div class="cel"><small>Hoy</small><b class="num" id="k_hoy">–</b><span id="k_hoy2" class="mut"></span></div>
+    <div class="cel"><small>Plata en juego ahora</small><b class="num" id="k_noc">–</b><span class="mut">en operaciones abiertas</span></div>
   </div>
-  <div class="fila f3">
-    <div class="cel"><small>Hoy</small><b class="num" id="k_hoy">–</b></div>
-    <div class="cel"><small>Exposición (posiciones abiertas)</small><b class="num" id="k_noc">–</b></div>
-    <div class="cel"><small>Apalancamiento actual</small><b class="num" id="k_apal">–</b></div>
-  </div>
+  <p class="det"><span>Ya cerradas: <b id="k_real">–</b></span><span>Ganando o perdiendo en las abiertas: <b id="k_flot">–</b></span><span>Tu cuenta se multiplica por: <b id="k_apal">–</b> (apalancamiento)</span></p>
 
-  <div class="cuad">
-    <div class="card" id="recorrido" style="margin-bottom:16px"></div><div class="card"><div class="tit"><span>Curva de la cuenta</span><span id="t_curva" class="mut"></span></div><svg class="gr" id="curva"></svg></div>
+  <div class="card" id="recorrido"></div><div class="cuad">
+    <div class="card"><div class="tit"><span>Curva de la cuenta</span><span id="t_curva" class="mut"></span></div><svg class="gr" id="curva"></svg></div>
     <div>
-      <div class="card" style="margin-bottom:14px"><div class="tit"><span>Exposición por mercado</span></div><div id="expo"></div></div>
-      <div class="card"><div class="tit"><span>Límites de la firma</span></div>
+      <div class="card" style="margin-bottom:14px"><div class="tit"><span>Dónde está la plata ahora</span></div><div id="expo"></div></div>
+      <div class="card"><div class="tit"><span>Límites de Funding Pips y objetivo</span></div>
         <div class="lim"><div class="r"><span>Pérdida de hoy</span><span class="num" id="t_dia"></span></div><div class="pista"><i id="b_dia"></i></div><div class="sub" id="s_dia"></div></div>
         <div class="lim"><div class="r"><span>Pérdida total</span><span class="num" id="t_tot"></span></div><div class="pista"><i id="b_tot"></i></div><div class="sub" id="s_tot"></div></div>
         <div class="lim"><div class="r"><span>Avance al objetivo</span><span class="num" id="t_meta"></span></div><div class="pista"><i id="b_meta" style="background:var(--verde)"></i></div><div class="sub" id="s_dias"></div></div>
@@ -341,7 +385,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none}dialog#fic .ficha{bac
 </main>
 <dialog id="fic" style="max-width:640px;padding:12px"><div id="fic_c"></div></dialog>
 <dialog id="dlg">
-  <h3 id="dlg_t"></h3>
+  <h2 id="dlg_t"></h2>
   <p id="dlg_p"></p>
   <label id="dlg_cl"><input type="checkbox" id="dlg_c"><span id="dlg_cs"></span></label>
   <input class="buscar pin" id="dlg_pin" type="password" inputmode="numeric" placeholder="Clave del panel" hidden>
@@ -359,7 +403,8 @@ const usdS=v=>(v>0?"+":"")+usd(v);
 const c2=v=>v.toFixed(2).replace(".",",");
 const pct=v=>(v>0?"+":"")+v.toFixed(2).replace(".",",")+"%";
 const cl=v=>v>0?"verde":v<0?"rojo":"";
-const hhmm=t=>new Date(t*1000).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"});
+const hhmm=t=>new Date(t*1000).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"UTC"});
+const fdm=t=>{const d=new Date(t*1000);return String(d.getUTCDate()).padStart(2,"0")+"/"+String(d.getUTCMonth()+1).padStart(2,"0")};
 const fecha=t=>{const d=new Date(t*1000);return String(d.getUTCMonth()+1).padStart(2,"0")+"-"+String(d.getUTCDate()).padStart(2,"0")};
 const TITULOS={resumen:"Resumen",bots:"Bots",graficos:"Gráficos",historial:"Historial",resultados:"Resultados",reglas:"Reglas",alertas:"Alertas"};
 document.querySelectorAll("#menu button[data-v]").forEach(b=>b.onclick=()=>irA(b.dataset.v));
@@ -408,7 +453,7 @@ function area(c,id,opts){
   const col=o.col||"#34d399";let h=`<defs><linearGradient id="g${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".28"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>`;
   if(o.ejes){
     for(let k=0;k<5;k++){const y=mn+(mx-mn)*k/4;h+=`<line x1="${pl}" x2="${W}" y1="${Y(y)}" y2="${Y(y)}" stroke="#16213a" stroke-width="1"/><text x="2" y="${Y(y)+4}" fill="#6c7f9a" font-size="15">${Math.round(y).toLocaleString("es-AR")}</text>`}
-    const n=Math.min(7,v.length);for(let k=0;k<n;k++){const i=Math.round((v.length-1)*k/(n-1));h+=`<text x="${X(i)}" y="${H-8}" fill="#6c7f9a" font-size="15" text-anchor="${k==0?"start":k==n-1?"end":"middle"}">${fecha(c[i][0])}</text>`}
+    const n=Math.max(2,Math.min(7,v.length,Math.floor((W-pl)/110)));for(let k=0;k<n;k++){const i=Math.round((v.length-1)*k/(n-1));h+=`<text x="${X(i)}" y="${H-8}" fill="#6c7f9a" font-size="15" text-anchor="${k==0?"start":k==n-1?"end":"middle"}">${fdm(c[i][0])}</text>`}
   }
   if(o.ref!=null)h+=`<line x1="${pl}" x2="${W}" y1="${Y(o.ref)}" y2="${Y(o.ref)}" stroke="#4a5d7c" stroke-dasharray="5 5"/>`;
   h+=`<polygon points="${X(0)},${12+ph} ${pts.join(" ")} ${X(v.length-1)},${12+ph}" fill="url(#g${id})"/><polyline points="${pts.join(" ")}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
@@ -715,8 +760,24 @@ function detalleTrade(h,cerrable){
     <div class="lectura"><div class="tit" style="margin-bottom:8px"><span>Qué pasó</span></div>${lect.map(x=>`<p>${x}</p>`).join("")}</div></div>`;
 }
 const INFO={"Tendencia 4H":["ETH · BTC · ORO","LARGO · 1,25 %"],"Williams Nasdaq":["NASDAQ","UNA POR DÍA · 0,75 %"]};
+const ICONO={verde:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-7"/></svg>',
+  amb:'<svg viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18.2v.1"/></svg>',
+  rojo:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7"/></svg>'};
+//--- el estado de la cuenta en una frase, para entenderlo de un vistazo
+function estadoTexto(d){
+  const pd=Math.max(0,-d.hoy_pct),pt=Math.max(0,-d.total_pct),ab=d.posiciones.length;
+  if(!d.conectado)return["rojo","Sin conexión","MT5 perdió la conexión con el broker: ahora nadie está operando."];
+  if(!(d.algo_terminal&&d.algo_cuenta))return["rojo","Los bots están apagados","El trading automático está apagado en MT5: no se abre ni se cierra nada."];
+  if(pt>=d.freno_total)return["rojo","Freno total: los bots pararon","La pérdida total llegó al "+d.freno_total+" %. Los bots cerraron todo y no operan más en esta cuenta."];
+  if(pd>=d.freno_diario)return["rojo","Freno del día: los bots pararon hasta mañana","La pérdida de hoy llegó al "+d.freno_diario+" %. La firma corta en "+d.lim_diario+" %."];
+  if(d.total_pct>=d.meta_pct)return["verde","Objetivo cumplido","La cuenta ganó "+usd(d.total_usd)+" ("+pct(d.total_pct)+") y llegó a la meta del "+d.meta_pct+" %. "+(ab?"Todavía hay "+ab+(ab===1?" operación abierta":" operaciones abiertas")+": la firma da la etapa por pasada cuando todo está cerrado.":"Todo está cerrado.")];
+  if(pd>=d.freno_diario*0.6||pt>=d.freno_total*0.6)return["amb","Atención: la pérdida se acerca al freno","Hoy "+usdS(d.hoy_usd)+" · en total "+usdS(d.total_usd)+". Si llega al freno, los bots cierran todo."];
+  const falta=Math.max(0,d.meta_pct-d.total_pct);
+  return["verde","Todo en orden","Vas "+usdS(d.total_usd)+" en total y "+usdS(d.hoy_usd)+" hoy. Te falta "+c2(falta)+" % para el objetivo del "+d.meta_pct+" %. "+(ab?ab+(ab===1?" operación abierta.":" operaciones abiertas."):"No hay nada abierto ahora.")];
+}
 function pintar(d){
   ULT=d;
+  {const e=estadoTexto(d);$("estado").className="estado"+(e[0]==="verde"?"":" "+e[0]);$("estado").innerHTML=ICONO[e[0]]+"<div><b>"+e[1]+"</b><span>"+e[2]+"</span></div>"}
   const ok=d.conectado&&d.algo_terminal&&d.algo_cuenta;
   $("vivo").className="vivo"+(ok?"":" mal");$("vivo_t").textContent=ok?"Ejemplo":"Revisar";
   const bots=d.bots||[];const enc=ok?bots.filter(b=>estadoBot(d,b.nombre)!=="pausado").length:0;
@@ -727,7 +788,7 @@ function pintar(d){
   const real=d.realizado!=null?d.realizado:d.saldo-d.capital;
   $("k_real").textContent=usdS(real);$("k_real").className="num "+cl(real);
   $("k_flot").textContent=usdS(d.flotante);$("k_flot").className="num "+cl(d.flotante);
-  $("k_hoy").textContent=usdS(d.hoy_usd)+"  ("+pct(d.hoy_pct)+")";$("k_hoy").className="num "+cl(d.hoy_usd);
+  $("k_hoy").textContent=usdS(d.hoy_usd);$("k_hoy").className="num "+cl(d.hoy_usd);$("k_hoy2").textContent=pct(d.hoy_pct)+" de la cuenta";$("k_hoy2").className="mut";
   const noc=d.nocional||0;$("k_noc").textContent=usd0(noc);$("k_apal").textContent=(d.patrimonio>0?noc/d.patrimonio:0).toFixed(1)+"x";
   const pd=Math.max(0,-d.hoy_pct),pt=Math.max(0,-d.total_pct);
   pista("b_dia",pd,d.lim_diario,d.freno_diario);pista("b_tot",pt,d.lim_total,d.freno_total);
@@ -748,7 +809,7 @@ function pintar(d){
       ${spark(b.spark,tot>=0?"#34d399":"#f87171")}
       <div class="datos"><div><small>Mercados</small>${inf[0]}</div><div><small>Operaciones cerradas</small><span class="mono">${b.ops||0}</span></div>
       <div><small>Posición</small>${pos?`<span class="mono">${pos.sim} ${pos.lado} ${lote(pos.lote)}</span>`:'<span class="mut">sin operación abierta</span>'}</div>
-      <div><small>Exposición</small><span class="mono">${usd0(b.nocional||0)}</span></div></div></div>`}).join("");
+      <div><small>Plata en juego</small><span class="mono">${usd0(b.nocional||0)}</span></div></div></div>`}).join("");
   $("abiertas").innerHTML=d.posiciones.length?d.posiciones.map(p=>`<div class="op"><span class="h mono">${hhmm(p.desde||0)}</span><span class="s mono">${p.sim}</span>${ladoChip(p.lado)}<span class="g mono ${cl(p.gan)}">${usdS(p.gan)}</span><span class="mut">${p.bot}</span></div>`).join(""):'<div class="vacio">Ninguna abierta</div>';
   $("cerradas").innerHTML=d.cerradas_hoy.length?d.cerradas_hoy.map(p=>`<div class="op"><span class="h mono">${hhmm(p.t)}</span><span class="s mono">${p.sim}</span><span class="g mono ${cl(p.neto)}">${p.neto>=0?"ganó":"perdió"} ${usdS(p.neto)}</span><span class="mut">${p.bot}</span></div>`).join(""):'<div class="vacio">Ninguna todavía</div>';
   $("avisos").innerHTML=avisos(d).map(x=>`<div class="av ${x[0]}"><em>${x[1]}</em>${x[2]}${x[3]?`<small>${x[3]}</small>`:""}</div>`).join("");
@@ -775,24 +836,24 @@ async function leerVelas(){return EJ.fases[FASE].velas}
 const fd=t=>{const [y,m,d]=t.slice(0,10).split("-");return d+"/"+m+"/"+y};
 const mn=n=>(n<0?"-":"+")+"$"+Math.abs(n).toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2});
 function pintarRecorrido(){
-  const R=EJ.recorrido,tot=Math.round((new Date(R[1].hasta.slice(0,10))-new Date(R[0].desde.slice(0,10)))/864e5);
-  const fila=r=>`<div style="display:grid;grid-template-columns:auto 1fr;gap:4px 14px;padding:14px 0;border-top:1px solid var(--ln)">
-    <div style="font-weight:700;font-size:18px">${r.etapa==="fase 1"?"Fase 1":"Fase 2"}<div class="mut" style="font-weight:400;font-size:14px">objetivo ${r.meta} %</div></div>
-    <div><span class="verde" style="font-weight:700">APROBADA</span> · ${fd(r.hasta)}<br>
-    <span class="mut">Arrancó el ${fd(r.desde)} con $5.000 · ${r.dias} días · ${r.dias_operados} días con operaciones · ${r.ops} operaciones</span><br>
-    Resultado <b class="verde">${mn(r.neto)} (+${r.pct.toFixed(2).replace(".",",")} %)</b> · saldo <b>$${r.saldo.toLocaleString("es-AR",{minimumFractionDigits:2})}</b><br>
-    <span class="mut">Punto más bajo: $${r.piso[1].toLocaleString("es-AR",{minimumFractionDigits:2})} el ${fd(r.piso[0])}</span></div></div>`;
-  const sem=r=>`<tr><td colspan="4" style="padding:10px 0 4px;font-weight:700">${r.etapa==="fase 1"?"Fase 1":"Fase 2"}</td></tr>`+r.semanas.map(w=>
-    `<tr><td>${fd(w[0])}</td><td style="text-align:right">${w[1]}</td><td style="text-align:right" class="${w[2]>=0?"verde":"rojo"}">${mn(w[2])}</td><td style="text-align:right">$${w[3].toLocaleString("es-AR",{minimumFractionDigits:0})}</td></tr>`).join("");
+  const R=EJ.recorrido,d1=Math.max(1,R[0].dias),d2=Math.max(1,R[1].dias),tot=Math.round((new Date(R[1].hasta.slice(0,10))-new Date(R[0].desde.slice(0,10)))/864e5);
+  const p1=100*d1/(d1+d2),ck='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-7"/></svg>';
+  const blq=r=>`<div class="rf"><div class="rft">${ck}<b>${r.etapa==="fase 1"?"Fase 1":"Fase 2"}</b><span class="mut">objetivo ${r.meta} %</span></div>
+    <div class="rfn verde">${mn(r.neto)}</div><div class="rfp verde">+${r.pct.toFixed(2).replace(".",",")} % · aprobada el ${fd(r.hasta)}</div>
+    <dl><div><dt>Duró</dt><dd>${r.dias} días</dd></div><div><dt>Operaciones</dt><dd>${r.ops}</dd></div><div><dt>Días con operaciones</dt><dd>${r.dias_operados}</dd></div>
+    <div><dt>Lo más bajo de la cuenta</dt><dd>$${r.piso[1].toLocaleString("es-AR",{minimumFractionDigits:0,maximumFractionDigits:0})} · ${fd(r.piso[0])}</dd></div></dl></div>`;
+  const sem=r=>`<tr><th colspan="4">${r.etapa==="fase 1"?"Fase 1":"Fase 2"}</th></tr>`+r.semanas.map(w=>
+    `<tr><td>${fd(w[0])}</td><td class="r">${w[1]}</td><td class="r ${w[2]>=0?"verde":"rojo"}">${mn(w[2])}</td><td class="r">$${w[3].toLocaleString("es-AR",{minimumFractionDigits:0})}</td></tr>`).join("");
   document.getElementById("recorrido").innerHTML=`<div class="tit"><span>Recorrido del challenge</span><span class="mut">ejemplo con datos reales</span></div>
-    <div class="verde" style="font-size:26px;font-weight:800">CHALLENGE APROBADO</div>
-    <div class="mut" style="margin-bottom:8px">Del ${fd(R[0].desde)} al ${fd(R[1].hasta)} · ${tot} días · las dos fases</div>
-    ${fila(R[0])}${fila(R[1])}
-    <div style="border-top:1px solid var(--ln);padding-top:12px" class="mut">Siguiente paso real: Funding Pips revisa la cuenta (identidad y contrato) y entrega la cuenta fondeada.</div>
-    <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600">Semana por semana</summary>
-    <table style="width:100%;border-collapse:collapse;margin-top:8px"><tr class="mut"><td>Semana del</td><td style="text-align:right">Operaciones</td><td style="text-align:right">Resultado</td><td style="text-align:right">Saldo</td></tr>${sem(R[0])}${sem(R[1])}</table></details>`;
-  const bt=(n,t)=>`<button onclick="location.search='?fase=${n}'" style="flex:1;padding:10px 8px;border-radius:12px;border:1px solid ${FASE===n-1?"#3b82f6":"var(--ln)"};background:${FASE===n-1?"#12264a":"var(--card)"};color:inherit;font:inherit;font-weight:600;cursor:pointer">${t}</button>`;
-  document.getElementById("selfase").innerHTML=bt(1,"Ver fase 1 (8 %)")+bt(2,"Ver fase 2 (5 %)");
+    <div class="rtop">${ck}<div><b>Challenge aprobado</b><span>Del ${fd(R[0].desde)} al ${fd(R[1].hasta)} · ${tot} días · las dos fases</span></div></div>
+    <div class="tl" role="img" aria-label="Fase 1 de ${fd(R[0].desde)} a ${fd(R[0].hasta)} y fase 2 de ${fd(R[1].desde)} a ${fd(R[1].hasta)}">
+      <div class="tlb"><i style="flex:${d1}"></i><i style="flex:${d2}"></i></div>
+      <div class="tll"><span style="left:0">${fd(R[0].desde).slice(0,5)}</span><span style="left:${p1}%;transform:translateX(-50%)">${fd(R[0].hasta).slice(0,5)}</span><span style="right:0">${fd(R[1].hasta).slice(0,5)}</span></div></div>
+    <div class="rfs">${blq(R[0])}${blq(R[1])}</div>
+    <p class="mut rsig">Siguiente paso real: Funding Pips revisa la cuenta (identidad y contrato) y entrega la cuenta fondeada.</p>
+    <details><summary>Semana por semana</summary><div class="scroll"><table class="rsem"><tr><th>Semana del</th><th class="r">Operaciones</th><th class="r">Resultado</th><th class="r">Saldo</th></tr>${sem(R[0])}${sem(R[1])}</table></div></details>`;
+  const bt=(n,t)=>`<button class="${FASE===n-1?"on":""}" aria-pressed="${FASE===n-1}" onclick="location.search='?fase=${n}'">${t}</button>`;
+  document.getElementById("selfase").innerHTML=bt(1,"Fase 1")+bt(2,"Fase 2");
 }
 setTimeout(pintarRecorrido,0);
 
