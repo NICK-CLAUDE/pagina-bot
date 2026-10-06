@@ -5,125 +5,261 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Panel de bots (simulación)</title><meta name="robots" content="noindex">
 <style>
-:root{--bg:#0b0f14;--card:#141b24;--tx:#e6edf3;--mut:#8b98a5;--ok:#2ecc71;--am:#f1c40f;--ro:#e74c3c;--ln:#223040}
+:root{--bg:#070b10;--pn:#0c131c;--ln:#17232f;--tx:#e8eef4;--mut:#5d7083;--verde:#2fd08a;--rojo:#ff5c5c;--amb:#e0a030}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,Segoe UI,Roboto,sans-serif;padding:16px;max-width:900px;margin:auto}
-h1{font-size:18px;margin:0}
-.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
-.pill{padding:4px 10px;border-radius:99px;font-size:13px;background:var(--card);border:1px solid var(--ln)}
-.ok{color:var(--ok)}.am{color:var(--am)}.ro{color:var(--ro)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}
-.card{background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:12px}
-.card small{color:var(--mut);display:block;font-size:12px}
-.card b{font-size:22px}
-.sec{margin:14px 0 6px;font-size:14px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em}
-.barra{height:12px;background:#0d1319;border-radius:6px;position:relative;overflow:hidden;margin:6px 0 2px}
-.barra i{position:absolute;left:0;top:0;bottom:0;border-radius:6px}
-.fila{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--ln);font-size:15px}
-.fila:last-child{border:0}
-.mut{color:var(--mut)}
-#aviso{display:none;padding:10px;border-radius:10px;background:#3a1a1a;color:#ffb4ab;margin-bottom:12px}
+body{margin:0;background:radial-gradient(1200px 500px at 50% -10%,#101c2a,var(--bg));color:var(--tx);min-height:100vh;
+ font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:14px}
+.wrap{max-width:1180px;margin:auto}
+.verde{color:var(--verde)}.rojo{color:var(--rojo)}.amb{color:var(--amb)}.mut{color:var(--mut)}
+/* barra de arriba */
+.barra{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;background:var(--pn);border:1px solid var(--ln);border-radius:14px;padding:12px 16px;margin-bottom:12px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo i{width:26px;height:26px;border:2px solid #2a6f8f;border-radius:50%;position:relative;display:block}
+.logo i:after{content:"";position:absolute;inset:6px;border:1.5px solid #2a6f8f;border-radius:50%}
+.logo b{letter-spacing:.2em;font-size:14px;display:block}.logo small{color:var(--mut);font-size:9px;letter-spacing:.25em}
+.estado{padding:6px 14px;border-radius:8px;border:1px solid #1d5c44;background:#0c2a20;color:var(--verde);letter-spacing:.15em;font-size:12px}
+.estado.mal{border-color:#6b2424;background:#2a0f0f;color:var(--rojo)}
+.modo{display:flex;border:1px solid var(--ln);border-radius:8px;overflow:hidden;font-size:12px;opacity:.9}
+.modo span{padding:6px 12px;color:var(--mut)}.modo span.on{background:#0c2a20;color:var(--verde)}
+.stat{display:flex;flex-direction:column}
+.stat b{font-size:15px;white-space:nowrap}.stat small{font-size:9px;letter-spacing:.14em;color:var(--mut);text-transform:uppercase}
+.fin{display:flex;align-items:center;gap:12px;margin-left:auto}
+.reloj b{font-size:15px}
+.panico{background:#2a0f0f;border:1px solid #7a2a2a;color:#ff7b7b;border-radius:8px;padding:8px 14px;font:inherit;cursor:pointer}
+.panico:before{content:"● ";color:var(--rojo)}
+/* paneles */
+.pn{background:var(--pn);border:1px solid var(--ln);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.tit{font-size:10px;letter-spacing:.22em;color:var(--mut);text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between}
 svg{width:100%;height:150px;display:block}
+.op{display:flex;gap:12px;align-items:baseline;padding:9px 0;border-top:1px solid #101a25}
+.op:first-of-type{border-top:0}
+.op .h{color:var(--mut);font-size:11px;min-width:42px}.op .s{font-weight:700;min-width:84px}
+.op .g{min-width:110px}
+.vacio{color:var(--mut);padding:6px 0}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:820px){.dos{grid-template-columns:1fr}.fin{margin-left:0}}
+.lim{margin-bottom:14px}.lim:last-child{margin-bottom:0}
+.lim .r{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
+.pista{height:8px;background:#060a0f;border-radius:4px;overflow:hidden}.pista i{display:block;height:100%;border-radius:4px;transition:width .6s}
+.lim small{display:block;margin-top:5px;font-size:11px;color:var(--mut)}
+.av{border-left:3px solid var(--verde);padding:2px 0 2px 12px;margin-bottom:12px}
+.av.amb{border-color:var(--amb)}.av.rojo{border-color:var(--rojo)}
+.av em{font-style:normal;font-size:9px;letter-spacing:.14em;padding:2px 7px;border-radius:4px;background:#0c2a20;color:var(--verde);margin-right:8px}
+.av.amb em{background:#2e2410;color:var(--amb)}.av.rojo em{background:#2a0f0f;color:var(--rojo)}
+.av small{display:block;color:var(--mut);margin-top:3px;font-size:11px}
+.nota{color:var(--mut);font-size:11px;margin-top:8px}
+
+.tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button{background:var(--pn);border:1px solid var(--ln);color:var(--mut);border-radius:99px;padding:7px 16px;font:inherit;cursor:pointer}
+.tabs button.on{color:var(--verde);border-color:#1d5c44;background:#0c2a20}
+.sec{display:none}.sec.on{display:block}
+table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:8px 6px;border-top:1px solid #101a25;font-weight:400;vertical-align:top}
+th{color:var(--mut);font-size:10px;letter-spacing:.14em;text-transform:uppercase;border-top:0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:#09101a;border:1px solid var(--ln);border-radius:10px;padding:10px 12px}.kpi b{font-size:17px;display:block}.kpi small{font-size:9px;letter-spacing:.14em;color:var(--mut);text-transform:uppercase}
+.bot h3{margin:0 0 4px;font-size:14px}.bot p{margin:4px 0;color:#b6c4d1}
 </style>
 </head>
 <body>
-<div class="top"><h1>Panel de bots <span class="pill am" style="font-size:11px">SIMULACIÓN</span></h1><span class="pill" id="estado">cargando…</span></div>
-<div id="aviso"></div>
+<div class="wrap">
 
-<div class="grid">
-  <div class="card"><small>Saldo + operaciones abiertas</small><b id="patrimonio">–</b></div>
-  <div class="card"><small>Hoy</small><b id="hoy">–</b></div>
-  <div class="card"><small>Desde el inicio</small><b id="total">–</b></div>
-  <div class="card"><small>Días operados</small><b id="dias">–</b></div>
+<div class="barra">
+  <div class="logo"><i></i><div><b>BOTS · SIMULACIÓN</b><small>PANEL DE CONTROL</small></div></div>
+  <div class="estado" id="estado">…</div>
+  <div class="modo" title="Próximamente: elegir el modo desde acá"><span>Solo cierre</span><span class="on">Operar</span></div>
+  <div class="stat"><b id="k_cap">–</b><small>Capital</small></div>
+  <div class="stat"><b id="k_hoy">–</b><small>Hoy</small></div>
+  <div class="stat"><b id="k_caida">–</b><small>Caída total</small></div>
+  <div class="stat"><b id="k_ops">–</b><small>Abiertas / cerradas hoy</small></div>
+  <div class="stat"><b id="k_dias">–</b><small>Días operados</small></div>
+  <div class="stat"><b id="k_meta">–</b><small>Objetivo</small></div>
+  <div class="fin">
+    <div class="reloj stat"><b id="reloj">--:--:--</b><small>Hora del servidor</small></div>
+    <button class="panico" id="panico">Pánico</button>
+  </div>
 </div>
 
-<div class="sec">Límites de la firma</div>
-<div class="card">
-  <div class="fila" style="border:0;padding:0"><span>Pérdida de hoy</span><span id="t_dia" class="mut"></span></div>
-  <div class="barra"><i id="b_dia"></i></div>
-  <div class="mut" style="font-size:12px" id="s_dia"></div>
-  <div class="fila" style="border:0;padding:10px 0 0"><span>Pérdida total</span><span id="t_tot" class="mut"></span></div>
-  <div class="barra"><i id="b_tot"></i></div>
-  <div class="mut" style="font-size:12px" id="s_tot"></div>
-  <div class="fila" style="border:0;padding:10px 0 0"><span>Objetivo de la etapa</span><span id="t_meta" class="mut"></span></div>
-  <div class="barra"><i id="b_meta" style="background:var(--ok)"></i></div>
+<div class="tabs" id="tabs">
+  <button data-t="resumen" class="on">Resumen</button><button data-t="bots">Bots</button><button data-t="resultados">Resultados</button><button data-t="reglas">Reglas</button>
 </div>
 
-<div class="sec">Bots</div>
-<div class="card" id="bots"></div>
+<div class="sec on" id="sec_resumen">
+<div class="pn">
+  <div class="tit"><span>Curva de la cuenta</span><span id="t_curva"></span></div>
+  <svg id="curva" viewBox="0 0 900 150" preserveAspectRatio="none"></svg>
+</div>
 
-<div class="sec">Operaciones abiertas</div>
-<div class="card" id="pos"></div>
+<div class="dos">
+  <div class="pn"><div class="tit"><span>Operaciones abiertas</span></div><div id="abiertas"></div></div>
+  <div class="pn"><div class="tit"><span>Operaciones cerradas hoy</span></div><div id="cerradas"></div></div>
+</div>
 
-<div class="sec">Cerradas hoy</div>
-<div class="card" id="cer"></div>
+<div class="dos">
+  <div class="pn"><div class="tit"><span>Límites de la firma</span></div>
+    <div class="lim"><div class="r"><span>Pérdida de hoy</span><span id="t_dia"></span></div><div class="pista"><i id="b_dia"></i></div><small id="s_dia"></small></div>
+    <div class="lim"><div class="r"><span>Pérdida total</span><span id="t_tot"></span></div><div class="pista"><i id="b_tot"></i></div><small id="s_tot"></small></div>
+    <div class="lim"><div class="r"><span>Avance al objetivo</span><span id="t_meta"></span></div><div class="pista"><i id="b_meta" style="background:var(--verde)"></i></div></div>
+  </div>
+  <div class="pn"><div class="tit"><span>Avisos de los bots</span></div><div id="avisos"></div></div>
+</div>
+</div>
 
-<div class="sec">Curva de la cuenta</div>
-<div class="card"><svg id="curva" viewBox="0 0 600 150" preserveAspectRatio="none"></svg></div>
+<div class="sec" id="sec_bots">
+  <div class="dos">
+    <div class="pn bot"><div class="tit"><span>Bot 1 · Tendencia 4H</span><span id="est_b1" class="mut"></span></div>
+      <h3>Compra cripto y oro cuando suben</h3>
+      <p><span class="mut">Mercados:</span> ETH, BTC y oro. Solo compras.</p>
+      <p><span class="mut">Cómo decide:</span> mira velas de 4 horas y solo compra si el precio está por encima del promedio de los últimos 200 días.</p>
+      <p><span class="mut">Riesgo:</span> 1,25 % de la cuenta por operación (unos 62 $ con 5.000 $). Cada operación lleva Stop Loss desde que se abre.</p>
+      <p><span class="mut">Frenos:</span> corta todo si pierde 4 % en el día o 9 % en total. Si dos cripto se abren juntas, la segunda arriesga la mitad.</p>
+    </div>
+    <div class="pn bot"><div class="tit"><span>Bot 2 · Williams Ruptura</span><span id="est_b2" class="mut"></span></div>
+      <h3>Opera la ruptura del Nasdaq, una vez por día</h3>
+      <p><span class="mut">Mercado:</span> Nasdaq (USTEC).</p>
+      <p><span class="mut">Cómo decide:</span> a las 10:30 de Nueva York deja órdenes de ruptura. Una operación por día como máximo, y todo se cierra a las 15:55.</p>
+      <p><span class="mut">Riesgo:</span> 0,75 % de la cuenta por operación (unos 37 $ con 5.000 $).</p>
+      <p><span class="mut">Frenos:</span> corta todo si pierde 4 % en el día u 8 % en total.</p>
+    </div>
+  </div>
+  <div class="pn"><div class="tit"><span>Qué esperar según las pruebas con datos pasados (2018-26)</span></div>
+    <div class="kpis">
+      <div class="kpi"><b>98 de cada 100</b><small>pasan el challenge</small></div>
+      <div class="kpi"><b>~110 días</b><small>tarda en pasar</small></div>
+      <div class="kpi"><b>9 de cada 100</b><small>pierden la cuenta</small></div>
+      <div class="kpi"><b>Gana 1,5 por 1</b><small>lo que gana vs lo que pierde</small></div>
+    </div>
+    <p class="nota">Son simulaciones con el pasado, no una promesa. Los dos bots están pensados para operar juntos, sin intervenir a mano.</p>
+  </div>
+</div>
 
-<p class="mut" style="font-size:12px">ESTO ES UNA SIMULACIÓN con números inventados. Este panel solo mira: no abre ni cierra operaciones. La pérdida de hoy se mide desde la medianoche del servidor (reinicio de la firma) sobre el saldo de ese momento; es una aproximación, confirmá el valor exacto en el panel de Funding Pips.</p>
+<div class="sec" id="sec_resultados">
+  <div class="pn"><div class="tit"><span>Resumen de las operaciones cerradas</span><span id="t_res"></span></div><div class="kpis" id="kpis_res"></div></div>
+  <div class="pn"><div class="tit"><span>Curva de la cuenta</span></div><svg id="curva2" viewBox="0 0 900 150" preserveAspectRatio="none"></svg></div>
+  <p class="nota">Se calcula con los últimos cierres que lee el panel. El detalle completo está en el historial de MT5.</p>
+</div>
+
+<div class="sec" id="sec_reglas">
+  <div class="pn"><div class="tit"><span>Reglas del challenge y de los bots</span></div>
+    <table>
+      <tr><th>Regla</th><th>Firma</th><th>Bots</th></tr>
+      <tr><td>Pérdida máxima por día</td><td>5 %</td><td>frenan al 4 %</td></tr>
+      <tr><td>Pérdida máxima total</td><td>10 %</td><td>frenan al 9 %</td></tr>
+      <tr><td>Objetivo etapa 1 / 2</td><td>8 % / 5 %</td><td>cierran al llegar</td></tr>
+      <tr><td>Días mínimos operados</td><td>3</td><td>si hace falta, abrir y cerrar 0,01 lote a mano</td></tr>
+      <tr><td>Cripto</td><td>apalancamiento 1:2</td><td>tope de 2× el capital entre las cripto</td></tr>
+      <tr><td>Bots de terceros</td><td>prohibidos</td><td>solo bots propios</td></tr>
+      <tr><td>Fin de semana</td><td>permitido en el challenge</td><td>la cuenta fondeada pide cerrar el viernes</td></tr>
+    </table>
+    <p class="nota">Las reglas de la firma cambian: confirmalas en su web antes de decisiones importantes.</p>
+  </div>
+</div>
+
+<p class="nota">ESTO ES UNA SIMULACIÓN con números inventados. Este panel solo mira: no abre ni cierra operaciones. La pérdida de hoy se mide desde la medianoche del servidor (reinicio de la firma) sobre el saldo de ese momento; es una aproximación, confirmá el valor exacto en Funding Pips.</p>
+</div>
 
 <script>
 const $=id=>document.getElementById(id);
-const usd=v=>(v<0?"-":"")+"US$ "+Math.abs(v).toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2});
-const pct=v=>(v>0?"+":"")+v.toFixed(2)+" %";
-const col=v=>v>0?"ok":v<0?"ro":"";
-const hora=t=>new Date(t*1000).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"});
-function barra(id,valor,lim,freno){ // valor = % perdido (positivo)
-  const p=Math.max(0,Math.min(100,100*valor/lim));
-  const e=$(id);e.style.width=p+"%";
-  e.style.background=valor>=freno?"var(--ro)":valor>=freno*0.6?"var(--am)":"var(--ok)";
+const usd=v=>(v<0?"-":"")+Math.abs(v).toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2})+" $";
+const usdS=v=>(v>0?"+":"")+usd(v);
+const pct=v=>(v>0?"+":"")+v.toFixed(2)+"%";
+const cl=v=>v>0?"verde":v<0?"rojo":"";
+const hhmm=t=>new Date(t*1000).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"});
+function pista(id,valor,lim,freno){
+  const e=$(id);e.style.width=Math.max(0,Math.min(100,100*valor/lim))+"%";
+  e.style.background=valor>=freno?"var(--rojo)":valor>=freno*0.6?"var(--amb)":"var(--verde)";
+}
+function listaAvisos(d){
+  const a=[];
+  if(!d.conectado)a.push(["rojo","SIN CONEXIÓN","MT5 perdió la conexión con el broker."]);
+  if(!(d.algo_terminal&&d.algo_cuenta))a.push(["rojo","BOTS APAGADOS","El trading automático está apagado: los bots no pueden operar."]);
+  const pd=Math.max(0,-d.hoy_pct),pt=Math.max(0,-d.total_pct);
+  if(pd>=d.freno_diario)a.push(["rojo","FRENO DIARIO","La pérdida de hoy llegó al freno de los bots ("+d.freno_diario+" %)."]);
+  else if(pd>=d.freno_diario*0.6)a.push(["amb","ATENCIÓN","La pérdida de hoy ya pasó el 60 % del freno diario."]);
+  if(pt>=d.freno_total)a.push(["rojo","FRENO TOTAL","La pérdida total llegó al freno de los bots ("+d.freno_total+" %)."]);
+  else if(pt>=d.freno_total*0.6)a.push(["amb","ATENCIÓN","La pérdida total ya pasó el 60 % del freno total."]);
+  if(d.total_pct>=d.meta_pct)a.push(["","OBJETIVO","Llegaste al objetivo de la etapa."]);
+  if(d.dias_operados<d.dias_minimos)a.push(["amb","DÍAS MÍNIMOS","Llevás "+d.dias_operados+" de "+d.dias_minimos+" días operados; la firma exige "+d.dias_minimos+"."]);
+  if(!a.length)a.push(["","TODO EN ORDEN","Conectado, bots encendidos y lejos de los límites."]);
+  return (d.extra_avisos||[]).concat(a);
+}
+function pintar(d){
+  const ok=d.conectado&&d.algo_terminal&&d.algo_cuenta;
+  $("estado").textContent=ok?"EN MARCHA":"REVISAR";$("estado").className="estado"+(ok?"":" mal");
+  $("k_cap").textContent=usd(d.patrimonio);
+  $("k_hoy").textContent=pct(d.hoy_pct);$("k_hoy").className=cl(d.hoy_pct);
+  $("k_caida").textContent=pct(Math.min(0,d.total_pct));$("k_caida").className=d.total_pct<0?"rojo":"";
+  $("k_ops").textContent=d.posiciones.length+" / "+d.cerradas_hoy.length;
+  $("k_dias").textContent=d.dias_operados+" / "+d.dias_minimos;$("k_dias").className=d.dias_operados>=d.dias_minimos?"verde":"amb";
+  $("k_meta").textContent=Math.max(0,d.total_pct).toFixed(2)+" / "+d.meta_pct+"%";
+  $("reloj").textContent=new Date(d.actualizado*1000).toLocaleTimeString("es-AR",{timeZone:"UTC"});
+  const pd=Math.max(0,-d.hoy_pct),pt=Math.max(0,-d.total_pct);
+  pista("b_dia",pd,d.lim_diario,d.freno_diario);pista("b_tot",pt,d.lim_total,d.freno_total);
+  $("t_dia").textContent=pd.toFixed(2)+"% de "+d.lim_diario+"%";$("t_tot").textContent=pt.toFixed(2)+"% de "+d.lim_total+"%";
+  $("s_dia").textContent="Los bots frenan al "+d.freno_diario+"%. Te quedan "+usd(Math.max(0,(d.lim_diario-pd)*d.capital/100))+" antes del límite.";
+  $("s_tot").textContent="Los bots frenan al "+d.freno_total+"%. Te quedan "+usd(Math.max(0,(d.lim_total-pt)*d.capital/100))+" antes del límite.";
+  $("b_meta").style.width=Math.max(0,Math.min(100,100*d.total_pct/d.meta_pct))+"%";
+  $("t_meta").textContent=Math.max(0,d.total_pct).toFixed(2)+"% de "+d.meta_pct+"%";
+  $("abiertas").innerHTML=d.posiciones.length?d.posiciones.map(p=>`<div class="op"><span class="h">${hhmm(p.desde||0)}</span><span class="s">${p.sim}</span><span class="g ${cl(p.gan)}">${p.lado} ${usdS(p.gan)}</span><span class="mut">${p.bot}</span></div>`).join(""):'<div class="vacio">Ninguna abierta</div>';
+  $("cerradas").innerHTML=d.cerradas_hoy.length?d.cerradas_hoy.map(p=>`<div class="op"><span class="h">${hhmm(p.t)}</span><span class="s">${p.sim}</span><span class="g ${cl(p.neto)}">${p.neto>=0?"ganó":"perdió"} ${usdS(p.neto)}</span><span class="mut">${p.bot}</span></div>`).join(""):'<div class="vacio">Ninguna todavía</div>';
+  $("avisos").innerHTML=listaAvisos(d).map(x=>`<div class="av ${x[0]}"><em>${x[1]}</em>${x[2]}${x[3]?`<small>${x[3]}</small>`:""}</div>`).join("");
+  dibujar(d.curva,d.capital,d.meta_pct);
+  resultados(d.curva);
+  const ab=n=>(d.bots||[]).find(b=>b.nombre===n);
+  const e1=ab("Tendencia 4H"),e2=ab("Williams Nasdaq");
+  $("est_b1").textContent=e1?(e1.abiertas?e1.abiertas+" abierta(s)":"sin operación abierta"):"";
+  $("est_b2").textContent=e2?(e2.abiertas?e2.abiertas+" abierta(s)":"sin operación abierta"):"";
+  dibujar(d.curva,d.capital,d.meta_pct,"curva2");
+}
+function dibujar(c,cap,meta,id){
+  const s=$(id||"curva");
+  if(!c||c.length<2){s.innerHTML='<text x="10" y="80" fill="#5d7083" font-size="13">Todavía no hay operaciones cerradas</text>';$("t_curva").textContent="";return}
+  const piso=cap*0.9,techo=cap*(1+meta/100);
+  const ys=c.map(x=>x[1]).concat([cap]),mn=Math.min(...ys,cap*0.97),mx=Math.max(...ys,cap*1.03),r=(mx-mn)||1;
+  const Y=v=>(140-130*(v-mn)/r).toFixed(1);
+  const pts=c.map((x,i)=>(900*i/(c.length-1)).toFixed(1)+","+Y(x[1])).join(" ");
+  let h=`<line x1="0" x2="900" y1="${Y(cap)}" y2="${Y(cap)}" stroke="#2a3a4a" stroke-dasharray="4 4"/>`;
+  if(techo<=mx)h+=`<line x1="0" x2="900" y1="${Y(techo)}" y2="${Y(techo)}" stroke="#1d5c44" stroke-dasharray="2 5"/><text x="4" y="${Y(techo)-3}" fill="#2fd08a" font-size="10">objetivo</text>`;
+  if(piso>=mn)h+=`<line x1="0" x2="900" y1="${Y(piso)}" y2="${Y(piso)}" stroke="#6b2424" stroke-dasharray="2 5"/><text x="4" y="${Y(piso)-3}" fill="#ff5c5c" font-size="10">límite de la firma</text>`;
+  s.innerHTML=h+`<polyline points="${pts}" fill="none" stroke="#2fd08a" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
+  if(!id)$("t_curva").textContent=c.length+" operaciones cerradas";
+}
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x===b));
+  document.querySelectorAll(".sec").forEach(x=>x.classList.toggle("on",x.id==="sec_"+b.dataset.t));
+});
+function resultados(c,svgId){
+  const k=$("kpis_res");
+  if(!c||c.length<3){k.innerHTML='<div class="vacio">Todavía no hay suficientes operaciones cerradas.</div>';return}
+  const dif=[];for(let i=1;i<c.length;i++)dif.push(c[i][1]-c[i-1][1]);
+  const g=dif.filter(x=>x>0),p=dif.filter(x=>x<0),sg=g.reduce((a,b)=>a+b,0),sp=-p.reduce((a,b)=>a+b,0);
+  const it=(b,s,c2)=>`<div class="kpi"><b class="${c2||""}">${b}</b><small>${s}</small></div>`;
+  k.innerHTML=it(dif.length,"operaciones")+it(Math.round(100*g.length/dif.length)+" %","ganadoras")
+    +it(usd(sg+(-sp)),"resultado neto",(sg-sp)>=0?"verde":"rojo")+it(usdS(sg/(g.length||1)),"ganancia promedio","verde")
+    +it(usdS(-sp/(p.length||1)),"pérdida promedio","rojo")+it(sp?("1 pierde, "+(sg/sp).toFixed(2)+" gana"):"–","relación");
+  $("t_res").textContent=dif.length+" cierres";
+}
+$("panico").onclick=()=>alert("El botón de pánico todavía no está conectado. Cuando lo esté, va a cerrar todas las operaciones y apagar los bots.");
+
+// ---- SIMULACIÓN: datos inventados que se mueven solos (en el panel real vienen de MT5) ----
+const T0=Math.floor(Date.now()/1000);let flot=-22.3;
+async function leerEstado(){
+  flot+=(Math.random()-0.48)*9;const saldo=5120.5,pat=saldo+flot,hoy=pat-5180.5,tot=pat-5000,t=Math.floor(Date.now()/1000);
+  const curva=[[1,5000],[2,5060],[3,5030],[4,5105],[5,5085],[6,5150],[7,5180.5],[8,5142.8],[9,5120.5]];
+  return {actualizado:t,conectado:true,algo_terminal:true,algo_cuenta:true,capital:5000,saldo:saldo,patrimonio:pat,flotante:flot,
+   hoy_usd:hoy,hoy_pct:hoy/50,total_usd:tot,total_pct:tot/50,meta_pct:8,lim_diario:5,lim_total:10,freno_diario:4,freno_total:9,
+   dias_operados:2,dias_minimos:3,
+   posiciones:[{sim:"ETHUSD",lado:"compra",lote:0.5,gan:flot,bot:"Tendencia 4H",desde:t-5400}],
+   cerradas_hoy:[{t:t-7200,sim:"USTEC",bot:"Williams Nasdaq",neto:-37.7},{t:t-20000,sim:"XAUUSD",bot:"Tendencia 4H",neto:62.4}],curva:curva,
+   extra_avisos:[["","WILLIAMS","Hoy cerró la operación del Nasdaq por Stop Loss: -37,70 $.","Una por día, cierra a las 15:55 de Nueva York"]]};
 }
 
-// ---- SIMULACION: datos inventados que se mueven solos (en el panel real vienen de MT5) ----
-const T0=Math.floor(Date.now()/1000);let flot=-22.3,saldo=5120.5;
-async function leerEstado(){
-  flot+= (Math.random()-0.48)*9; saldo+=0;
-  const pat=saldo+flot, hoy=pat-5180.5, tot=pat-5000;
-  const curva=[[T0-9e4,5000],[T0-8e4,5060],[T0-7e4,5030],[T0-6e4,5105],[T0-5e4,5085],[T0-4e4,5150],[T0-3e4,5180.5],[T0-2e4,5142.8],[T0-1e4,5120.5]];
-  return {actualizado:T0,conectado:true,algo_terminal:true,algo_cuenta:true,capital:5000,saldo:saldo,patrimonio:pat,flotante:flot,
-   hoy_usd:hoy,hoy_pct:hoy/50,total_usd:tot,total_pct:tot/50,meta_pct:8,lim_diario:5,lim_total:10,freno_diario:4,freno_total:9,
-   dias_operados:2,dias_minimos:3,bots:[{nombre:"Tendencia 4H",abiertas:1},{nombre:"Williams Nasdaq",abiertas:0}],
-   posiciones:[{sim:"ETHUSD",lado:"compra",lote:0.5,gan:flot,bot:"Tendencia 4H"}],
-   cerradas_hoy:[{t:T0-7200,sim:"USTEC",bot:"Williams Nasdaq",neto:-37.7},{t:T0-20000,sim:"XAUUSD",bot:"Tendencia 4H",neto:62.4}],curva:curva};
-}
 async function cargar(){
-  let d;
-  d=await leerEstado();
-  const av=$("aviso");
-  if(!d||d.sin_datos){av.style.display="block";av.textContent="Sin datos: ¿está MT5 abierto con Panel_Estado cargado en un gráfico?";$("estado").textContent="sin datos";$("estado").className="pill ro";return}
-  const edad=Date.now()/1000-d.actualizado; // la hora del servidor MT5 no es UTC: se compara solo si hay mucho desfase
-  const algo=d.algo_terminal&&d.algo_cuenta;
-  const msgs=[];
-  if(!d.conectado)msgs.push("MT5 sin conexión al broker.");
-  if(!algo)msgs.push("Trading automático APAGADO: los bots no pueden operar.");
-  av.style.display=msgs.length?"block":"none";av.textContent=msgs.join(" ");
-  const ok=d.conectado&&algo;
-  $("estado").textContent=ok?"en marcha":"revisar";$("estado").className="pill "+(ok?"ok":"ro");
-  $("patrimonio").textContent=usd(d.patrimonio);
-  $("hoy").textContent=usd(d.hoy_usd)+"  ("+pct(d.hoy_pct)+")";$("hoy").className=col(d.hoy_usd);
-  $("total").textContent=usd(d.total_usd)+"  ("+pct(d.total_pct)+")";$("total").className=col(d.total_usd);
-  $("dias").textContent=d.dias_operados+" / "+d.dias_minimos;$("dias").className=d.dias_operados>=d.dias_minimos?"ok":"am";
-  const pd=Math.max(0,-d.hoy_pct),pt=Math.max(0,-d.total_pct);
-  barra("b_dia",pd,d.lim_diario,d.freno_diario);barra("b_tot",pt,d.lim_total,d.freno_total);
-  $("t_dia").textContent=pd.toFixed(2)+" % de "+d.lim_diario+" %";$("t_tot").textContent=pt.toFixed(2)+" % de "+d.lim_total+" %";
-  $("s_dia").textContent="Los bots frenan al "+d.freno_diario+" % · te quedan "+usd(Math.max(0,(d.lim_diario-pd)*d.capital/100))+" antes del límite";
-  $("s_tot").textContent="Los bots frenan al "+d.freno_total+" % · te quedan "+usd(Math.max(0,(d.lim_total-pt)*d.capital/100))+" antes del límite";
-  const m=Math.max(0,Math.min(100,100*d.total_pct/d.meta_pct));
-  $("b_meta").style.width=m+"%";$("t_meta").textContent=Math.max(0,d.total_pct).toFixed(2)+" % de "+d.meta_pct+" %";
-  $("bots").innerHTML=d.bots.map(b=>`<div class="fila"><span>${b.nombre}</span><span class="${b.abiertas?"ok":"mut"}">${b.abiertas?b.abiertas+" abierta(s)":"sin operación abierta"}</span></div>`).join("");
-  $("pos").innerHTML=d.posiciones.length?d.posiciones.map(p=>`<div class="fila"><span>${p.sim} ${p.lado} ${p.lote}<br><span class="mut" style="font-size:12px">${p.bot}</span></span><span class="${col(p.gan)}">${usd(p.gan)}</span></div>`).join(""):'<span class="mut">Ninguna</span>';
-  $("cer").innerHTML=d.cerradas_hoy.length?d.cerradas_hoy.map(p=>`<div class="fila"><span>${hora(p.t)} · ${p.sim}<br><span class="mut" style="font-size:12px">${p.bot}</span></span><span class="${col(p.neto)}">${usd(p.neto)}</span></div>`).join(""):'<span class="mut">Ninguna todavía</span>';
-  dibujar(d.curva,d.capital);
+  let d;try{d=await leerEstado()}catch(e){d=null}
+  if(!d||d.sin_datos){$("estado").textContent="SIN DATOS";$("estado").className="estado mal";
+    $("avisos").innerHTML='<div class="av rojo"><em>SIN DATOS</em>¿Está MT5 abierto con Panel_Estado cargado en un gráfico?</div>';return}
+  pintar(d);
 }
-function dibujar(c,cap){
-  const s=$("curva");
-  if(!c||c.length<2){s.innerHTML='<text x="10" y="80" fill="#8b98a5" font-size="14">Todavía no hay operaciones cerradas</text>';return}
-  const ys=c.map(x=>x[1]).concat([cap]),mn=Math.min(...ys),mx=Math.max(...ys),r=(mx-mn)||1;
-  const pts=c.map((x,i)=>(600*i/(c.length-1)).toFixed(1)+","+(140-130*(x[1]-mn)/r).toFixed(1)).join(" ");
-  const yc=(140-130*(cap-mn)/r).toFixed(1);
-  s.innerHTML=`<line x1="0" x2="600" y1="${yc}" y2="${yc}" stroke="#8b98a5" stroke-dasharray="4 4" stroke-width="1"/><polyline points="${pts}" fill="none" stroke="#2ecc71" stroke-width="2"/>`;
-}
+{const b=document.querySelector('#tabs button[data-t="'+location.hash.slice(1)+'"]');if(b)b.click()}
 cargar();setInterval(cargar,4000);
 </script>
 </body>
