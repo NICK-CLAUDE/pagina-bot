@@ -155,7 +155,7 @@ dialog .pin{width:100%;margin-bottom:14px}
 
 .ld{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:7px;font-weight:700;font-size:13px;letter-spacing:.02em;white-space:nowrap}
 .ld svg{width:10px;height:10px;fill:currentColor}
-.ld.c{background:#0c2a22;color:var(--verde)}.ld.v{background:#3a1515;color:var(--rojo)}
+.ld.c{background:#089981;color:#fff}.ld.v{background:#F23645;color:#fff}
 .graf{position:relative}
 .gov{position:absolute;left:10px;top:10px;z-index:3;display:flex;flex-direction:column;gap:6px;max-width:calc(100% - 90px);pointer-events:none}
 .gov div{background:rgba(10,17,29,.88);border:1px solid var(--ln);border-radius:10px;padding:8px 12px;font-size:14px;line-height:1.35;backdrop-filter:blur(4px)}
@@ -535,6 +535,20 @@ async function enviarControl(bot,accion,cerrar,pin){
   return Object.assign({},DEMO_CTRL);
 }
 // ---------- gráficos tipo TradingView
+class ZonaPosicion{ // rectángulos verde (entrada→Take Profit) y rojo (entrada→Stop Loss) desde que abrió hasta el borde derecho
+  constructor(p){this.p=p}
+  attached({chart,series}){this.chart=chart;this.series=series}
+  detached(){}
+  updateAllViews(){}
+  paneViews(){const z=this;return [{zOrder:()=>"bottom",renderer:()=>({draw:target=>target.useMediaCoordinateSpace(sc=>{
+    const ctx=sc.context,ts=z.chart.timeScale(),W=sc.mediaSize.width;
+    let x1=ts.timeToCoordinate(z.p.t);if(x1===null)x1=0;
+    const ye=z.series.priceToCoordinate(z.p.precio);if(ye===null)return;
+    const caja=(precio,color)=>{if(!(precio>0))return;const y=z.series.priceToCoordinate(precio);if(y===null)return;
+      ctx.fillStyle=color;ctx.fillRect(x1,Math.min(ye,y),W-x1,Math.abs(y-ye))};
+    caja(z.p.tp,"rgba(8,153,129,.22)");caja(z.p.sl,"rgba(242,54,69,.22)");
+  })})}]}
+}
 const botDeSimbolo=sy=>/TEC|NAS|NDX|US100/i.test(sy)?"Williams Nasdaq":"Tendencia 4H";
 const TF_SEG={M1:60,M5:300,M15:900,M30:1800,H1:3600,H4:14400,D1:86400};
 const GR={};   // por bot: {chart, serie, sim, lineas:[]}
@@ -549,13 +563,13 @@ function armarGraficos(){
     const id=b.replace(/\W/g,"");
     cont.insertAdjacentHTML("beforeend",`<div class="card gbot"><div class="gcab"><h2>${b}</h2><div class="grupo" id="gs_${id}">${bots[b].map((sy,i)=>`<button class="f${i?"":" on"}" data-s="${sy}">${sy} · ${VELAS[sy].tf}</button>`).join("")}</div></div>
       <div class="graf" id="gr_${id}"><div class="gov" id="go_${id}"></div></div>
-      <details class="gayuda"><summary>¿Qué son las líneas?</summary><div class="ley"><span><i style="border-color:#e7edf6"></i>precio de entrada</span><span><i style="border-color:#f87171;border-top-style:dashed"></i>Stop Loss: ahí cierra perdiendo</span><span><i style="border-color:#34d399;border-top-style:dashed"></i>Take Profit: ahí cierra ganando</span><span>Flecha = abrió · cuadradito = cerró, con lo que ganó o perdió</span></div></details>
+      <details class="gayuda"><summary>¿Qué son las líneas?</summary><div class="ley"><span><i style="border-color:#2962FF"></i>precio de entrada (zona verde = hasta el Take Profit, zona roja = hasta el Stop Loss)</span><span><i style="border-color:#f87171;border-top-style:dashed"></i>Stop Loss: ahí cierra perdiendo</span><span><i style="border-color:#34d399;border-top-style:dashed"></i>Take Profit: ahí cierra ganando</span><span>Flecha gris = operación vieja · círculo = dónde cerró y cuánto ganó o perdió</span></div></details>
       </div>`);
     const ch=LightweightCharts.createChart($("gr_"+id),{autoSize:true,layout:{background:{color:"#0a111d"},textColor:"#9db0c9",fontSize:13,fontFamily:"system-ui,Segoe UI,Roboto,sans-serif"},
-      grid:{vertLines:{visible:false},horzLines:{color:"#101a2b"}},rightPriceScale:{borderColor:"#17223a"},timeScale:{borderColor:"#17223a",timeVisible:true,secondsVisible:false},
+      grid:{vertLines:{visible:false},horzLines:{color:"#101a2b"}},rightPriceScale:{borderColor:"#17223a"},timeScale:{borderColor:"#17223a",timeVisible:true,secondsVisible:false,rightOffset:12},
       crosshair:{mode:0},localization:{locale:"es-AR"}});
-    const se=ch.addCandlestickSeries({upColor:"#34d399",downColor:"#f87171",borderVisible:false,wickUpColor:"#34d399",wickDownColor:"#f87171"});
-    GR[b]={chart:ch,serie:se,sim:bots[b][0],lineas:[],nuevo:true};
+    const se=ch.addCandlestickSeries({upColor:"#089981",downColor:"#F23645",borderVisible:false,wickUpColor:"#089981",wickDownColor:"#F23645"});
+    GR[b]={chart:ch,serie:se,sim:bots[b][0],lineas:[],zonas:[],nuevo:true};
     document.querySelectorAll(`#gs_${id} .f`).forEach(x=>x.onclick=()=>{GR[b].sim=x.dataset.s;GR[b].nuevo=true;
       document.querySelectorAll(`#gs_${id} .f`).forEach(y=>y.classList.toggle("on",y===x));pintarGrafico(b)});
   });
@@ -566,22 +580,24 @@ function pintarGrafico(b){
   g.serie.applyOptions({priceFormat:{type:"price",precision:dig,minMove:1/Math.pow(10,dig)}});
   g.serie.setData(V.v.map(x=>({time:x[0],open:x[1],high:x[2],low:x[3],close:x[4]})));
   if(g.nuevo){const n=V.v.length,ancho=$("gr_"+id).clientWidth;
-    if(ancho<700)g.chart.timeScale().setVisibleLogicalRange({from:n-60,to:n+2});else g.chart.timeScale().fitContent();g.nuevo=false}
+    if(ancho<700)g.chart.timeScale().setVisibleLogicalRange({from:n-55,to:n+10});else g.chart.timeScale().fitContent();g.nuevo=false}
   g.lineas.forEach(l=>g.serie.removePriceLine(l));g.lineas=[];
+  g.zonas.forEach(z=>g.serie.detachPrimitive(z));g.zonas=[];
   const pos=(d.posiciones||[]).filter(p=>p.sim===g.sim&&p.bot===b);
   pos.forEach(p=>{
     const L=(price,color,style,title)=>{if(price>0)g.lineas.push(g.serie.createPriceLine({price,color,lineWidth:2,lineStyle:style,axisLabelVisible:true,title}))};
-    L(p.precio,"#e7edf6",0,(p.lado==="compra"?"COMPRA ":"VENTA ")+lote(p.lote));L(p.sl,"#f87171",2,"Stop Loss");L(p.tp,"#34d399",2,"Take Profit");
+    L(p.precio,"#2962FF",0,(p.lado==="compra"?"COMPRA ":"VENTA ")+lote(p.lote)+" · ABIERTA");L(p.sl,"#F23645",2,"Stop Loss");L(p.tp,"#089981",2,"Take Profit");
+    const z=new ZonaPosicion({t:p.desde-p.desde%tf,precio:p.precio,sl:p.sl,tp:p.tp});g.serie.attachPrimitive(z);g.zonas.push(z);
   });
   const t0=V.v.length?V.v[0][0]:0,bar=t=>t-t%tf,m=[];
   (d.historial||[]).filter(h=>h.sim===g.sim&&h.bot===b&&h.ci>=t0).forEach(h=>{
     const c=h.lado==="compra";
-    if(h.ab>=t0)m.push({time:bar(h.ab),position:c?"belowBar":"aboveBar",color:c?"#34d399":"#f87171",shape:c?"arrowUp":"arrowDown",text:c?"Compra":"Venta"});
-    m.push({time:bar(h.ci),position:c?"aboveBar":"belowBar",color:h.neto>=0?"#34d399":"#f87171",shape:"square",text:"Cerró "+(h.neto>=0?"+":"")+Math.round(h.neto)});
+    if(h.ab>=t0)m.push({time:bar(h.ab),position:c?"belowBar":"aboveBar",color:"#6b7a90",shape:c?"arrowUp":"arrowDown",text:""});
+    m.push({time:bar(h.ci),position:c?"aboveBar":"belowBar",color:h.neto>=0?"#089981":"#F23645",shape:"circle",text:"Cerró "+(h.neto>=0?"+":"")+Math.round(h.neto)});
   });
-  pos.forEach(p=>{const c=p.lado==="compra";if(p.desde>=t0)m.push({time:bar(p.desde),position:c?"belowBar":"aboveBar",color:c?"#34d399":"#f87171",shape:c?"arrowUp":"arrowDown",text:(c?"Compra":"Venta")+" abierta"})});
-  $("go_"+id).innerHTML=pos.length?"":`<div class="mut">Sin operación abierta en ${g.sim}</div>`;$("go_"+id).innerHTML+=pos.map(p=>`<div>${ladoChip(p.lado)} <b>${lote(p.lote)}</b> lotes<br><span class="mut">entrada</span> <b>${p.precio}</b> · <span class="${cl(p.gan)}"><b>${usdS(p.gan)}</b></span></div>`).join("");
-  m.sort((a,c)=>a.time-c.time);m.forEach((x,i)=>{x.size=.7;if(i<m.length-3||/abierta/.test(x.text))x.text=""});
+  pos.forEach(p=>{const c=p.lado==="compra";if(p.desde>=t0)m.push({time:bar(p.desde),position:c?"belowBar":"aboveBar",color:c?"#089981":"#F23645",shape:c?"arrowUp":"arrowDown",text:"",size:1.4,abierta:1})});
+  $("go_"+id).innerHTML=pos.length?"":`<div class="mut">Sin operación abierta en ${g.sim}</div>`;$("go_"+id).innerHTML+=pos.map(p=>`<div><span class="mut" style="font-size:12px;letter-spacing:.04em">OPERACIÓN ABIERTA</span><br>${ladoChip(p.lado)} <b>${lote(p.lote)}</b> lotes<br><span class="mut">entrada</span> <b>${p.precio}</b> · <span class="${cl(p.gan)}"><b>${usdS(p.gan)}</b></span></div>`).join("");
+  m.sort((a,c)=>a.time-c.time);const viejas=m.filter(x=>!x.abierta);viejas.forEach((x,i)=>{x.size=.7;if(i<viejas.length-3)x.text=""});m.forEach(x=>delete x.abierta);
   g.serie.setMarkers(m);
 }
 async function refrescarGraficos(){
