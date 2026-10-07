@@ -219,18 +219,31 @@ details.mas > summary { cursor: pointer; font-weight: 700; color: var(--text) }
 
   <!-- VEREDICTO (informe opcional que inserta analizador_backtest.py --informe) -->
   <div class="pane informe" data-pane="veredicto"><header style="display:grid;gap:12px">
-    <span class="label">Veredicto · actualizado 6 de octubre de 2026</span>
-    <h1>Dos bots propios en 6 mercados: <em>ETH, Bitcoin, oro y petróleo</em> + <em>Nasdaq, S&amp;P 500 y Bitcoin</em>.</h1>
+    <span class="label">Veredicto · revisión completa del 6 de octubre de 2026</span>
+    <h1>Los dos bots sirven para el challenge, pero <em>antes de comprar</em> hay que hacerles <em>4 cambios</em> y probarlos gratis en Funding Pips.</h1>
   </header>
 
   <section class="card hero">
-    <span class="label">En pocas palabras</span>
+    <span class="label">En pocas palabras (con los cambios)</span>
     <div class="big">
-      <div><b class="pos">9 de cada 10</b><span>challenges que pasan los bots juntos (2018 a 2026, contando lo que la simulación no ve)</span></div>
-      <div><b class="pos">unos 2 meses</b><span>para pasar las dos etapas, normalmente (antes, unos 4)</span></div>
+      <div><b class="pos">9 de cada 10</b><span>challenges que pasan (94 de 100 en la simulación más dura: los bots juntos, la pérdida que va flotando y los costos de Funding Pips)</span></div>
+      <div><b class="pos">unos 2 meses y medio</b><span>para pasar las dos etapas, en la mitad de los casos</span></div>
       <div><b>48,40 US$</b><span>lo máximo que podés perder: lo que cuesta el challenge de 5.000</span></div>
     </div>
-    <p>🟡 <b>Mejora del 6 de octubre:</b> los mismos dos bots, con las mismas reglas, en 3 mercados más (petróleo para el Bot 1; S&amp;P 500 y Bitcoin para el Bot 2). Probada con 8 años de datos y con la configuración exacta del challenge; falta verla funcionar en la demo antes de usarla con plata.  El del Nasdaq todavía no operó en vivo: el challenge hace de prueba real. Lo que funcionó en el pasado no asegura el futuro.</p>
+    <p>🟡 <b>Revisión del 6 de octubre:</b> revisé las reglas de Funding Pips, el código y 8 años de pruebas. Encontré 2 cosas que podían hacer que te cierren la cuenta (Bot 2 en Bitcoin y órdenes que quedaban puestas de noche) y que el plan de hoy, medido con más realismo, pasa <b>7 de cada 10</b> y no 9. Con los cambios de abajo vuelve a <b>9 de cada 10</b>, tardando un poco más. Lo que funcionó en el pasado no asegura el futuro.</p>
+  </section>
+
+  <section>
+    <h2>Qué cambiar antes de comprar</h2>
+    <div class="card steps">
+      <div class="step"><p><b>1. Sacar el Bot 2 de Bitcoin.</b> El Bot 1 deja compras de Bitcoin abiertas varios días; si el Bot 2 vende Bitcoin en ese momento quedan compra y venta a la vez ("hedging"), y Funding Pips cierra la cuenta por eso. Pasaba más o menos 1 vez por semana. Además, la comisión de Funding Pips en cripto le come la mitad de la ganancia.</p></div>
+      <div class="step"><p><b>2. Bajar el riesgo:</b> Bot 1 de 1,25 % a <b>1 % (50 US$ por operación)</b>; Bot 2 de 0,75 % a <b>0,56 % (28 US$) en el Nasdaq</b> y de 0,56 % a <b>0,42 % (21 US$) en el S&amp;P 500</b>. Pasa 94 de cada 100 en vez de 85, tardando unas 4 semanas más.</p></div>
+      <div class="step"><p><b>3. Arreglar 3 detalles del Bot 2:</b> borrar sus órdenes a las 15:55 de Nueva York (hoy, si en el día no se activó ninguna, quedan puestas y a veces se activan con el salto de precio de la reapertura: Funding Pips prohíbe operar esos saltos, "gap trading"); recalcular la hora de Nueva York en el cambio de horario (1 de noviembre); y sacar un aviso falso que sale en el gráfico del S&amp;P 500.</p></div>
+      <div class="step"><p><b>4. Usar los nombres de Funding Pips:</b> petróleo = <b>USOIL</b> (el Bot 1 hoy dice XTIUSD y no lo operaría), Nasdaq = <b>NDX100</b>, S&amp;P 500 = <b>SPX500</b>.</p></div>
+      <div class="step"><p><b>5. Probarlos gratis 2 semanas en la cuenta de prueba de Funding Pips</b> (Free Trial: mismas condiciones, costos y nombres que el challenge; no se puede tener al mismo tiempo que un challenge pago). Así se ve si todo anda antes de poner plata.</p></div>
+      <div class="step"><p><b>6. Decidir el agregado Swing (+4,40 US$) con una pregunta al soporte de Funding Pips:</b> ¿el apalancamiento más bajo de las cuentas Swing rige también durante el challenge? Si <b>sí</b>, comprar <b>sin Swing</b>: con ese apalancamiento 1 de cada 6 entradas no tendría la garantía suficiente, y en la fondeada iría solo el Bot 2 (que ya cierra cada día) con menos riesgo. Si <b>no</b>, conviene <b>con Swing</b>: sin él, en la fondeada Funding Pips cierra todo cada noche y el Bot 1 (que deja operaciones abiertas varios días) no se podría usar.</p></div>
+      <div class="step"><p><b>7. Guardar el código con su historial</b> (git): Funding Pips puede pedir pruebas de que los bots son tuyos (código, historial de cambios o una llamada para explicar cómo funcionan).</p></div>
+    </div>
   </section>
 
   <section>
@@ -244,6 +257,7 @@ details.mas > summary { cursor: pointer; font-weight: 700; color: var(--text) }
 
   <section>
     <h2>Cómo arrancar</h2>
+    <p class="muted">Así está hoy. Cambia cuando se hagan los cambios de arriba (sin el gráfico de Bitcoin del Bot 2, menos riesgo y los nombres de Funding Pips).</p>
     <div class="card steps">
       <div class="step"><p><b>Comprar el 2 Step Standard de 5.000</b> (MT5, pérdida diaria de 5 %).</p></div>
       <div class="step"><p><b>En la Mac, seguir la guía LEEME_MAC.txt:</b> el Bot 1 en un gráfico de ETHUSD H4 con <b>challenge_5k_etapa1.set</b>, y el Bot 2 en 3 gráficos de 1 minuto: Nasdaq con <b>challenge_5k_nasdaq_etapa1.set</b>, S&amp;P 500 con <b>challenge_5k_sp500_etapa1.set</b> y BTCUSD con <b>challenge_5k_btc_etapa1.set</b>. Si Funding Pips llama distinto a algún mercado (por ejemplo "USOIL" al petróleo), corregir el nombre. Activar "Algo Trading".</p></div>
@@ -265,6 +279,24 @@ details.mas > summary { cursor: pointer; font-weight: 700; color: var(--text) }
     <h2>Más detalle</h2>
     <p class="muted">Tocá un tema para abrirlo.</p>
     <details class="mas" open>
+      <summary>Revisión completa: qué se probó y qué dio</summary>
+      <p><b>La prueba más dura que hicimos:</b> los dos bots juntos en la misma cuenta, hora por hora, tomando el peor precio de cada hora para todas las operaciones a la vez, con las reglas exactas de Funding Pips (5 % por día y 10 % en total contando la pérdida que va flotando, meta con todo cerrado y 3 días operados), los frenos de los bots y las comisiones de Funding Pips. Se repitió el challenge arrancando cada 2 semanas entre 2019 y 2025 (176 veces):</p>
+      <div class="card scroll"><table>
+        <thead><tr><th>Plan</th><th>Pasa (de 100)</th><th>Pierde el challenge</th><th>Días (mitad de los casos)</th></tr></thead>
+        <tbody>
+          <tr><td>Hoy: 6 mercados, riesgo actual</td><td class="neg">74</td><td>26</td><td>42</td></tr>
+          <tr><td>Sin el Bot 2 en Bitcoin, riesgo actual</td><td>85</td><td>15</td><td>54</td></tr>
+          <tr><td>Sin Bitcoin en el Bot 2 y Bot 1 al 1 %</td><td>89</td><td>11</td><td>60</td></tr>
+          <tr><td><b>Recomendado:</b> sin Bitcoin en el Bot 2, Bot 1 al 1 %, Bot 2 un cuarto menos</td><td class="pos"><b>94</b></td><td>6</td><td>81</td></tr>
+          <tr><td>Todavía más prudente (Bot 1 al 0,75 %)</td><td class="pos">97</td><td>3</td><td>91</td></tr>
+        </tbody></table></div>
+      <p>"Pierde el challenge" quiere decir que los bots se frenaron solos al perder 8-9 % para no romper la regla del 10 %: en ninguno de los 176 se rompió una regla de Funding Pips (el peor día perdió 4,2 %, con límite de 5 %; la peor bajada fue 9,3 %, con límite de 10 %). Arrancando en 2019-21 o en 2022-25 da parecido.</p>
+      <p><b>¿Es suerte? Pruebas de solidez del plan recomendado:</b> con los costos al doble pasa <b>90 de 100</b>; si 1 de cada 10 operaciones no se abre (al azar, 12 veces), pasa <b>entre 91 y 97</b>. Con los parámetros de los bots un poco más arriba o más abajo da casi lo mismo (Bot 1: gana entre 1,6 y 1,9 por cada 1 que pierde y los 9 años en ganancia; Bot 2: entre 1,32 y 1,34): no están hechos a medida del pasado.</p>
+      <p><b>Reglas de Funding Pips</b> (leídas en su web el 6 de octubre): los bots las cumplen (5 % diario, 10 % total, meta con todo cerrado, 3 días, máximo 1 lote por orden en cripto, fin de semana y noticias permitidos en el challenge, bots propios con código). Prohibido: bots de otros, VPN o VPS, "hedging" (compra y venta a la vez) y "gap trading". La garantía que pide el broker alcanza (solo 3 de cada 1.000 entradas no tendrían margen). Los dos bots compilan sin errores.</p>
+      <p><b>Cuenta fondeada (después de aprobar):</b> sin Swing, Funding Pips cierra todo cada noche y el Bot 1 no sirve ahí. Solo el Bot 2 al 0,40 % (Nasdaq) y 0,30 % (S&amp;P 500): en 8 años su peor bajada fue 9,3 % y ganó unos 70 US$ por mes sobre 5.000 (sin contar el reparto con Funding Pips). Con Swing se puede usar también el Bot 1, pero el apalancamiento es más bajo (índices 1:5, cripto 1:1): con el riesgo del challenge, 1 de cada 6 entradas no tendría margen, así que la versión fondeada necesita menos riesgo y un tope de tamaño. Además, en la fondeada ninguna operación debería poder perder 1 % (50 US$): con el cobro mensual, cada vez que pasa es una advertencia y a la cuarta cierran la cuenta.</p>
+      <p class="muted">Lo que todavía no está probado: cómo andan en vivo con los precios y costos de Funding Pips (para eso la cuenta de prueba gratis). El Bot 2 todavía no operó en vivo.</p>
+    </details>
+    <details class="mas">
       <summary>La mejora del 6 de octubre: más mercados, mismas reglas</summary>
       <p>Probé los dos bots, <b>sin cambiarles nada</b>, en 18 combinaciones de bot y mercado (2018 a 2026). Me quedé solo con las que ganan en los dos períodos (2018-21 y 2022-26) y en casi todos los años, y que casi no se mueven junto con lo que ya teníamos:</p>
       <div class="card scroll"><table>
