@@ -141,6 +141,10 @@ td, th { overflow-wrap: normal }
 .riesgos input { width: 84px }
 .riesgos .hint { font-size: 11px; color: var(--dim) }
 details.mas > summary { cursor: pointer; font-weight: 700; color: var(--text) }
+/* celular: que las tablas anchas se deslicen dentro de su cuadro en vez de ensanchar la página */
+.pane, .informe :is(section, header, .list, .item, details, .card, .step, .big) { min-width: 0 }
+.informe details.mas[open], .informe section { grid-template-columns: minmax(0, 1fr) }
+.informe .scroll, .informe .card.scroll { max-width: 100% }
 /* Estilos de la pestaña Veredicto (informe en lenguaje simple). Todo va dentro de .informe para no chocar con el analizador. */
 .informe { display: grid; gap: 30px; max-width: 880px; width: 100%; margin: 0 auto; font-size: 16px; line-height: 1.75 }
 .informe b.pos { color: var(--gain) } .informe b.neg { color: var(--loss) }
