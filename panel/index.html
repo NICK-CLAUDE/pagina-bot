@@ -54,8 +54,8 @@ svg{flex:none}
 /* barra de pestañas (celular) */
 .side{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;padding:6px 6px calc(6px + var(--sb));
   background:rgba(11,17,27,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--ln2)}
-.side>button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0;color:var(--mut);font-size:11.5px;font-weight:600;padding:4px 0;cursor:pointer;min-height:54px}
-.side>button span.ic{display:grid;place-items:center;width:52px;height:30px;border-radius:99px;transition:background .2s}
+.side>button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0;color:var(--mut);font-size:11.5px;font-weight:600;padding:4px 0;cursor:pointer;min-height:54px}
+.side>button span.ic{display:grid;place-items:center;width:48px;height:30px;border-radius:99px;transition:background .2s}
 .side>button.on{color:var(--tx)}.side>button.on span.ic{background:#16304d}
 .side svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .side>button.on svg{stroke:var(--azul)}
@@ -247,6 +247,16 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
 .btn.azul{background:#16406a;border-color:#2d6da3;color:#fff;width:100%}
 .err{color:var(--rojo);min-height:1.2em;margin:0 0 6px;font-size:14px}
 
+/* pestaña PC */
+.pcg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.pcg>div{background:var(--card);border:1px solid var(--ln);border-radius:var(--r);padding:14px 16px}
+.pcg small{display:block;font-size:12.5px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+.pcg b{display:block;font-size:28px;font-weight:800;letter-spacing:-.02em;margin:4px 0 0}
+.pcg span{font-size:13.5px;color:var(--mut);font-weight:600}
+.pcf{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--ln);font-size:15px}
+.pcf:first-child{border-top:0;padding-top:0}.pcf:last-child{padding-bottom:0}
+.pcf>span:first-child{color:var(--tx2)}.pcf b{font-weight:700;text-align:right}
+
 /* ---- computadora ---- */
 @media(min-width:900px){
  body{font-size:16.5px}
@@ -305,6 +315,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
   <button data-v="bots"><span class="ic"><svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4M9 12h.01M15 12h.01M9 16h6"/></svg></span>Bots</button>
   <button data-v="graficos"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 3v18M12 5v14M18 7v10"/><rect x="4" y="7" width="4" height="8" rx="1"/><rect x="10" y="9" width="4" height="6" rx="1"/><rect x="16" y="10" width="4" height="4" rx="1"/></svg></span>Charts</button>
   <button data-v="historial"><span class="ic"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>History</button>
+  <button data-v="pc"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span>PC</button>
   <button data-v="resultados"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span>Results</button>
   <button data-v="reglas"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>Rules</button>
   <button data-v="alertas"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>Alerts</button>
@@ -381,6 +392,14 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
     <table class="hist" id="h_tab"></table>
     <button class="lnk" id="h_mas" hidden>Show more</button>
   </div>
+</section>
+
+<!-- PC -->
+<section class="vista" id="v_pc">
+  <div class="estado" id="pc_estado"><i></i><b>Loading…</b></div>
+  <div class="pcg" id="pc_top"></div>
+  <div class="card"><div class="tit"><span>Details</span><span class="mut" id="pc_t"></span></div><div id="pc_det"></div></div>
+  <p class="nota">Updated every 30 s. The graphics card (NVIDIA) should sleep when no monitor is plugged in by HDMI.</p>
 </section>
 
 <!-- RESULTADOS -->
@@ -484,7 +503,7 @@ const fdm=t=>new Date(t*1000).toLocaleDateString("en-US",{month:"short",day:"num
 const NOM={"Tendencia 4H":"Trend 4H","Williams Ruptura":"Williams Breakout","Rango Asiatico":"Asian Range","Manual / otro":"Manual / other"};
 const nb=n=>NOM[n]||n;   // nombre del bot en inglés (los datos siguen usando el nombre original)
 const fecha=t=>{const d=new Date(t*1000);return String(d.getUTCMonth()+1).padStart(2,"0")+"-"+String(d.getUTCDate()).padStart(2,"0")};
-const TITULOS={resumen:"Overview",bots:"Bots",graficos:"Charts",historial:"History",resultados:"Results",reglas:"Rules",alertas:"Alerts"};
+const TITULOS={pc:"PC",resumen:"Overview",bots:"Bots",graficos:"Charts",historial:"History",resultados:"Results",reglas:"Rules",alertas:"Alerts"};
 document.querySelectorAll("#menu button[data-v]").forEach(b=>b.onclick=()=>irA(b.dataset.v));
 $("mas").onclick=e=>{e.stopPropagation();$("masmenu").classList.toggle("abierto")};
 document.querySelectorAll("#masmenu button").forEach(b=>b.onclick=()=>{$("masmenu").classList.remove("abierto");irA(b.dataset.m)});
@@ -496,7 +515,7 @@ function irA(v){
   document.querySelectorAll(".vista").forEach(x=>x.classList.toggle("on",x.id==="v_"+v));
   $("titulo").textContent=TITULOS[v]||v;
   window.scrollTo(0,0);document.querySelectorAll(".main,.app").forEach(e=>e.scrollTop=0);   // cada pestaña arranca desde arriba
-  VISTA=v;if(v==="graficos")refrescarGraficos();
+  VISTA=v;if(v==="graficos")refrescarGraficos();if(v==="pc")cargarPC();
   if(ULT)pintar(ULT);
 }
 let ULT=null;
@@ -916,6 +935,38 @@ function pintar(d){
   const ae=d.avisos_enviados||[];
   $("avisos_env").innerHTML=ae.length?ae.map(a=>`<div class="op"><span class="h">${a.hora}</span><span>${a.texto}</span></div>`).join(""):'<div class="vacio">No alerts.</div>';
 }
+// ---------- pestaña PC (datos de tools/pc_estado.ps1)
+async function cargarPC(){
+  if(VISTA!=="pc")return;
+  let p;try{p=await (await api("pc.json")).json()}catch(e){return}
+  const viejo=!p.t||Date.now()/1000-p.t>120,si=(ok,a,b)=>`<b class="${ok?"verde":"rojo"}">${ok?a:b}</b>`;
+  const malo=[];
+  if(viejo)malo.push(["rojo","No PC data","the PC monitor isn't running (task \"PC Estado\")."]);
+  if(!p.internet)malo.push(["rojo","No internet",""]);
+  if(!p.mt5)malo.push(["rojo","MT5 closed","the bots aren't running."]);
+  if(p.cpu_temp>=85)malo.push(["rojo","Very hot",p.cpu_temp+" °C on the processor."]);else if(p.cpu_temp>=70)malo.push(["amb","Warm",p.cpu_temp+" °C on the processor."]);
+  if(!p.enchufada)malo.push(["amb","On battery",p.bateria+"% left."]);
+  if(p.sensores&&Math.max(p.fan_cpu,p.fan_gpu)>=4000)malo.push(["amb","Fans loud",Math.max(p.fan_cpu,p.fan_gpu)+" rpm."]);
+  if(!p.throttlestop)malo.push(["amb","ThrottleStop closed","the power profile isn't applied."]);
+  const e=malo[0]||["verde","All good","Cool, quiet and online."];
+  $("pc_estado").className="estado"+(e[0]==="verde"?"":" "+e[0]);$("pc_estado").innerHTML=`<i></i><b>${e[1]}</b><span>${e[2]}${malo.length>1?" (+"+(malo.length-1)+" more)":""}</span>`;
+  const tc=t=>t>=85?"rojo":t>=70?"amb":"";
+  const ven=p.sensores?Math.max(p.fan_cpu,p.fan_gpu):null;
+  $("pc_top").innerHTML=`<div><small>Processor</small><b class="${tc(p.cpu_temp)}">${p.cpu_temp} °C</b><span>${p.cpu_uso}% in use</span></div>
+    <div><small>Fans</small><b class="${ven>=4000?"amb":""}">${ven==null?"–":ven.toLocaleString("en-US")}</b><span>${ven==null?"sensors off":"rpm · "+(ven<2500?"quiet":ven<4000?"audible":"loud")}</span></div>
+    <div><small>Power</small><b>${p.cpu_w==null?"–":p.cpu_w+" W"}</b><span>processor, last min</span></div>
+    <div><small>NVIDIA</small><b class="${p.nvidia===0?"amb":"verde"}">${p.nvidia===0?"Awake":"Asleep"}</b><span>${p.nvidia===0?"uses a few watts":"saving power"}</span></div>`;
+  const f=(a,b)=>`<div class="pcf"><span>${a}</span>${b}</div>`;
+  $("pc_det").innerHTML=f("Board temperature",`<b>${p.sensores?p.placa_temp+" °C":"–"}</b>`)
+    +f("Graphics card temperature",`<b>${p.gpu_temp?p.gpu_temp+" °C":"off"}</b>`)
+    +f("Fans CPU / GPU",`<b>${p.sensores?p.fan_cpu+" / "+p.fan_gpu+" rpm":"–"}</b>`)
+    +f("Memory in use",`<b>${p.ram}%</b>`)+f("Free disk",`<b>${p.disco_gb} GB</b>`)
+    +f("Power",`<b class="${p.enchufada?"":"amb"}">${p.enchufada?"plugged in":"battery"} · ${p.bateria}%</b>`)
+    +f("On for",`<b>${p.prendida_h<48?p.prendida_h+" h":Math.round(p.prendida_h/24)+" days"}</b>`)
+    +f("Internet",si(p.internet,"OK","down"))+f("MT5 (bots)",si(p.mt5,"open","closed"))
+    +f("ThrottleStop",si(p.throttlestop,"on","closed"))+f("WiFi watchdog",si(p.vigia,"on","off"));
+  $("pc_t").textContent=p.t?"at "+new Date(p.t*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})+" your time":"";
+}
 $("panico").onclick=()=>pedirCambio("todos","pausar");
 async function leerEstado(){return await (await api("estado.json")).json()}
 const NOMBRE_VIEJO=/^Williams Nasdaq$/;
@@ -938,7 +989,7 @@ async function cargar(){
 {const h=location.hash.slice(1);if(TITULOS[h])irA(h)}
 if(FIJA&&!CLAVE)pedirClave();
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
-cargar();setInterval(()=>{cargar().then(refrescarGraficos)},4000);
+cargar();setInterval(()=>{cargar().then(refrescarGraficos).then(cargarPC)},4000);
 </script>
 </body>
 </html>
