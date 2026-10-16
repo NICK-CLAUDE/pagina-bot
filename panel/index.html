@@ -124,6 +124,12 @@ svg.gr{width:100%;height:220px;display:block}
 .op .b{display:none}
 .op .g{text-align:right;font-weight:700}
 #abiertas:not(:empty)+#cerradas .op:first-child{border-top:1px solid var(--ln);padding-top:12px}
+.op.ir{cursor:pointer;-webkit-tap-highlight-color:transparent}.op.ir:active{opacity:.55}
+.op .fl{font-style:normal;font-weight:400;color:var(--mut);margin-left:8px}
+.toque{margin:10px 0 0;font-size:13px;color:var(--mut)}
+.gbot{scroll-margin-top:84px}
+.brow>.tot{flex-direction:column;flex-wrap:nowrap;align-items:flex-end;gap:0}
+.brow>.tot>b{font-size:18px;white-space:nowrap}.brow .tot small{flex-basis:auto;font-size:12px;white-space:nowrap}
 .op .tag{font-size:11px;font-weight:700;color:var(--mut);border:1px solid var(--ln);border-radius:6px;padding:2px 6px;justify-self:start}
 .bot .op{grid-template-columns:auto 1fr auto auto}
 .bot .op .h{grid-column:1/-1;margin-bottom:-6px}
@@ -339,6 +345,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
 <section class="vista on" id="v_resumen">
   <div class="estado" id="estado"><i></i><b>Connecting…</b></div>
   <div class="card" id="c_avisos" style="display:none"><div class="tit"><span>Warnings</span></div><div id="avisos"></div></div>
+  <div class="card" id="c_ops"><div class="tit"><span>Trades</span><span id="t_ops" class="mut"></span></div><div id="abiertas"></div><div id="cerradas"></div><p class="toque" id="t_toque">Tap a trade to see it on its chart.</p></div>
   <div class="cifras">
     <div><small>Equity</small><b class="num" id="k_cap">–</b><span id="k_cap2"></span></div>
     <div><small>Total P&amp;L</small><b class="num" id="k_tot">–</b><span id="k_tot2"></span></div>
@@ -354,10 +361,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
     </div>
     <div class="card"><div class="tit"><span>Account curve</span><span id="t_curva" class="mut"></span></div><svg class="gr" id="curva"></svg></div>
   </div>
-  <div class="dos">
-    <div class="card"><div class="tit"><span>Bots</span></div><div id="bots_res"></div></div>
-    <div class="card"><div class="tit"><span>Trades</span><span id="t_ops" class="mut"></span></div><div id="abiertas"></div><div id="cerradas"></div></div>
-  </div>
+  <div class="card"><div class="tit"><span>Bots</span><span class="mut">result since the start</span></div><div id="bots_res"></div></div>
 </section>
 
 <!-- BOTS -->
@@ -507,6 +511,14 @@ const TITULOS={pc:"PC",resumen:"Overview",bots:"Bots",graficos:"Charts",historia
 document.querySelectorAll("#menu button[data-v]").forEach(b=>b.onclick=()=>irA(b.dataset.v));
 $("mas").onclick=e=>{e.stopPropagation();$("masmenu").classList.toggle("abierto")};
 document.querySelectorAll("#masmenu button").forEach(b=>b.onclick=()=>{$("masmenu").classList.remove("abierto");irA(b.dataset.m)});
+// tocar una operación del resumen: abre Charts con ese mercado elegido y baja hasta su gráfico
+let IRG=null;
+$("c_ops").onclick=e=>{const o=e.target.closest(".op[data-sim]");if(!o)return;IRG={bot:o.dataset.bot,sim:o.dataset.sim};irA("graficos")};
+function verGrafico(g){
+  const id=g.bot.replace(/\W/g,""),f=[...document.querySelectorAll(`#gs_${id} .f`)].find(x=>simDe(x.dataset.s)===g.sim);
+  if(f&&!f.classList.contains("on"))f.click();
+  const c=$("gr_"+id);if(c)c.closest(".gbot").scrollIntoView({block:"start"});
+}
 document.addEventListener("click",()=>$("masmenu").classList.remove("abierto"));
 function irA(v){
   document.querySelectorAll("#menu button[data-v]").forEach(x=>x.classList.toggle("on",x.dataset.v===v));
@@ -831,6 +843,7 @@ async function refrescarGraficos(){
   try{VELAS=await leerVelas()}catch(e){return}
   if(!VELAS||!Object.keys(VELAS).length){$("graficos").innerHTML='<div class="card vacio">No price data (Panel_Estado not running).</div>';return}
   armarGraficos();Object.keys(GR).forEach(pintarGrafico);
+  if(IRG){verGrafico(IRG);IRG=null}
 }
 const TRI_UP='<svg viewBox="0 0 10 10"><path d="M5 1l4 8H1z"/></svg>',TRI_DN='<svg viewBox="0 0 10 10"><path d="M1 1h8L5 9z"/></svg>';
 const ladoChip=l=>l==="compra"?`<span class="ld c">${TRI_UP}BUY</span>`:`<span class="ld v">${TRI_DN}SELL</span>`;
@@ -915,11 +928,14 @@ function pintar(d){
   $("bots_res").innerHTML=bots.map(b=>{
     const tot=(b.cerrado||0)+(b.flotante||0),inf=INFO[b.nombre]||["",""],pos=d.posiciones.find(p=>p.bot===b.nombre),pa=estadoBot(d,b.nombre)==="pausado";
     const est=!ok?["mal","Off"]:pa?["amb",(d.pausa_bots||{})[b.nombre]>0?"Paused":"Pausing…"]:["","On"];
-    return `<div class="brow"><div><b>${nb(b.nombre)}</b><span class="est ${est[0]}"><i></i>${est[1]}</span><small>${inf[0]} · ${inf[1]}</small>${pos?`<small class="pos">${pos.sim} ${pos.lado==="compra"?"buy":"sell"} ${lote(pos.lote)} <em class="${cl(pos.gan)}">${usdS(pos.gan)}</em></small>`:""}</div><b class="num ${cl(tot)}">${usdS(tot)}</b></div>`}).join("");
+    return `<div class="brow"><div><b>${nb(b.nombre)}</b><span class="est ${est[0]}"><i></i>${est[1]}</span><small>${inf[0]} · ${inf[1]} risk per trade</small>${pos?`<small class="pos">Open now: ${pos.sim} ${pos.lado==="compra"?"buy":"sell"} ${lote(pos.lote)} <em class="${cl(pos.gan)}">${usdS(pos.gan)}</em></small>`:""}</div><div class="tot"><b class="num ${cl(tot)}">${usdS(tot)}</b><small>total so far</small></div></div>`}).join("");
   const nAb=d.posiciones.length,nCe=d.cerradas_hoy.length;
   $("t_ops").textContent=nAb+" open · "+nCe+" closed today";
-  $("abiertas").innerHTML=d.posiciones.map(p=>`<div class="op"><span class="h">${hhmm(p.desde||0)}</span><span class="s">${p.sim}</span>${ladoChip(p.lado)}<span class="mut b">${nb(p.bot)}</span><span class="g num ${cl(p.gan)}">${usdS(p.gan)}</span></div>`).join("");
-  $("cerradas").innerHTML=d.cerradas_hoy.map(p=>`<div class="op cerr"><span class="h">${hhmm(p.t)}</span><span class="s">${p.sim}</span><span class="tag">closed</span><span class="mut b">${nb(p.bot)}</span><span class="g num ${cl(p.neto)}">${usdS(p.neto)}</span></div>`).join("")||(nAb?"":'<div class="vacio">No activity today.</div>');
+  const dia=t=>Math.floor(t/86400)===Math.floor((d.actualizado||0)/86400)?hhmm(t):fdm(t);   // hoy: la hora; antes: la fecha
+  const ir=p=>`class="op ir${p.neto!==undefined?" cerr":""}" data-sim="${p.sim}" data-bot="${p.bot}"`;
+  $("abiertas").innerHTML=d.posiciones.map(p=>`<div ${ir(p)}><span class="h">${dia(p.desde||0)}</span><span class="s">${p.sim}</span>${ladoChip(p.lado)}<span class="mut b">${nb(p.bot)}</span><span class="g num ${cl(p.gan)}">${usdS(p.gan)}<i class="fl">›</i></span></div>`).join("");
+  $("cerradas").innerHTML=d.cerradas_hoy.map(p=>`<div ${ir(p)}><span class="h">${hhmm(p.t)}</span><span class="s">${p.sim}</span><span class="tag">closed</span><span class="mut b">${nb(p.bot)}</span><span class="g num ${cl(p.neto)}">${usdS(p.neto)}<i class="fl">›</i></span></div>`).join("")||(nAb?"":'<div class="vacio">No activity today.</div>');
+  $("t_toque").style.display=nAb+nCe?"":"none";
   const av=avisos(d).filter(x=>x[0]&&x[1]!=="MIN. DAYS");
   $("c_avisos").style.display=av.length?"":"none";
   $("avisos").innerHTML=av.map(x=>`<div class="av ${x[0]}"><em>${x[1]}</em>${x[2]}${x[3]?`<small>${x[3]}</small>`:""}</div>`).join("");
