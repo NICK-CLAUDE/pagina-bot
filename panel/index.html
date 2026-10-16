@@ -944,18 +944,18 @@ async function cargarPC(){
   if(viejo)malo.push(["rojo","No PC data","the PC monitor isn't running (task \"PC Estado\")."]);
   if(!p.internet)malo.push(["rojo","No internet",""]);
   if(!p.mt5)malo.push(["rojo","MT5 closed","the bots aren't running."]);
-  if(p.cpu_temp>=85)malo.push(["rojo","Very hot",p.cpu_temp+" °C on the processor."]);else if(p.cpu_temp>=70)malo.push(["amb","Warm",p.cpu_temp+" °C on the processor."]);
+  const tmax=Math.max(p.cpu_temp,p.sensores?p.gpu_temp:0);if(tmax>=70)malo.push(["rojo","Very hot",tmax+" °C (goal: under 50)."]);else if(tmax>50)malo.push(["amb","Warm",tmax+" °C (goal: under 50)."]);
   if(!p.enchufada)malo.push(["amb","On battery",p.bateria+"% left."]);
-  if(p.sensores&&Math.max(p.fan_cpu,p.fan_gpu)>=4000)malo.push(["amb","Fans loud",Math.max(p.fan_cpu,p.fan_gpu)+" rpm."]);
+  if(p.sensores&&Math.max(p.fan_cpu,p.fan_gpu)>=2500)malo.push(["amb","Fans loud",Math.max(p.fan_cpu,p.fan_gpu)+" rpm."]);
   if(!p.throttlestop)malo.push(["amb","ThrottleStop closed","the power profile isn't applied."]);
   const e=malo[0]||["verde","All good","Cool, quiet and online."];
   $("pc_estado").className="estado"+(e[0]==="verde"?"":" "+e[0]);$("pc_estado").innerHTML=`<i></i><b>${e[1]}</b><span>${e[2]}${malo.length>1?" (+"+(malo.length-1)+" more)":""}</span>`;
-  const tc=t=>t>=85?"rojo":t>=70?"amb":"";
+  const tc=t=>t>=70?"rojo":t>50?"amb":"";
   const ven=p.sensores?Math.max(p.fan_cpu,p.fan_gpu):null;
   $("pc_top").innerHTML=`<div><small>Processor</small><b class="${tc(p.cpu_temp)}">${p.cpu_temp} °C</b><span>${p.cpu_uso}% in use</span></div>
-    <div><small>Fans</small><b class="${ven>=4000?"amb":""}">${ven==null?"–":ven.toLocaleString("en-US")}</b><span>${ven==null?"sensors off":"rpm · "+(ven<2500?"quiet":ven<4000?"audible":"loud")}</span></div>
+    <div><small>Fans</small><b class="${ven>=2500?"amb":""}">${ven==null?"–":ven.toLocaleString("en-US")}</b><span>${ven==null?"sensors off":"rpm · "+(ven<2500?"quiet":ven<4000?"audible":"loud")}</span></div>
     <div><small>Power</small><b>${p.cpu_w==null?"–":p.cpu_w+" W"}</b><span>processor, last min</span></div>
-    <div><small>NVIDIA</small><b class="${p.nvidia===0?"amb":"verde"}">${p.nvidia===0?"Awake":"Asleep"}</b><span>${p.nvidia===0?"uses a few watts":"saving power"}</span></div>`;
+    <div><small>NVIDIA</small><b class="${p.nvidia===0?"":"verde"}">${p.nvidia===0?"Awake":"Asleep"}</b><span>${p.sensores?"<em style=\"font-style:normal\" class=\""+tc(p.gpu_temp)+"\">"+p.gpu_temp+" °C</em> · ":""}${p.nvidia===0?"idle, HDMI on":"saving power"}</span></div>`;
   const f=(a,b)=>`<div class="pcf"><span>${a}</span>${b}</div>`;
   $("pc_det").innerHTML=f("Board temperature",`<b>${p.sensores?p.placa_temp+" °C":"–"}</b>`)
     +f("Graphics card temperature",`<b>${p.gpu_temp?p.gpu_temp+" °C":"off"}</b>`)
