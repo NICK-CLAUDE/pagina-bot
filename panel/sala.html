@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#060b14">
+<title>Bot Room</title>
+<style>
+:root{--bg:#060b14;--card:#0c1522;--line:#1a2a40;--tx:#d7e3f4;--mut:#7d8fa8;--ok:#2dd4a0;--mal:#ff5d6c;--amb:#f5b942;--azul:#5ab0ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.4 system-ui,-apple-system,Segoe UI,sans-serif;padding-bottom:env(safe-area-inset-bottom)}
+header{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line)}
+header b{letter-spacing:.14em;font-size:13px}header b i{color:var(--azul);font-style:normal}
+header span{margin-left:auto;font-size:12px;color:var(--mut)}
+.pt{width:8px;height:8px;border-radius:50%;background:var(--mut);display:inline-block;margin-right:5px}.pt.v{background:var(--ok)}.pt.m{background:var(--mal)}
+#esc{position:relative;height:52vh;min-height:280px;max-height:520px;background:radial-gradient(ellipse at 50% 30%,#0f1d33,#060b14)}
+#esc canvas{display:block;width:100%;height:100%;touch-action:pan-y}
+#aviso{position:absolute;left:12px;top:10px;font-size:11px;color:var(--amb);background:#000a;padding:3px 8px;border-radius:6px}
+#btn3d{position:absolute;right:12px;top:10px;font-size:11px;color:var(--tx);background:#000a;border:1px solid var(--line);padding:4px 10px;border-radius:6px}
+main{padding:12px 16px;display:grid;gap:12px;max-width:900px;margin:auto}
+.fila{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.t{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.t small{display:block;color:var(--mut);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}
+.t b{font-size:22px}.t span{display:block;color:var(--mut);font-size:11.5px}
+.verde{color:var(--ok)}.rojo{color:var(--mal)}.amb{color:var(--amb)}
+.bot{display:flex;align-items:center;gap:10px}
+.bot i{width:10px;height:10px;border-radius:50%;flex:none}
+.bot div{flex:1}.bot b{font-size:15px}
+h3{margin:4px 0 0;font-size:11px;letter-spacing:.12em;color:var(--mut);text-transform:uppercase}
+.log{background:var(--card);border:1px solid var(--line);border-radius:10px}
+.log p{margin:0;padding:8px 12px;border-bottom:1px solid var(--line);font-size:12.5px}.log p:last-child{border:0}
+.log em{font-style:normal;color:var(--mut);margin-right:8px}
+@media(min-width:700px){.fila{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<header><b>BOT <i>ROOM</i></b><span><i class="pt" id="pt"></i><em id="est" style="font-style:normal">Connecting…</em></span></header>
+<div id="esc"><span id="aviso"></span><button id="btn3d">3D: on</button></div>
+<main>
+  <div class="fila" id="tiles"></div>
+  <h3>Bots</h3><div id="bots" style="display:grid;gap:10px"></div>
+  <h3>Activity</h3><div class="log" id="log"></div>
+</main>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from "three";
+import {OrbitControls} from "three/addons/controls/OrbitControls.js";
+const $=id=>document.getElementById(id);
+
+// ---------- datos: igual que el panel (túnel de la PC + clave); sin conexión o con ?demo se ven datos de ejemplo
+const LS={get:k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}}};
+const FIJA=location.hostname.endsWith("github.io"),CLAVE=LS.get("panel_clave");
+let BASE=FIJA?LS.get("panel_base"):(location.protocol==="file:"?"":"");
+const DEMO_FORZADO=/demo/.test(location.search)||location.protocol==="file:";
+const NOM={"Tendencia 4H":"Trend 4H","Williams Ruptura":"Williams Breakout","Rango Asiatico":"Asian Range"};
+const nom=n=>NOM[n]||n;
+function ejemplo(){
+  const curva=[],t0=1770000000;let v=5000;for(let i=0;i<30;i++){v+=(Math.sin(i*1.3)*30+22);curva.push([t0+i*86400,Math.round(v*100)/100])}
+  return {demo:true,conectado:true,algo_terminal:true,capital:5000,saldo:v,patrimonio:v+18,hoy_usd:42.1,hoy_pct:.84,total_pct:(v-5000)/50,meta_pct:8,lim_diario:5,lim_total:10,
+    bots:[{nombre:"Tendencia 4H",abiertas:1,cerrado:96,flotante:18,ops:4},{nombre:"Williams Ruptura",abiertas:0,cerrado:41,flotante:0,ops:3},{nombre:"Rango Asiatico",abiertas:0,cerrado:-12,flotante:0,ops:2}],
+    control:{"Tendencia 4H":"activo","Williams Ruptura":"activo","Rango Asiatico":"pausado"},curva,
+    posiciones:[{bot:"Tendencia 4H",sim:"XAUUSD",lado:"compra",neto:18}],
+    cerradas_hoy:[{t:t0+86400*29,sim:"USTEC",bot:"Williams Ruptura",neto:41.2}],
+    avisos_enviados:[{hora:"09:12",texto:"Trend 4H opened XAUUSD (buy)."},{hora:"07:40",texto:"Williams Breakout closed USTEC: won $41.20."},{hora:"00:05",texto:"New day. Daily loss limit reset."}]};
+}
+async function leer(){
+  if(DEMO_FORZADO)return ejemplo();
+  try{
+    const r=await fetch(BASE+"estado.json",{cache:"no-store",headers:{"X-Clave":CLAVE}});
+    if(!r.ok)throw 0;const d=await r.json();if(d.sin_datos)throw 0;return d;
+  }catch(e){return ejemplo()}
+}
+
+// ---------- escena 3D
+const esc=$("esc");
+const R=new THREE.WebGLRenderer({antialias:true,alpha:true});
+R.setPixelRatio(Math.min(devicePixelRatio,1.5));esc.appendChild(R.domElement);
+const S=new THREE.Scene();S.fog=new THREE.Fog(0x060b14,9,22);
+const cam=new THREE.PerspectiveCamera(48,1,.1,60);cam.position.set(0,3.2,8.2);
+const ctl=new OrbitControls(cam,R.domElement);ctl.target.set(0,1.5,0);ctl.enableDamping=true;ctl.enablePan=false;ctl.minDistance=5;ctl.maxDistance=11;
+ctl.maxPolarAngle=1.45;ctl.minAzimuthAngle=-.9;ctl.maxAzimuthAngle=.9;
+S.add(new THREE.HemisphereLight(0x8fb4ff,0x0a1020,.9));
+const L1=new THREE.PointLight(0x5ab0ff,40,18);L1.position.set(0,5,4);S.add(L1);S.add(new THREE.AmbientLight(0x7a93bd,.9));
+const piso=new THREE.Mesh(new THREE.CircleGeometry(9,48),new THREE.MeshStandardMaterial({color:0x0b1424,roughness:.55,metalness:.4}));
+piso.rotation.x=-Math.PI/2;S.add(piso);const rej=new THREE.GridHelper(18,24,0x1a3a5c,0x112238);rej.position.y=.01;S.add(rej);
+
+function pantalla(w,h,px=512){
+  const c=document.createElement("canvas");c.width=px;c.height=Math.round(px*h/w);
+  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
+  const g=new THREE.Group();
+  g.add(new THREE.Mesh(new THREE.BoxGeometry(w+.12,h+.12,.08),new THREE.MeshStandardMaterial({color:0x14243a,metalness:.7,roughness:.4})));
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:tex}));m.position.z=.05;g.add(m);
+  return {g,c:c.getContext("2d"),tex,w:c.width,h:c.height};
+}
+// pantallas en arco al fondo: izquierda (calendario/curva), centro (saldo), derecha (últimos movimientos)
+const PI=pantalla(2.4,1.7),PC=pantalla(3.6,2.2,640),PD=pantalla(2.4,1.7);
+PI.g.position.set(-3.5,2.2,-3.1);PI.g.rotation.y=.5;PC.g.position.set(0,2.5,-3.6);PD.g.position.set(3.5,2.2,-3.1);PD.g.rotation.y=-.5;
+S.add(PI.g,PC.g,PD.g);
+
+const COL={verde:0x2dd4a0,rojo:0xff5d6c,amb:0xf5b942,gris:0x7d8fa8};
+function robot(){
+  const g=new THREE.Group(),met=new THREE.MeshStandardMaterial({color:0xe3ebf6,metalness:.25,roughness:.45});
+  const cuerpo=new THREE.Mesh(new THREE.CapsuleGeometry(.28,.35,6,16),met);cuerpo.position.y=.62;g.add(cuerpo);
+  const cab=new THREE.Mesh(new THREE.SphereGeometry(.3,24,18),met);cab.position.y=1.2;g.add(cab);
+  const vis=new THREE.Mesh(new THREE.SphereGeometry(.24,20,14),new THREE.MeshStandardMaterial({color:0x05080f,metalness:.9,roughness:.1}));vis.position.set(0,1.2,.1);vis.scale.set(1,.8,.75);g.add(vis);
+  const ojoM=new THREE.MeshBasicMaterial({color:COL.amb});
+  for(const x of[-.09,.09]){const o=new THREE.Mesh(new THREE.SphereGeometry(.035,10,8),ojoM);o.position.set(x,1.22,.29);g.add(o)}
+  const baseM=new THREE.MeshBasicMaterial({color:COL.amb});
+  const aro=new THREE.Mesh(new THREE.TorusGeometry(.5,.025,8,40),baseM);aro.rotation.x=Math.PI/2;aro.position.y=.04;g.add(aro);
+  const lab=document.createElement("canvas");lab.width=256;lab.height=64;const tx=new THREE.CanvasTexture(lab);tx.colorSpace=THREE.SRGBColorSpace;
+  const spr=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,depthWrite:false}));spr.scale.set(1.4,.35,1);spr.position.y=1.75;g.add(spr);
+  g.userData={cab,ojoM,baseM,lab,tx,spr,fase:Math.random()*6};
+  return g;
+}
+let ROB=[];
+function poner(bots){
+  if(ROB.length!==bots.length){ROB.forEach(r=>S.remove(r));ROB=bots.map(()=>{const r=robot();S.add(r);return r});
+    const n=ROB.length;ROB.forEach((r,i)=>{const a=(i-(n-1)/2)*.75;r.position.set(Math.sin(a)*3.4,0,Math.cos(a)*-1.2+.2);r.rotation.y=-a*.6})}
+}
+function ajustar(){const w=esc.clientWidth,h=esc.clientHeight;R.setSize(w,h);cam.aspect=w/h;cam.fov=w/h<1?Math.min(95,48/(w/h)**.7):48;cam.updateProjectionMatrix()}
+addEventListener("resize",ajustar);ajustar();
+
+// ---------- estado de cada bot -> color y mensaje
+function estadoBot(d,b){
+  if(!d.conectado||!d.algo_terminal)return ["gris","Offline"];
+  if((d.control||{})[b.nombre]==="pausado")return ["rojo","Paused"];
+  if(b.abiertas>0)return ["verde","In a trade"];
+  return ["amb","Watching"];
+}
+const usd=v=>(v<0?"-":"")+"$"+Math.abs(v).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const cl=v=>v>0?"verde":v<0?"rojo":"";
+const hhmm=t=>new Date(t*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"});
+
+function dibujarPantallas(d){
+  // centro: saldo + avance hacia la meta + curva
+  let c=PC.c,W=PC.w,H=PC.h;c.fillStyle="#07101d";c.fillRect(0,0,W,H);
+  c.fillStyle="#7d8fa8";c.font="600 22px system-ui";c.fillText("BALANCE",28,40);
+  c.fillStyle=d.total_pct>=0?"#2dd4a0":"#ff5d6c";c.font="700 64px system-ui";c.fillText(usd(d.saldo),28,108);
+  c.fillStyle="#7d8fa8";c.font="22px system-ui";c.fillText("Goal "+d.meta_pct+"%   ·   so far "+(d.total_pct>0?"+":"")+d.total_pct.toFixed(2)+"%",28,146);
+  const p=Math.max(0,Math.min(1,d.total_pct/d.meta_pct));c.fillStyle="#13223a";c.fillRect(28,160,W-56,14);c.fillStyle="#2dd4a0";c.fillRect(28,160,(W-56)*p,14);
+  const cv=(d.curva||[]).map(x=>x[1]);
+  if(cv.length>1){const mn=Math.min(...cv),mx=Math.max(...cv),y0=200,hh=H-y0-20;c.strokeStyle="#5ab0ff";c.lineWidth=3;c.beginPath();
+    cv.forEach((v,i)=>{const x=28+(W-56)*i/(cv.length-1),y=y0+hh-(v-mn)/((mx-mn)||1)*hh;i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke()}
+  PC.tex.needsUpdate=true;
+  // izquierda: margen de riesgo
+  c=PI.c;W=PI.w;H=PI.h;c.fillStyle="#07101d";c.fillRect(0,0,W,H);
+  const pd=Math.max(0,-d.hoy_pct),pt=Math.max(0,-d.total_pct);
+  c.fillStyle="#7d8fa8";c.font="600 20px system-ui";c.fillText("RISK ROOM LEFT",24,38);
+  [["Today",pd,d.lim_diario],["Total",pt,d.lim_total]].forEach(([n,u,m],i)=>{const y=80+i*86,r=1-u/m;
+    c.fillStyle="#d7e3f4";c.font="22px system-ui";c.fillText(n+": "+(m-u).toFixed(1)+"% of "+m+"%",24,y);
+    c.fillStyle="#13223a";c.fillRect(24,y+12,W-48,12);c.fillStyle=r>.4?"#2dd4a0":r>.2?"#f5b942":"#ff5d6c";c.fillRect(24,y+12,(W-48)*Math.max(0,r),12)});
+  PI.tex.needsUpdate=true;
+  // derecha: último movimiento
+  c=PD.c;W=PD.w;H=PD.h;c.fillStyle="#07101d";c.fillRect(0,0,W,H);
+  c.fillStyle="#7d8fa8";c.font="600 20px system-ui";c.fillText("LATEST",24,38);
+  const fil=[...(d.posiciones||[]).map(p=>[p.sim+" "+(p.lado==="compra"?"buy":"sell")+" (open)",p.neto??p.flotante??0]),...(d.cerradas_hoy||[]).map(p=>[p.sim+" closed",p.neto])].slice(0,5);
+  c.font="22px system-ui";if(!fil.length){c.fillStyle="#7d8fa8";c.fillText("Nothing yet today",24,90)}
+  fil.forEach(([t,v],i)=>{c.fillStyle="#d7e3f4";c.fillText(t,24,86+i*44);c.fillStyle=v>=0?"#2dd4a0":"#ff5d6c";c.textAlign="right";c.fillText(usd(v),W-24,86+i*44);c.textAlign="left"});
+  PD.tex.needsUpdate=true;
+}
+
+// ---------- HUD (HTML)
+function pintar(d){
+  const pd=Math.max(0,-d.hoy_pct),pt=Math.max(0,-d.total_pct);
+  $("tiles").innerHTML=
+   `<div class="t"><small>Balance</small><b>${usd(d.saldo)}</b><span>of $${d.capital.toLocaleString("en-US")}</span></div>
+    <div class="t"><small>Today</small><b class="${cl(d.hoy_usd)}">${usd(d.hoy_usd)}</b><span>${d.hoy_pct>0?"+":""}${d.hoy_pct.toFixed(2)}%</span></div>
+    <div class="t"><small>Toward goal</small><b class="${cl(d.total_pct)}">${d.total_pct>0?"+":""}${d.total_pct.toFixed(2)}%</b><span>goal ${d.meta_pct}%</span></div>
+    <div class="t"><small>Daily loss room</small><b class="${pd>d.lim_diario*.6?"amb":"verde"}">${(d.lim_diario-pd).toFixed(1)}%</b><span>limit ${d.lim_diario}%</span></div>`;
+  $("bots").innerHTML=d.bots.map(b=>{const [c,t]=estadoBot(d,b),tot=(b.cerrado||0)+(b.flotante||0);
+    return `<div class="t bot"><i style="background:var(--${c==="gris"?"mut":c==="verde"?"ok":c==="rojo"?"mal":"amb"})"></i><div><b>${nom(b.nombre)}</b><span>${t} · ${b.ops} trades</span></div><b class="${cl(tot)}">${usd(tot)}</b></div>`}).join("");
+  $("log").innerHTML=(d.avisos_enviados||[]).slice(0,8).map(a=>`<p><em>${a.hora}</em>${a.texto}</p>`).join("")||`<p><em>–</em>No alerts yet.</p>`;
+  const ok=d.conectado&&d.algo_terminal&&!d.demo;
+  $("pt").className="pt "+(d.demo?"":ok?"v":"m");$("est").textContent=d.demo?"Example data":ok?"Live":"MT5 offline";
+  $("aviso").textContent=d.demo?"EXAMPLE DATA — not your account":"";
+  poner(d.bots);
+  d.bots.forEach((b,i)=>{const r=ROB[i],u=r.userData,[c,t]=estadoBot(d,b);u.col=c;u.ojoM.color.setHex(COL[c]);u.baseM.color.setHex(COL[c]);
+    const x=u.lab.getContext("2d");x.clearRect(0,0,256,64);x.fillStyle="#000a";x.fillRect(0,0,256,64);x.fillStyle="#d7e3f4";x.font="600 24px system-ui";x.textAlign="center";x.fillText(nom(b.nombre),128,28);
+    x.fillStyle="#"+COL[c].toString(16).padStart(6,"0");x.font="20px system-ui";x.fillText(t,128,54);u.tx.needsUpdate=true});
+  dibujarPantallas(d);
+}
+
+// ---------- animación liviana: 30 cuadros/seg, pausa si la pestaña no se ve, botón para apagar el 3D
+let on=true,ult=0;
+$("btn3d").onclick=()=>{on=!on;$("btn3d").textContent="3D: "+(on?"on":"off");esc.style.height=on?"":"0";esc.style.minHeight=on?"":"0";if(on){ajustar();bucle()}};
+function bucle(t=0){
+  if(!on)return;requestAnimationFrame(bucle);
+  if(document.hidden||t-ult<33)return;ult=t;const s=t/1000;
+  ROB.forEach(r=>{const u=r.userData,v=u.col==="verde"?1:u.col==="amb"?.35:.08;
+    r.position.y=Math.sin(s*2+u.fase)*.05*v;u.cab.rotation.y=Math.sin(s*.8+u.fase)*(u.col==="amb"?.5:.15);u.spr.position.y=1.75-r.position.y});
+  ctl.update();R.render(S,cam);
+}
+bucle();
+async function ciclo(){pintar(await leer())}
+ciclo();setInterval(()=>{if(!document.hidden)ciclo()},5000);
+</script>
+</body>
+</html>
