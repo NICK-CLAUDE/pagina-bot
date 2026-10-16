@@ -515,7 +515,7 @@ function irA(v){
   document.querySelectorAll(".vista").forEach(x=>x.classList.toggle("on",x.id==="v_"+v));
   $("titulo").textContent=TITULOS[v]||v;
   window.scrollTo(0,0);document.querySelectorAll(".main,.app").forEach(e=>e.scrollTop=0);   // cada pestaña arranca desde arriba
-  VISTA=v;if(v==="graficos")refrescarGraficos();if(v==="pc")cargarPC();
+  VISTA=v;LS.set("panel_vista",v);if(v==="graficos")refrescarGraficos();if(v==="pc")cargarPC();
   if(ULT)pintar(ULT);
 }
 let ULT=null;
@@ -986,7 +986,7 @@ async function cargar(){
     $("subt").textContent=ULT?"last data "+hhmm(ULT.actualizado||0)+" server time":"";return}
   pintar(d);
 }
-{const h=location.hash.slice(1);if(TITULOS[h])irA(h)}
+{const h=location.hash.slice(1)||LS.get("panel_vista");if(TITULOS[h])irA(h)}   // al recargar vuelve a la última pestaña
 if(FIJA&&!CLAVE)pedirClave();
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 cargar();setInterval(()=>{cargar().then(refrescarGraficos).then(cargarPC)},4000);
