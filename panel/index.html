@@ -901,14 +901,9 @@ function armarGraficos(){
   const ch=LightweightCharts.createChart($("graf"),{autoSize:true,layout:{background:{color:"#14181f"},textColor:"#848e9c",fontSize:12,fontFamily:"Inter,system-ui,Segoe UI,Roboto,sans-serif"},
     grid:{vertLines:{visible:false},horzLines:{color:"#1c222b"}},rightPriceScale:{borderColor:"#252c37"},timeScale:{borderColor:"#252c37",timeVisible:true,secondsVisible:false,rightOffset:12},
     crosshair:{mode:0},localization:{locale:"en-US"},
-    handleScroll:{vertTouchDrag:false},handleScale:{axisPressedMouseMove:{time:true,price:false}}});   // deslizar vertical en el celu baja la página (no estira la escala de precios)
+    handleScroll:{vertTouchDrag:false},handleScale:{axisPressedMouseMove:{time:true,price:true}}});   // la barra de precios de la derecha se estira con un dedo; deslizar en el resto del gráfico baja la página
   const se=ch.addCandlestickSeries({upColor:"#089981",downColor:"#F23645",borderVisible:false,wickUpColor:"#089981",wickDownColor:"#F23645"});
   G={chart:ch,serie:se,lineas:[],zonas:[],nuevo:true,sel:null,trazos:null};
-  // la escala de precios (barra de la derecha) solo se estira con DOS dedos: apoyás uno en cualquier lado y arrastrás con el otro sobre la barra; con un dedo la página baja normal
-  const escalaPrecio=on=>ch.applyOptions({handleScale:{axisPressedMouseMove:{time:true,price:on}}});
-  const dedos=e=>escalaPrecio(e.touches.length>=2);
-  $("graf").addEventListener("touchstart",dedos,{capture:true,passive:true});
-  ["touchend","touchcancel"].forEach(t=>$("graf").addEventListener(t,dedos,{capture:true,passive:true}));
   ch.subscribeClick(p=>{if(!p.point||!G.trazos)return;const o=G.trazos.hit(p.point.x,p.point.y);G.sel=o&&!o.abierta?o.ab+"_"+o.ci:null;pintarGrafico();if(G.sel&&window.innerWidth<900)abrirFicha(o)});
 }
 $("g_rst").onclick=()=>{if(G){G.nuevo=true;pintarGrafico()}};
