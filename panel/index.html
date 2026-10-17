@@ -416,7 +416,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
   <div class="mks" id="mercados"></div>
   <div class="card gcard" id="g_card">
     <div class="gh">
-      <div class="gh-n"><div class="gh-s"><b id="g_sym">–</b><span class="tag" id="g_tf"></span></div><small id="g_bot"></small></div>
+      <div class="gh-n"><div class="gh-s"><b id="g_sym">–</b><span class="tag" id="g_tf"></span><span class="tag" id="g_cd" title="Time left until the candle closes"></span></div><small id="g_bot"></small></div>
       <div class="gh-p"><b class="num" id="g_px">–</b><span id="g_ch"></span></div>
       <button class="ibtn" id="g_rst" title="Reset view" aria-label="Reset view"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
     </div>
@@ -1133,6 +1133,13 @@ async function cargar(){
 {const h=location.hash.slice(1)||LS.get("panel_vista");if(TITULOS[h])irA(h)}   // al recargar vuelve a la última pestaña
 if(FIJA&&!CLAVE)pedirClave();
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+
+// cuenta regresiva al cierre de la vela: las velas vienen en hora del servidor (GMT+2 invierno / +3 verano, horario de EE.UU.)
+function offSrv(){const n=new Date(),y=n.getUTCFullYear(),dom=(m,k)=>{const d=new Date(Date.UTC(y,m,1)),f=(7-d.getUTCDay())%7;return Date.UTC(y,m,1+f+7*(k-1),7)},ini=dom(2,2),fin=dom(10,1);return n>=ini&&n<fin?10800:7200}
+function relojVela(){const V=VELAS&&VELAS[MERC]?getV():null,el=$("g_cd");if(!V||!V.v||!V.v.length){el.textContent="";return}
+  const tf=TF_SEG[V.tf]||14400,ahora=Math.floor(Date.now()/1000)+offSrv(),r=tf-ahora%tf,h=Math.floor(r/3600),m=Math.floor(r%3600/60),s=r%60,z=x=>String(x).padStart(2,"0");
+  el.textContent=(h?h+":"+z(m):z(m))+":"+z(s)}
+setInterval(relojVela,1000);
 cargar();setInterval(()=>{cargar().then(refrescarGraficos).then(cargarPC)},4000);
 </script>
 </body>
