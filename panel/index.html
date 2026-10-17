@@ -854,7 +854,7 @@ const simDe=k=>k.split(":")[0];
 const botDeClave=k=>VELAS[k]&&VELAS[k].tf==="H4"?"Tendencia 4H":simDe(k).includes("JPY")?"Rango Asiatico":"Williams Ruptura";
 const velasDe=(sim,bot)=>{if(!VELAS)return null;const k=Object.keys(VELAS).find(k=>simDe(k)===sim&&botDeClave(k)===bot);return k?VELAS[k]:null};
 const TF_SEG={M1:60,M5:300,M15:900,M30:1800,H1:3600,H4:14400,D1:86400};
-let VELAS=null,VISTA="resumen",G=null,MERC=LS.get("panel_mercado");   // G = el gráfico (uno solo); MERC = mercado elegido (clave de VELAS)
+let ULTV=0,VELAS=null,VISTA="resumen",G=null,MERC=LS.get("panel_mercado");   // G = el gráfico (uno solo); MERC = mercado elegido (clave de VELAS)
 async function leerVelas(){return await (await api("velas.json")).json()}
 const cambio=V=>{const v=V.v,n=v.length;if(n<2)return 0;const a=v[Math.max(0,n-1-Math.round(86400/(TF_SEG[V.tf]||14400)))][4];return a?100*(v[n-1][4]-a)/a:0};   // en el último día
 const ultimo=V=>V.v.length?V.v[V.v.length-1][4]:0;
@@ -919,7 +919,8 @@ function pintarGrafico(){
 }
 async function refrescarGraficos(){
   if(VISTA!=="graficos")return;
-  try{VELAS=await leerVelas()}catch(e){return}
+  if(VELAS&&G&&Date.now()-ULTV<12000){pintarGrafico();return}   // las velas pesan (~150 KB): se bajan cada 12 s
+  try{VELAS=await leerVelas();ULTV=Date.now()}catch(e){return}
   if(!VELAS||!Object.keys(VELAS).length){$("mercados").innerHTML='<div class="card vacio" style="grid-column:1/-1">No price data (Panel_Estado not running).</div>';return}
   armarGraficos();pintarMercados();pintarGrafico();
   if(IRG){verGrafico(IRG);IRG=null}
