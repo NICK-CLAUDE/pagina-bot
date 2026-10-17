@@ -80,6 +80,7 @@ svg{flex:none}
 .sec{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;min-width:0}
 .sec h2{margin:0;font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
 .sec .mut{font-size:12.5px;text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#graf tr td:last-child,#graf tr td:last-child *{touch-action:none!important}
 .tag{display:inline-block;font-size:11px;font-weight:600;color:var(--tx2);background:var(--raise);border-radius:6px;padding:2px 6px;letter-spacing:.02em}
 .chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--verdeb);color:var(--verde);white-space:nowrap}
 .chip.amb{background:var(--ambb);color:var(--amb)}.chip.rojo{background:var(--rojob);color:var(--rojo)}.chip.gris{background:var(--raise);color:var(--mut)}.chip.azul{background:var(--prib);color:var(--pri)}
@@ -904,6 +905,11 @@ function armarGraficos(){
     handleScroll:{vertTouchDrag:false},handleScale:{axisPressedMouseMove:{time:true,price:true}}});   // la barra de precios de la derecha se estira con un dedo; deslizar en el resto del gráfico baja la página
   const se=ch.addCandlestickSeries({upColor:"#089981",downColor:"#F23645",borderVisible:false,wickUpColor:"#089981",wickDownColor:"#F23645"});
   G={chart:ch,serie:se,lineas:[],zonas:[],nuevo:true,sel:null,trazos:null};
+  // dedo sobre la barra de precios (derecha): el navegador no debe tomarlo como scroll de la página, así la escala se estira con un dedo
+  let enBarra=false;const g=$("graf");
+  g.addEventListener("touchstart",e=>{const r=g.getBoundingClientRect(),t=e.touches[0];enBarra=e.touches.length===1&&t.clientX>r.right-64},{capture:true,passive:true});
+  g.addEventListener("touchmove",e=>{if(enBarra&&e.cancelable)e.preventDefault()},{capture:true,passive:false});
+  ["touchend","touchcancel"].forEach(t=>g.addEventListener(t,()=>{enBarra=false},{capture:true,passive:true}));
   ch.subscribeClick(p=>{if(!p.point||!G.trazos)return;const o=G.trazos.hit(p.point.x,p.point.y);G.sel=o&&!o.abierta?o.ab+"_"+o.ci:null;pintarGrafico();if(G.sel&&window.innerWidth<900)abrirFicha(o)});
 }
 $("g_rst").onclick=()=>{if(G){G.nuevo=true;pintarGrafico()}};
