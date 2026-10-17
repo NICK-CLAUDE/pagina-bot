@@ -196,7 +196,10 @@ details[open] summary:before{transform:rotate(45deg)}
 .tr-a{display:flex;align-items:center;gap:8px;min-width:0}.tr-a b{font-size:14.5px;font-weight:600}
 .tr-g{font-size:15px;font-weight:600;text-align:right;white-space:nowrap}
 .tr-b{font-size:12.5px;color:var(--mut);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tr-c{font-size:12px;color:var(--mut);text-align:right;white-space:nowrap}
-.dia{display:flex;justify-content:space-between;align-items:center;margin:14px 0 2px;padding:7px 10px;border-radius:9px;background:var(--card2);font-size:12.5px;font-weight:600;color:var(--tx2)}
+.dia{display:flex;justify-content:space-between;align-items:center;margin:18px 0 4px;padding:10px 12px;border-radius:10px;background:var(--card2);border-left:4px solid var(--mut);font-size:15px;font-weight:700;color:var(--tx)}
+.dia small{display:block;font-size:11.5px;font-weight:500;color:var(--mut)}
+.dia b{font-size:17px}
+.dia.g{background:var(--verdeb);border-left-color:var(--verde)}.dia.p{background:var(--rojob);border-left-color:var(--rojo)}
 .dia:first-child{margin-top:0}.dia+.tr{border-top:0}
 
 /* historial: filtros */
@@ -748,10 +751,11 @@ function historial(d){
     +`<div><small>Net result</small><b class="num ${cl(tot)}">${usdS(tot)}</b></div><div><small>Profit factor</small><b class="num">${sp?(sg/sp).toFixed(2):"–"}</b></div>`;
   let html="",dia=null;
   const porDia=HF.orden==="ci",suma={};
-  if(porDia)h.forEach(x=>{const k2=Math.floor(x.ci/86400);suma[k2]=(suma[k2]||0)+x.neto});
+  const cant={};
+  if(porDia)h.forEach(x=>{const k2=Math.floor(x.ci/86400);suma[k2]=(suma[k2]||0)+x.neto;cant[k2]=(cant[k2]||0)+1});
   h.slice(0,HF.max).forEach(x=>{
     const k2=Math.floor(x.ci/86400);
-    if(porDia&&k2!==dia){dia=k2;html+=`<div class="dia"><span>${fdl(x.ci)}</span><span class="${cl(suma[k2])}">${usdS(suma[k2])}</span></div>`}
+    if(porDia&&k2!==dia){dia=k2;html+=`<div class="dia ${suma[k2]>0?"g":suma[k2]<0?"p":""}"><span>${fdl(x.ci)}<small>${cant[k2]} trade${cant[k2]>1?"s":""} · day result</small></span><b class="num ${cl(suma[k2])}">${usdS(suma[k2])}</b></div>`}
     html+=filaOp(x,`data-i="${HIST_IDX.push(x)-1}"`);
   });
   $("h_lista").innerHTML=html||'<div class="vacio">No results.</div>';
