@@ -958,7 +958,7 @@ function pintarGrafico(){
   let h="";
   pos.forEach(p=>{
     h+=`<div class="gp-h">${ladoChip(p.lado)}<b>${lote(p.lote)} lots</b><span class="mut">open since ${fh(p.desde||0)}</span></div>
-      ${p.riesgo_ini>0?`<div class="gp-r">Risked <b class="rojo">${riesgoTxt(p.riesgo_ini)}</b> if it hits the first Stop Loss${p.riesgo>0&&Math.abs(p.riesgo-p.riesgo_ini)>.01?` · now <b>${riesgoTxt(p.riesgo)}</b>`:p.riesgo<0?` · now <b class="verde">+$${nf(-p.riesgo,2)}</b> locked`:""}</div>`:""}
+      ${p.riesgo_ini>0?`<div class="gp-r">Risked <b class="rojo">${riesgoTxt(p.riesgo_ini)}</b> if it hits the first Stop Loss</div>`:""}
       <div class="gp">${celda("Entry",p.precio)}${celda("Stop Loss",p.sl>0?p.sl:"none")}${celda("Take Profit",p.tp>0?p.tp:"none")}${celda("P&L",usdS(p.gan),cl(p.gan))}</div>`});
   if(ords.length)h+=`<div class="gp-h">Pending orders</div><div class="gp">${ords.map(o=>celda(o.lado==="compra"?"Buy stop":"Sell stop",o.precio)).join("")}</div>`;
   $("g_pos").innerHTML=h||`<div class="gp-v">No open position on ${sym}.</div>`;
