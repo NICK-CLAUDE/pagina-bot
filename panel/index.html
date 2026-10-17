@@ -815,7 +815,7 @@ class Trazos{ // operaciones en su precio exacto: punto de entrada y de salida u
       const c=o.lado==="compra",x1=X(o.ab),y1=Y(o.pa),x2=X(o.ci),y2=Y(o.pc),res=o.neto>=0?"#089981":"#F23645",esSel=!o.abierta&&(o.ab+"_"+o.ci)===z.sel;
       if(x1===null||y1===null)return;
       z.puntos.push({x:x1,y:y1,o:o});
-      if(o.abierta){if(x2!==null&&y2!==null)tramo(x1,y1,x2,y2,res,true);punto(x1,y1,"#2962FF",6);carteles.push({x:x1,y:y1,arriba:false,sel:false,color:"#2962FF",txt:c?"BUY":"SELL",o});return}   // abierta: punteada hasta el precio actual
+      if(o.abierta){if(x2!==null&&y2!==null)tramo(x1,y1,x2,y2,res,true);punto(x1,y1,"#2962FF",6);return}   // abierta: punteada hasta el precio actual
       if(esSel&&x2!==null){const W2=Math.max(x2,x1+30);
         const caja=(pr,col2)=>{if(!(pr>0))return;const yy=Y(pr);if(yy===null)return;ctx.fillStyle=col2;ctx.fillRect(x1,Math.min(y1,yy),W2-x1,Math.abs(yy-y1))};
         caja(o.tp,"rgba(8,153,129,.28)");caja(o.sli>0?o.sli:o.sl,"rgba(242,54,69,.28)");
