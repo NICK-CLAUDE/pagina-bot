@@ -1130,7 +1130,7 @@ if(FIJA&&!CLAVE)pedirClave();
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 
 // cuenta regresiva al cierre de la vela: las velas vienen en hora del servidor (GMT+2 invierno / +3 verano, horario de EE.UU.)
-function offSrv(){const n=new Date(),y=n.getUTCFullYear(),dom=(m,k)=>{const d=new Date(Date.UTC(y,m,1)),f=(7-d.getUTCDay())%7;return Date.UTC(y,m,1+f+7*(k-1),7)},ini=dom(2,2),fin=dom(10,1);return n>=ini&&n<fin?10800:7200}
+function offSrv(){if(ULT&&typeof ULT.off==="number")return ULT.off;const n=new Date(),y=n.getUTCFullYear(),dom=(m,k)=>{const d=new Date(Date.UTC(y,m,1)),f=(7-d.getUTCDay())%7;return Date.UTC(y,m,1+f+7*(k-1),7)},ini=dom(2,2),fin=dom(10,1);return n>=ini&&n<fin?10800:7200}
 function relojVela(){const V=VELAS&&VELAS[MERC]?getV():null,el=$("g_cd");if(!V||!V.v||!V.v.length){el.textContent="";return}
   const tf=TF_SEG[V.tf]||14400,ahora=Math.floor(Date.now()/1000)+offSrv(),r=tf-ahora%tf,h=Math.floor(r/3600),m=Math.floor(r%3600/60),s=r%60,z=x=>String(x).padStart(2,"0");
   el.textContent=(h?h+":"+z(m):z(m))+":"+z(s)}
