@@ -906,9 +906,10 @@ function armarGraficos(){
   const se=ch.addCandlestickSeries({upColor:"#089981",downColor:"#F23645",borderVisible:false,wickUpColor:"#089981",wickDownColor:"#F23645"});
   G={chart:ch,serie:se,lineas:[],zonas:[],nuevo:true,sel:null,trazos:null};
   // dedo sobre la barra de precios (derecha): el navegador no debe tomarlo como scroll de la página, así la escala se estira con un dedo
-  let enBarra=false;const g=$("graf");
-  g.addEventListener("touchstart",e=>{const r=g.getBoundingClientRect(),t=e.touches[0];enBarra=e.touches.length===1&&t.clientX>r.right-64},{capture:true,passive:true});
-  g.addEventListener("touchmove",e=>{if(enBarra&&e.cancelable)e.preventDefault()},{capture:true,passive:false});
+  let enBarra=false,y0=0,k0=1;const g=$("graf");G.k=1;
+  se.applyOptions({autoscaleInfoProvider:o=>{const r=o();if(!r||!r.priceRange||G.k===1)return r;const{minValue:a,maxValue:z}=r.priceRange,m=(a+z)/2,h=(z-a)/2*G.k;return{...r,priceRange:{minValue:m-h,maxValue:m+h}}}});   // zoom vertical propio: la escala se multiplica por G.k
+  g.addEventListener("touchstart",e=>{const r=g.getBoundingClientRect(),t=e.touches[0];enBarra=e.touches.length===1&&t.clientX>r.right-64;if(enBarra){y0=t.clientY;k0=G.k;e.stopPropagation()}},{capture:true,passive:true});
+  g.addEventListener("touchmove",e=>{if(!enBarra)return;e.stopPropagation();if(e.cancelable)e.preventDefault();G.k=Math.min(8,Math.max(.1,k0*Math.exp((e.touches[0].clientY-y0)/150)));ch.priceScale("right").applyOptions({autoScale:true})},{capture:true,passive:false});
   ["touchend","touchcancel"].forEach(t=>g.addEventListener(t,()=>{enBarra=false},{capture:true,passive:true}));
   ch.subscribeClick(p=>{if(!p.point||!G.trazos)return;const o=G.trazos.hit(p.point.x,p.point.y);G.sel=o&&!o.abierta?o.ab+"_"+o.ci:null;pintarGrafico();if(G.sel&&window.innerWidth<900)abrirFicha(o)});
 }
@@ -920,7 +921,7 @@ function pintarGrafico(){
   $("g_px").textContent=precio(ultimo(V),dig);$("g_ch").textContent=(c>=0?"+":"")+c.toFixed(2)+"% 1D";$("g_ch").className=cl(c);
   G.serie.applyOptions({priceFormat:{type:"price",precision:dig,minMove:1/Math.pow(10,dig)}});
   G.serie.setData(V.v.map(x=>({time:x[0],open:x[1],high:x[2],low:x[3],close:x[4]})));
-  if(G.nuevo){const n=V.v.length;G.chart.priceScale("right").applyOptions({autoScale:true});
+  if(G.nuevo){const n=V.v.length;G.k=1;G.chart.priceScale("right").applyOptions({autoScale:true});
     const t1=Math.min(Infinity,...(d.historial||[]).filter(h=>h.sim===sym&&h.bot===b&&h.pa>0).map(h=>h.ab)),i1=V.v.findIndex(x=>x[0]>=t1);   // en el celu se empieza viendo desde la primera operación, no solo las últimas horas
     if($("graf").clientWidth<700)G.chart.timeScale().setVisibleLogicalRange({from:Math.max(0,Math.min(n-55,i1>=0?i1-6:n-55)),to:n+10});else G.chart.timeScale().fitContent();G.nuevo=false}
   G.lineas.forEach(l=>G.serie.removePriceLine(l));G.lineas=[];
