@@ -214,15 +214,12 @@ details[open] summary:before{transform:rotate(45deg)}
 .lhead .sel{width:auto;padding:7px 32px 7px 11px;font-size:13px;background-position:right 9px center}
 
 /* gráficos */
-.mks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
-.mk{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:10px 11px;border-radius:13px;background:var(--card);border:1px solid var(--ln2);cursor:pointer;text-align:left;min-width:0}
+.mks{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}   /* mercados como botoncitos chicos: el gráfico queda a la vista */
+.mk{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;background:var(--card);border:1px solid var(--ln2);cursor:pointer;font-size:12.5px;font-weight:700;color:var(--tx)}
 .mk:hover{border-color:var(--ln)}
-.mk.on{background:linear-gradient(180deg,rgba(79,140,255,.16),rgba(79,140,255,.05));border-color:rgba(79,140,255,.55)}
-.mk-s{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700;letter-spacing:-.01em;width:100%}
-.mk-s em{font-style:normal;font-size:10px;font-weight:600;color:var(--mut);background:var(--raise);border-radius:4px;padding:1px 4px}
-.mk-p{font-size:14px;font-weight:600;color:var(--tx);max-width:100%;overflow:hidden;text-overflow:ellipsis}
-.mk-c{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;width:100%}
-.mk-o{margin-left:auto;font-style:normal;font-size:10px;font-weight:700;letter-spacing:.03em;padding:1px 5px;border-radius:5px;background:var(--prib);color:var(--pri)}
+.mk.on{background:rgba(79,140,255,.16);border-color:rgba(79,140,255,.6)}
+.mk-c{font-size:11px;font-weight:600}
+.mk-o{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--pri);box-shadow:0 0 6px var(--pri)}
 .gcard{padding:14px;scroll-margin-top:80px}
 .gh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .gh-n{flex:1;min-width:0}.gh-s{display:flex;align-items:center;gap:7px}.gh-s b{font-size:19px;font-weight:700;letter-spacing:-.02em}
@@ -332,7 +329,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
  .bots{grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
  .kpis{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
  .mini{grid-template-columns:repeat(4,minmax(0,1fr))}
- .mks{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+
  .graf{height:500px}
  .gp{grid-template-columns:repeat(4,minmax(0,1fr))}
  .hbar{grid-template-columns:minmax(0,1.3fr) 200px 220px}.seg{grid-column:auto}
@@ -857,10 +854,10 @@ let ULTV=0,VELAS=null,VISTA="resumen",G=null,MERC=LS.get("panel_mercado");   // 
 async function leerVelas(){return await (await api("velas.json")).json()}
 const cambio=V=>{const v=V.v,n=v.length;if(n<2)return 0;const a=v[Math.max(0,n-1-Math.round(86400/(TF_SEG[V.tf]||14400)))][4];return a?100*(v[n-1][4]-a)/a:0};   // en el último día
 const ultimo=V=>V.v.length?V.v[V.v.length-1][4]:0;
-function pintarMercados(){   // grilla de mercados: todos a la vista, sin deslizar
+function pintarMercados(){   // mercados: botoncitos chicos, todos a la vista, sin deslizar (punto azul = operación abierta)
   if(!VELAS)return;const d=ULT||{};
   $("mercados").innerHTML=Object.keys(VELAS).map(k=>{const V=VELAS[k],sym=simDe(k),c=cambio(V),pos=(d.posiciones||[]).find(p=>p.sim===sym&&p.bot===botDeClave(k));
-    return `<button class="mk${k===MERC?" on":""}" data-k="${k}"><span class="mk-s">${sym}<em>${V.tf}</em></span><span class="mk-p num">${precio(ultimo(V),V.dig||2)}</span><span class="mk-c ${cl(c)}">${c>=0?"+":""}${c.toFixed(2)}%${pos?'<i class="mk-o">OPEN</i>':""}</span></button>`}).join("");
+    return `<button class="mk${k===MERC?" on":""}" data-k="${k}" title="${V.tf}">${pos?'<i class="mk-o"></i>':""}${sym}<span class="mk-c num ${cl(c)}">${c>=0?"+":""}${c.toFixed(1)}%</span></button>`}).join("");
 }
 $("mercados").onclick=e=>{const b=e.target.closest(".mk");if(b)elegirMercado(b.dataset.k)};
 function elegirMercado(k){MERC=k;LS.set("panel_mercado",k);if(G){G.nuevo=true;G.sel=null}pintarMercados();pintarGrafico()}
@@ -871,7 +868,8 @@ function armarGraficos(){
   if(G)return;
   const ch=LightweightCharts.createChart($("graf"),{autoSize:true,layout:{background:{color:"#14181f"},textColor:"#848e9c",fontSize:12,fontFamily:"Inter,system-ui,Segoe UI,Roboto,sans-serif"},
     grid:{vertLines:{visible:false},horzLines:{color:"#1c222b"}},rightPriceScale:{borderColor:"#252c37"},timeScale:{borderColor:"#252c37",timeVisible:true,secondsVisible:false,rightOffset:12},
-    crosshair:{mode:0},localization:{locale:"en-US"}});
+    crosshair:{mode:0},localization:{locale:"en-US"},
+    handleScroll:{vertTouchDrag:false},handleScale:{axisPressedMouseMove:{time:true,price:false}}});   // deslizar vertical en el celu baja la página (no estira la escala de precios)
   const se=ch.addCandlestickSeries({upColor:"#089981",downColor:"#F23645",borderVisible:false,wickUpColor:"#089981",wickDownColor:"#F23645"});
   G={chart:ch,serie:se,lineas:[],zonas:[],nuevo:true,sel:null,trazos:null};
   ch.subscribeClick(p=>{if(!p.point||!G.trazos)return;const o=G.trazos.hit(p.point.x,p.point.y);G.sel=o&&!o.abierta?o.ab+"_"+o.ci:null;pintarGrafico();if(G.sel&&window.innerWidth<900)abrirFicha(o)});
