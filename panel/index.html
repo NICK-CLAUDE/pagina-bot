@@ -220,6 +220,9 @@ details[open] summary:before{transform:rotate(45deg)}
 .mk:hover{border-color:var(--ln)}
 .mk.on{background:rgba(79,140,255,.16);border-color:rgba(79,140,255,.6)}
 .mk-c{font-size:10.5px;font-weight:600}
+.tfs{display:flex;gap:4px;margin:2px 0 8px}
+.tfs button{flex:1;padding:6px 0;border-radius:8px;border:1px solid var(--ln2);background:transparent;color:var(--mut);font-size:12.5px;font-weight:700;cursor:pointer}
+.tfs button.on{background:rgba(79,140,255,.16);border-color:rgba(79,140,255,.6);color:var(--tx)}
 .mk-o{display:inline-block;width:6px;height:6px;margin-right:3px;vertical-align:1px;border-radius:50%;background:var(--pri);box-shadow:0 0 6px var(--pri)}
 .gcard{padding:14px;scroll-margin-top:80px}
 .gh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
@@ -413,6 +416,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
       <div class="gh-p"><b class="num" id="g_px">–</b><span id="g_ch"></span></div>
       <button class="ibtn" id="g_rst" title="Reset view" aria-label="Reset view"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
     </div>
+    <div class="tfs" id="tfs"></div>
     <div class="graf" id="graf"></div>
     <div class="gpos" id="g_pos"></div>
     <div class="gdet" id="g_det"></div>
@@ -788,7 +792,7 @@ async function enviarControl(bot,accion,cerrar,pin){
   return (await r.json()).control;
 }
 // ---------- gráficos tipo TradingView
-class Trazos{ // operaciones en su precio exacto: punto de entrada y de salida unidos (verde si ganó, rojo si perdió) y un cartel "+$12" que busca lugar libre
+class Trazos{ // operaciones en su precio exacto: punto de entrada y de salida unidos (verde si ganó, rojo si perdió) un cartel BUY/SELL en la entrada y otro con el resultado ("+$12"); buscan lugar libre
   constructor(ops,tf,sel){this.ops=ops;this.tf=tf;this.sel=sel;this.puntos=[]}
   attached({chart,series}){this.chart=chart;this.series=series}
   detached(){}
@@ -805,27 +809,28 @@ class Trazos{ // operaciones en su precio exacto: punto de entrada y de salida u
       const c=o.lado==="compra",x1=X(o.ab),y1=Y(o.pa),x2=X(o.ci),y2=Y(o.pc),res=o.neto>=0?"#089981":"#F23645",esSel=!o.abierta&&(o.ab+"_"+o.ci)===z.sel;
       if(x1===null||y1===null)return;
       z.puntos.push({x:x1,y:y1,o:o});
-      if(o.abierta){if(x2!==null&&y2!==null)tramo(x1,y1,x2,y2,res,true);punto(x1,y1,c?"#089981":"#F23645",6);return}   // abierta: punteada hasta el precio actual
+      if(o.abierta){if(x2!==null&&y2!==null)tramo(x1,y1,x2,y2,res,true);punto(x1,y1,"#2962FF",6);carteles.push({x:x1,y:y1,arriba:false,sel:false,color:"#2962FF",txt:c?"BUY":"SELL",o});return}   // abierta: punteada hasta el precio actual
       if(esSel&&x2!==null){const W2=Math.max(x2,x1+30);
         const caja=(pr,col2)=>{if(!(pr>0))return;const yy=Y(pr);if(yy===null)return;ctx.fillStyle=col2;ctx.fillRect(x1,Math.min(y1,yy),W2-x1,Math.abs(yy-y1))};
         caja(o.tp,"rgba(8,153,129,.28)");caja(o.sli>0?o.sli:o.sl,"rgba(242,54,69,.28)");
         [[o.sli>0?o.sli:o.sl,"#F23645"],[o.tp,"#089981"]].forEach(([pr,cc])=>{if(pr>0){const yy=Y(pr);if(yy!==null){ctx.strokeStyle=cc;ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(x1,yy);ctx.lineTo(W2,yy);ctx.stroke();ctx.setLineDash([])}}})}
-      if(x2===null||y2===null){punto(x1,y1,res);return}
+      if(x2===null||y2===null){punto(x1,y1,res);carteles.push({x:x1,y:y1,arriba:false,sel:esSel,color:res,txt:c?"BUY":"SELL",o});return}
       z.puntos.push({x:x2,y:y2,o:o});
       tramo(x1,y1,x2,y2,res);punto(x1,y1,res);punto(x2,y2,res,esSel?6:4.5);   // cerrada: línea continua, verde si ganó y rojo si perdió
       if(esSel){ctx.beginPath();ctx.arc(x2,y2,11,0,7);ctx.lineWidth=2.5;ctx.strokeStyle="#fff";ctx.stroke()}
-      carteles.push({x:x2,y:y2,arriba:y2<=y1,sel:esSel,color:res,txt:(o.neto>=0?"+$":"-$")+Math.abs(Math.round(o.neto)),o});
+      carteles.push({x:x1,y:y1,arriba:false,sel:esSel,color:res,txt:c?"BUY":"SELL",o});   // entrada: BUY o SELL, abajo del punto (si choca, se corre)
+      carteles.push({x:x2,y:y2,arriba:false,sel:esSel,color:res,txt:(o.neto>=0?"+$":"-$")+Math.abs(Math.round(o.neto)),o});
     });
     ctx.font="700 11px Inter,system-ui,Segoe UI,Roboto,sans-serif";
     const H=sc.mediaSize.height,choca=r=>ocup.some(q=>r[0]<q[0]+q[2]&&q[0]<r[0]+r[2]&&r[1]<q[1]+q[3]&&q[1]<r[1]+r[3]);
     carteles.sort((a,b)=>b.sel-a.sel).forEach(k=>{   // el seleccionado elige primero
       const w=ctx.measureText(k.txt).width+10;let pos=null;
       for(let n=0;n<12&&!pos;n++){const lado=(n%2?-1:1)*(k.arriba?-1:1),dist=10+Math.floor(n/2)*20,y=lado<0?k.y-dist-17:k.y+dist;
-        const r=[k.x-w/2-2,y-2,w+4,21];if(y>2&&y+17<H&&!choca(r))pos=[y,r]}
+        const r=[Math.min(Math.max(k.x-w/2,2),sc.mediaSize.width-w-2)-2,y-2,w+4,21];if(y>2&&y+17<H&&!choca(r))pos=[y,r]}
       if(!pos)return;   // sin lugar libre en 12 intentos: no se dibuja (tocando el punto se ve el detalle)
       const [y,r]=pos;ocup.push(r);
       if(Math.abs(y-k.y)>30){ctx.strokeStyle=k.color;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(k.x,k.y);ctx.lineTo(k.x,y<k.y?y+17:y);ctx.stroke()}   // hilo hasta el punto si quedó lejos
-      ctx.fillStyle=k.color;ctx.beginPath();ctx.roundRect(k.x-w/2,y,w,17,4);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(k.txt,k.x-w/2+5,y+12.5);
+      ctx.fillStyle=k.color;ctx.beginPath();ctx.roundRect(r[0]+2,y,w,17,4);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(k.txt,r[0]+7,y+12.5);
       z.puntos.push({x:k.x,y:y+8,o:k.o});
     });
   })})}]}
@@ -848,10 +853,16 @@ class ZonaPosicion{ // rectángulos verde (entrada→Take Profit) y rojo (entrad
   })})}]}
 }
 const simDe=k=>k.split(":")[0];
+const TFS=[["M5","5m"],["M15","15m"],["H1","1h"],["H4","4h"],["D1","1D"]];
+// velas del mercado elegido: las de su temporalidad normal, o las de la que se elige arriba del gráfico (el MT5 las manda cada 30 s)
+function getV(){const base=VELAS[MERC];if(!base||!TFSEL||TFSEL===base.tf)return base;const t=TFDATA[TFSEL]&&TFDATA[TFSEL][simDe(MERC)];return t||base}
+async function bajarTF(tf,fuerza){if(!tf||(!fuerza&&Date.now()-(TFHORA[tf]||0)<25000))return;TFHORA[tf]=Date.now();try{TFDATA[tf]=await (await api("velas_"+tf+".json")).json()}catch(e){TFHORA[tf]=0}}
+function pintarTFs(){const V=VELAS&&VELAS[MERC];if(!V)return;const act=TFSEL||V.tf;$("tfs").innerHTML=TFS.map(([k,n])=>`<button data-tf="${k}" class="${k===act?"on":""}">${n}</button>`).join("")}
+$("tfs").onclick=async e=>{const b=e.target.closest("button");if(!b)return;TFSEL=b.dataset.tf;LS.set("panel_tf",TFSEL);await bajarTF(TFSEL,true);if(G){G.nuevo=true;G.sel=null}pintarTFs();pintarGrafico()};
 const botDeClave=k=>VELAS[k]&&VELAS[k].tf==="H4"?"Tendencia 4H":simDe(k).includes("JPY")?"Rango Asiatico":"Williams Ruptura";
 const velasDe=(sim,bot)=>{if(!VELAS)return null;const k=Object.keys(VELAS).find(k=>simDe(k)===sim&&botDeClave(k)===bot);return k?VELAS[k]:null};
 const TF_SEG={M1:60,M5:300,M15:900,M30:1800,H1:3600,H4:14400,D1:86400};
-let ULTV=0,VELAS=null,VISTA="resumen",G=null,MERC=LS.get("panel_mercado");   // G = el gráfico (uno solo); MERC = mercado elegido (clave de VELAS)
+let TFSEL=LS.get("panel_tf"),TFDATA={},TFHORA={},ULTV=0,VELAS=null,VISTA="resumen",G=null,MERC=LS.get("panel_mercado");   // G = el gráfico (uno solo); MERC = mercado elegido (clave de VELAS)
 async function leerVelas(){return await (await api("velas.json")).json()}
 const cambio=V=>{const v=V.v,n=v.length;if(n<2)return 0;const a=v[Math.max(0,n-1-Math.round(86400/(TF_SEG[V.tf]||14400)))][4];return a?100*(v[n-1][4]-a)/a:0};   // en el último día
 const ultimo=V=>V.v.length?V.v[V.v.length-1][4]:0;
@@ -861,7 +872,7 @@ function pintarMercados(){   // mercados: botoncitos chicos, todos a la vista, s
     return `<button class="mk${k===MERC?" on":""}" data-k="${k}" title="${V.tf}"><span>${pos?'<i class="mk-o"></i>':""}${sym}</span><span class="mk-c num ${cl(c)}">${c>=0?"+":""}${c.toFixed(1)}%</span></button>`}).join("");
 }
 $("mercados").onclick=e=>{const b=e.target.closest(".mk");if(b)elegirMercado(b.dataset.k)};
-function elegirMercado(k){MERC=k;LS.set("panel_mercado",k);if(G){G.nuevo=true;G.sel=null}pintarMercados();pintarGrafico()}
+async function elegirMercado(k){MERC=k;LS.set("panel_mercado",k);if(G){G.nuevo=true;G.sel=null}if(TFSEL&&VELAS[k]&&TFSEL!==VELAS[k].tf)await bajarTF(TFSEL);pintarMercados();pintarTFs();pintarGrafico()}
 function armarGraficos(){
   if(!VELAS||!window.LightweightCharts)return;
   const claves=Object.keys(VELAS);if(!claves.length)return;
@@ -878,7 +889,7 @@ function armarGraficos(){
 $("g_rst").onclick=()=>{if(G){G.nuevo=true;pintarGrafico()}};
 function pintarGrafico(){
   const d=ULT;if(!G||!VELAS||!VELAS[MERC]||!d)return;
-  const V=VELAS[MERC],b=botDeClave(MERC),sym=simDe(MERC),dig=V.dig||2,tf=TF_SEG[V.tf]||14400,c=cambio(V);
+  const V=getV(),b=botDeClave(MERC),sym=simDe(MERC),dig=V.dig||2,tf=TF_SEG[V.tf]||14400,c=cambio(V);
   $("g_sym").textContent=sym;$("g_tf").textContent=V.tf;$("g_bot").textContent=nb(b);
   $("g_px").textContent=precio(ultimo(V),dig);$("g_ch").textContent=(c>=0?"+":"")+c.toFixed(2)+"% 1D";$("g_ch").className=cl(c);
   G.serie.applyOptions({priceFormat:{type:"price",precision:dig,minMove:1/Math.pow(10,dig)}});
@@ -922,7 +933,8 @@ async function refrescarGraficos(){
   if(VELAS&&G&&Date.now()-ULTV<12000){pintarGrafico();return}   // las velas pesan (~150 KB): se bajan cada 12 s
   try{VELAS=await leerVelas();ULTV=Date.now()}catch(e){return}
   if(!VELAS||!Object.keys(VELAS).length){$("mercados").innerHTML='<div class="card vacio" style="grid-column:1/-1">No price data (Panel_Estado not running).</div>';return}
-  armarGraficos();pintarMercados();pintarGrafico();
+  if(TFSEL&&VELAS[MERC]&&TFSEL!==VELAS[MERC].tf)await bajarTF(TFSEL);
+  armarGraficos();pintarMercados();pintarTFs();pintarGrafico();
   if(IRG){verGrafico(IRG);IRG=null}
 }
 const TRI_UP='<svg viewBox="0 0 10 10"><path d="M5 1l4 8H1z"/></svg>',TRI_DN='<svg viewBox="0 0 10 10"><path d="M1 1h8L5 9z"/></svg>';
