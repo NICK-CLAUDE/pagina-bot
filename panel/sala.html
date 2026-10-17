@@ -319,28 +319,27 @@ const [zc,ztx]=lienzo(64,64);zc.font="900 54px system-ui";zc.textAlign="center";
 const C={};
 const ESC_PJ=1.45;   // tamaño de los personajes (cabezones, estilo juguete)
 function hacerBot(p){const i=p.i%3,ropa=CC[i],piel=PIEL[i],tipo=TIPO[i],g=new THREE.Group();g.scale.setScalar(ESC_PJ);esc.add(g);
+  // robot: cuerpo y cabeza de metal, pantalla negra con ojos luminosos del color del estado, antena con luz
+  const luz=new THREE.MeshBasicMaterial({color:ESTCOL.amb,toneMapped:false}),METAL="#c3cee2",OSC="#4a5570";
   const cuerpo=pon(new THREE.Group(),0,0,0,g);
-  const torso=pon(esf(.26,ropa),0,.44,0,cuerpo);torso.scale.set(1,1.1,.92);
-  pon(esf(.1,"#ffffff",12),0,.62,.13,cuerpo).scale.set(1.4,.5,.8);   // cuellito
-  const piernas=[-1,1].map(s=>{const q=pon(new THREE.Group(),s*.11,.24,0,cuerpo);pon(cap(.08,.08,piel),0,-.12,0,q);return q});
-  const brazos=[-1,1].map(s=>{const q=pon(new THREE.Group(),s*.26,.56,0,cuerpo);pon(cap(.068,.12,ropa),0,-.1,0,q);pon(esf(.074,piel,12),0,-.21,0,q);return q});
+  const torso=pon(caja(.5,.46,.38,ropa,.12),0,.44,0,cuerpo);
+  pon(caja(.2,.12,.03,"#0a1226",.03),0,.46,.195,cuerpo);pon(caja(.14,.05,.03,luz,.02),0,.46,.205,cuerpo);   // panel del pecho
+  pon(cil(.07,.09,.1,OSC,12),0,.67,0,cuerpo);   // cuello
+  const piernas=[-1,1].map(s=>{const q=pon(new THREE.Group(),s*.11,.24,0,cuerpo);pon(cap(.075,.08,METAL),0,-.1,0,q);pon(caja(.16,.07,.22,OSC,.03),0,-.2,.04,q);return q});
+  const brazos=[-1,1].map(s=>{const q=pon(new THREE.Group(),s*.3,.56,0,cuerpo);pon(esf(.08,OSC,10),0,0,0,q);pon(cap(.06,.12,METAL),0,-.12,0,q);pon(caja(.12,.12,.12,"#e6ecf8",.04),0,-.25,0,q);return q});
   const cab=pon(new THREE.Group(),0,.72,0,cuerpo);
-  pon(esf(.37,piel,26),0,.3,0,cab).scale.set(1.07,.95,1);
-  const ojos=[-1,1].map(s=>{const o=pon(new THREE.Group(),s*.13,.32,.335,cab);pon(esf(.056,"#2d2a35",12),0,0,0,o).scale.z=.5;pon(esf(.019,"#ffffff",8),.02,.022,.026,o);return o});
-  for(const s of[-1,1]){const m=pon(esf(.065,mat("#ff9eb1",{transparent:true,opacity:.7}),12),s*.21,.2,.3,cab);m.scale.set(1,.6,.35);m.castShadow=false}
-  const boca=pon(new THREE.Mesh(new THREE.TorusGeometry(.045,.013,6,14,Math.PI),mat("#6a4048")),0,.17,.36,cab);
-  if(tipo==="oso"){pon(esf(.13,"#fff3df",14),0,.2,.32,cab).scale.set(1,.72,.6);pon(esf(.04,"#5a3d33",10),0,.25,.4,cab);boca.position.set(0,.15,.41);
-    for(const s of[-1,1]){pon(esf(.11,piel,14),s*.25,.6,0,cab);pon(esf(.06,"#f2a49a",10),s*.25,.6,.07,cab).scale.z=.4}}
-  if(tipo==="gato"){for(const s of[-1,1]){pon(malla(new THREE.ConeGeometry(.13,.24,14),piel),s*.2,.66,0,cab).rotation.z=-s*.35;pon(malla(new THREE.ConeGeometry(.07,.14,10),"#f7a9c0"),s*.195,.65,.07,cab).rotation.z=-s*.35}
-    pon(esf(.032,"#f58aa6",10),0,.25,.365,cab)}
-  if(tipo==="conejo"){for(const s of[-1,1]){const o=pon(new THREE.Group(),s*.13,.58,-.02,cab);o.rotation.z=-s*.15;pon(cap(.075,.3,piel),0,.22,0,o);pon(cap(.04,.24,"#f7b3c4"),0,.22,.05,o)}
-    pon(esf(.032,"#f58aa6",10),0,.25,.365,cab)}
+  pon(caja(.74,.56,.56,METAL,.16),0,.3,0,cab);
+  pon(caja(.6,.36,.06,"#050a18",.1),0,.32,.275,cab);   // pantalla
+  const ojos=[-1,1].map(s=>{const o=pon(new THREE.Group(),s*.14,.34,.315,cab);pon(caja(.1,.13,.03,luz,.03),0,0,0,o);return o});
+  const boca=pon(new THREE.Mesh(new THREE.TorusGeometry(.06,.014,6,14,Math.PI),luz),0,.22,.315,cab);
+  for(const s of[-1,1])pon(cil(.07,.07,.1,OSC,14),s*.39,.3,0,cab).rotation.z=Math.PI/2;   // orejeras
+  pon(cil(.018,.018,.2,OSC,8),0,.67,0,cab);pon(esf(.055,luz,10),0,.8,0,cab);   // antena
   const anillo=pon(new THREE.Mesh(new THREE.RingGeometry(.38,.48,32),new THREE.MeshBasicMaterial({color:"#ffffff",transparent:true,opacity:.85,depthWrite:false})),0,.02,0);anillo.rotation.x=-Math.PI/2;
   const zz=[0,1,2].map(()=>pon(new THREE.Sprite(new THREE.SpriteMaterial({map:ztx,transparent:true,depthWrite:false})),0,0,0));
   const nube=new THREE.Group();esc.add(nube);for(const [a,b,r] of[[-.14,0,.13],[0,.05,.17],[.15,0,.12]])pon(esf(r,"#a3abbd",12),a,b,0,nube);
   const gotas=[0,1].map(k=>{const m=pon(esf(.035,"#8cc7ff",8),k?.08:-.07,-.15,0,nube);m.scale.y=1.6;return m});
   const burb=document.createElement("div"),tag=document.createElement("div");burb.className="burb";tag.className="tag";tag.textContent=nom(p.nombre);capa.append(burb,tag);
-  return {p,g,cuerpo,torso,piernas,brazos,cab,ojos,boca,anillo,zz,nube,gotas,burb,tag,x:0,z:0,yaw:0,yawObj:0,ruta:[],dest:null,lugar:null,sig:performance.now()/1000+3+p.i*3.5,mis:null,charla:null,
+  return {p,g,cuerpo,torso,piernas,brazos,cab,ojos,boca,luz,anillo,zz,nube,gotas,burb,tag,x:0,z:0,yaw:0,yawObj:0,ruta:[],dest:null,lugar:null,sig:performance.now()/1000+3+p.i*3.5,mis:null,charla:null,
     Q:{y:0,l0:0,l1:0,a0:0,a1:0,az:.12,hy:0,hx:0,hz:0,bx:0,ojo:1,boca:1}}}
 
 // confeti (una sola malla con muchas copias)
@@ -388,10 +387,10 @@ function animar(c,t,dt,ahora){
   c.g.position.set(c.x,Q.y,c.z);c.g.rotation.y=c.yaw;c.cuerpo.rotation.x=Q.bx;
   c.piernas[0].rotation.x=Q.l0;c.piernas[1].rotation.x=Q.l1;
   c.brazos[0].rotation.set(Q.a0,0,-Q.az);c.brazos[1].rotation.set(Q.a1,0,Q.az);
-  c.cab.rotation.set(Q.hx,Q.hy,Q.hz);c.cab.position.y=.72+(resp-1)*.4;c.torso.scale.set(1,1.1*resp,.92);
+  c.cab.rotation.set(Q.hx,Q.hy,Q.hz);c.cab.position.y=.72+(resp-1)*.4;c.torso.scale.set(1,resp,1);
   c.ojos.forEach(o=>o.scale.y=Math.min(Q.ojo,parp));
   c.boca.rotation.z=Q.boca>=0?Math.PI:0;c.boca.scale.setScalar(Math.max(.4,Math.abs(Q.boca)));
-  c.anillo.position.set(c.x,.02,c.z);c.anillo.material.color.set(ESTCOL[p.est]||"#fff");
+  c.anillo.position.set(c.x,.02,c.z);c.luz.color.set(ESTCOL[p.est]||"#fff");c.anillo.material.color.set(ESTCOL[p.est]||"#fff");
   // zetas al dormir, nubecita al perder
   c.zz.forEach((z,n)=>{const f=(t*.45+n/3)%1;z.visible=modo==="duerme";z.position.set(c.x+.35+f*.4,1.7+f*.8,c.z-.1);z.material.opacity=1-f;z.scale.setScalar(.42+f*.3)});
   c.nube.visible=modo==="pierde";if(c.nube.visible){c.nube.position.set(c.x+.6,2.2+Math.sin(t*2)*.04,c.z);c.gotas.forEach((g,n)=>{const f=(t*1.6+n*.5)%1;g.position.y=-.15-f*.45;g.scale.setScalar(1-f*.6)})}
