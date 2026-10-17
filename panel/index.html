@@ -770,7 +770,7 @@ async function abrirFicha(h){
   $("fic_c").innerHTML=detalleTrade(h,true);$("fic").showModal();
   const b=$("fic_c").querySelector("[data-cerrar]");if(b)b.onclick=()=>$("fic").close();
 }
-$("fic").addEventListener("close",()=>{const o=PEND;PEND=null;if(o){irATrade(o);return}if(G){G.sel=null;pintarGrafico()}});
+$("fic").addEventListener("close",()=>{const o=PEND;PEND=null;if(o)irATrade(o);else if(G)pintarGrafico()});   // al cerrar la información la operación sigue marcada (con su zona de Stop Loss); se desmarca tocando otra parte del gráfico
 let PEDIDO=null;
 function pedirCambio(bot,accion){
   const d=ULT||{};const quien=bot==="todos"?"all bots":nb(bot);
