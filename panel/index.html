@@ -223,6 +223,7 @@ details[open] summary:before{transform:rotate(45deg)}
 .mk:hover{border-color:var(--ln)}
 .mk.on{background:rgba(79,140,255,.16);border-color:rgba(79,140,255,.6)}
 .mk-c{font-size:10.5px;font-weight:600}
+.gdh h3{margin:16px 0 4px;font-size:13px;font-weight:700;color:var(--tx2)}
 .tfs{display:flex;gap:4px;margin:2px 0 8px}
 .tfs button{flex:1;padding:6px 0;border-radius:8px;border:1px solid var(--ln2);background:transparent;color:var(--mut);font-size:12.5px;font-weight:700;cursor:pointer}
 .tfs button.on{background:rgba(79,140,255,.16);border-color:rgba(79,140,255,.6);color:var(--tx)}
@@ -423,6 +424,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
     <div class="graf" id="graf"></div>
     <div class="gpos" id="g_pos"></div>
     <div class="gdet" id="g_det"></div>
+    <div class="gdh" id="g_hist"></div>
   </div>
   <p class="credito">Server time. Charts: <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noopener">TradingView Lightweight Charts</a>.</p>
 </section>
@@ -862,11 +864,12 @@ const TFS=[["M5","5m"],["M15","15m"],["H1","1h"],["H4","4h"],["D1","1D"]];
 function getV(){const base=VELAS[MERC];if(!base||!TFSEL||TFSEL===base.tf)return base;const t=TFDATA[TFSEL]&&TFDATA[TFSEL][simDe(MERC)];return t||base}
 async function bajarTF(tf,fuerza){if(!tf||(!fuerza&&Date.now()-(TFHORA[tf]||0)<25000))return;TFHORA[tf]=Date.now();try{TFDATA[tf]=await (await api("velas_"+tf+".json")).json()}catch(e){TFHORA[tf]=0}}
 function pintarTFs(){const V=VELAS&&VELAS[MERC];if(!V)return;const act=TFSEL||V.tf;$("tfs").innerHTML=TFS.map(([k,n])=>`<button data-tf="${k}" class="${k===act?"on":""}">${n}</button>`).join("")}
+$("g_hist").onclick=e=>{const t=e.target.closest(".tr[data-g]");if(t)abrirFicha(GH[+t.dataset.g])};
 $("tfs").onclick=async e=>{const b=e.target.closest("button");if(!b)return;TFSEL=b.dataset.tf;LS.set("panel_tf",TFSEL);await bajarTF(TFSEL,true);if(G){G.nuevo=true;G.sel=null}pintarTFs();pintarGrafico()};
 const botDeClave=k=>VELAS[k]&&VELAS[k].tf==="H4"?"Tendencia 4H":simDe(k).includes("JPY")?"Rango Asiatico":"Williams Ruptura";
 const velasDe=(sim,bot)=>{if(!VELAS)return null;const k=Object.keys(VELAS).find(k=>simDe(k)===sim&&botDeClave(k)===bot);return k?VELAS[k]:null};
 const TF_SEG={M1:60,M5:300,M15:900,M30:1800,H1:3600,H4:14400,D1:86400};
-let TFSEL=LS.get("panel_tf"),TFDATA={},TFHORA={},ULTV=0,VELAS=null,VISTA="resumen",G=null,MERC=LS.get("panel_mercado");   // G = el gráfico (uno solo); MERC = mercado elegido (clave de VELAS)
+let GH=[],TFSEL=LS.get("panel_tf"),TFDATA={},TFHORA={},ULTV=0,VELAS=null,VISTA="resumen",G=null,MERC=LS.get("panel_mercado");   // G = el gráfico (uno solo); MERC = mercado elegido (clave de VELAS)
 async function leerVelas(){return await (await api("velas.json")).json()}
 const cambio=V=>{const v=V.v,n=v.length;if(n<2)return 0;const a=v[Math.max(0,n-1-Math.round(86400/(TF_SEG[V.tf]||14400)))][4];return a?100*(v[n-1][4]-a)/a:0};   // en el último día
 const ultimo=V=>V.v.length?V.v[V.v.length-1][4]:0;
@@ -928,6 +931,14 @@ function pintarGrafico(){
   const selOp=ops.find(o=>!o.abierta&&(o.ab+"_"+o.ci)===G.sel);
   $("g_det").innerHTML=selOp&&window.innerWidth>=900?detalleTrade(selOp,true):'<div class="hint">Tap a trade marker on the chart for details.</div>';
   const bc=$("g_det").querySelector("[data-cerrar]");if(bc)bc.onclick=()=>{G.sel=null;pintarGrafico()};
+  // historial de este mercado, debajo del gráfico (mismo estilo que la pestaña History)
+  {const cer=(d.historial||[]).filter(h=>h.sim===sym&&h.bot===b&&h.pa>0&&h.pc>0).sort((a,c)=>c.ci-a.ci),suma={},cant={};GH=cer;
+   cer.forEach(x=>{const k2=Math.floor(x.ci/86400);suma[k2]=(suma[k2]||0)+x.neto;cant[k2]=(cant[k2]||0)+1});
+   let html="",dia=null;
+   cer.forEach((x,i)=>{const k2=Math.floor(x.ci/86400);
+     if(k2!==dia){dia=k2;html+=`<div class="dia ${suma[k2]>0?"g":suma[k2]<0?"p":""}"><span>${fdl(x.ci)}<small>${cant[k2]} trade${cant[k2]>1?"s":""} · day result</small></span><b class="num ${cl(suma[k2])}">${usdS(suma[k2])}</b></div>`}
+     html+=filaOp(x,`data-g="${i}"`)});
+   $("g_hist").innerHTML=cer.length?`<h3>${sym} trades · ${cer.length}</h3>`+html:`<h3>${sym} trades</h3><div class="vacio">No closed trades on ${sym} yet.</div>`}
   const celda=(k,v,c2)=>`<div><small>${k}</small><b class="num ${c2||""}">${v}</b></div>`;
   let h="";
   pos.forEach(p=>{
