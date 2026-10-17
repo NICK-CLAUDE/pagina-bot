@@ -844,9 +844,9 @@ class ZonaPosicion{ // rectángulos verde (entrada→Take Profit) y rojo (entrad
     const ye=z.series.priceToCoordinate(z.p.precio);if(ye===null)return;
     const caja=(precio,color)=>{if(!(precio>0))return;const y=z.series.priceToCoordinate(precio);if(y===null)return;
       ctx.fillStyle=color;ctx.fillRect(x1,Math.min(ye,y),W-x1,Math.abs(y-ye))};
-    caja(z.p.tp,"rgba(8,153,129,.22)");caja(z.p.sl,"rgba(242,54,69,.22)");
+    caja(z.p.tp,"rgba(8,153,129,.22)");caja(z.p.sl,z.p.asegura?"rgba(8,153,129,.22)":"rgba(242,54,69,.22)");   // stop que ya asegura ganancia: zona verde
     ctx.strokeStyle="#2962FF";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x1,ye);ctx.lineTo(W,ye);ctx.stroke();   // entrada, SL y TP: desde que abrió hasta el borde, nunca para atrás
-    ctx.setLineDash([6,4]);[[z.p.sl,"#F23645"],[z.p.tp,"#089981"]].forEach(([pr,c])=>{if(!(pr>0))return;const y=z.series.priceToCoordinate(pr);if(y===null)return;
+    ctx.setLineDash([6,4]);[[z.p.sl,z.p.asegura?"#089981":"#F23645"],[z.p.tp,"#089981"]].forEach(([pr,c])=>{if(!(pr>0))return;const y=z.series.priceToCoordinate(pr);if(y===null)return;
       ctx.strokeStyle=c;ctx.beginPath();ctx.moveTo(x1,y);ctx.lineTo(W,y);ctx.stroke()});ctx.setLineDash([]);
   })})}]}
 }
@@ -892,8 +892,9 @@ function pintarGrafico(){
   const pos=(d.posiciones||[]).filter(p=>p.sim===sym&&p.bot===b);
   pos.forEach(p=>{
     const L=(price,color,style,title)=>{if(price>0)G.lineas.push(G.serie.createPriceLine({price,color,lineWidth:2,lineStyle:style,axisLabelVisible:true,title}))};
-    G.lineas.push(G.serie.createPriceLine({price:p.precio,color:"#2962FF",lineVisible:false,axisLabelVisible:true,title:(p.lado==="compra"?"BUY ":"SELL ")+lote(p.lote)}));[[p.sl,"#F23645","SL"],[p.tp,"#089981","TP"]].forEach(([price,color,title])=>{if(price>0)G.lineas.push(G.serie.createPriceLine({price,color,lineVisible:false,axisLabelVisible:true,title}))});   // las líneas las dibuja ZonaPosicion, desde la entrada
-    const z=new ZonaPosicion({t:p.desde-p.desde%tf,precio:p.precio,sl:p.sl,tp:p.tp});G.serie.attachPrimitive(z);G.zonas.push(z);
+    G.lineas.push(G.serie.createPriceLine({price:p.precio,color:"#2962FF",lineVisible:false,axisLabelVisible:true,title:(p.lado==="compra"?"BUY ":"SELL ")+lote(p.lote)}));const k=p.riesgo!=null&&p.sl>0&&p.sl!==p.precio?Math.abs(p.riesgo)/Math.abs(p.sl-p.precio):0,enUsd=pr=>k?" "+usdS((p.lado==="compra"?pr-p.precio:p.precio-pr)*k):"";   // US$ por punto, sale del riesgo que manda Panel_Estado
+    [[p.sl,(p.lado==="compra"?p.sl>p.precio:p.sl<p.precio)?"#089981":"#F23645","SL"+enUsd(p.sl)],[p.tp,"#089981","TP"+enUsd(p.tp)]].forEach(([price,color,title])=>{if(price>0)G.lineas.push(G.serie.createPriceLine({price,color,lineVisible:false,axisLabelVisible:true,title}))});   // las líneas las dibuja ZonaPosicion, desde la entrada
+    const z=new ZonaPosicion({t:p.desde-p.desde%tf,precio:p.precio,sl:p.sl,tp:p.tp,asegura:p.sl>0&&(p.lado==="compra"?p.sl>p.precio:p.sl<p.precio)});G.serie.attachPrimitive(z);G.zonas.push(z);
   });
   const ords=(d.ordenes||[]).filter(o=>o.sim===sym&&o.bot===b);
   {const L=(price,color,style,title)=>{if(price>0)G.lineas.push(G.serie.createPriceLine({price,color,lineWidth:1,lineStyle:style,axisLabelVisible:true,title}))};
