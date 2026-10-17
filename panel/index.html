@@ -804,19 +804,19 @@ class Trazos{ // operaciones en su precio exacto: flecha + etiqueta COMPRA/VENTA
     const etiqueta=(x,y,txt,fondo,forzar)=>{ctx.font="700 11px Inter,system-ui,Segoe UI,Roboto,sans-serif";const w=ctx.measureText(txt).width+10;
       const r=[x-w/2-2,y-2,w+4,21];if(!forzar&&ocup.some(o=>r[0]<o[0]+o[2]&&o[0]<r[0]+r[2]&&r[1]<o[1]+o[3]&&o[1]<r[1]+r[3]))return;ocup.push(r);
       ctx.fillStyle=fondo;ctx.beginPath();ctx.roundRect(x-w/2,y,w,17,4);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(txt,x-w/2+5,y+12.5)};
-    const flecha=(x,y,compra,color,borde,txt)=>{ // punta en (x,y): compra apunta hacia arriba desde abajo, venta hacia abajo desde arriba
-      const d=compra?1:-1;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-7,y+d*10);ctx.lineTo(x-2.5,y+d*10);ctx.lineTo(x-2.5,y+d*20);ctx.lineTo(x+2.5,y+d*20);ctx.lineTo(x+2.5,y+d*10);ctx.lineTo(x+7,y+d*10);ctx.closePath();
-      ctx.fillStyle=color;ctx.fill();ctx.lineWidth=borde?2:1;ctx.strokeStyle=borde?"#fff":"rgba(0,0,0,.6)";ctx.stroke();
-};
+    const flecha=(x,y,compra,color,borde)=>{ // entrada: un punto (pedido del usuario: puntos unidos, sin flechas)
+      ctx.beginPath();ctx.arc(x,y,borde?6:4.5,0,7);ctx.fillStyle=color;ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle="#fff";ctx.stroke()};
     z.puntos=[];
     z.ops.forEach(o=>{
       const c=o.lado==="compra",x1=X(o.ab),y1=Y(o.pa),col=c?"#089981":"#F23645",esSel=!o.abierta&&(o.ab+"_"+o.ci)===z.sel;
-      if(x1!==null&&y1!==null){z.puntos.push({x:x1,y:y1+(c?10:-10),o:o});z.puntos.push({x:x1,y:y1+(c?31:-31),o:o})}
+      if(x1!==null&&y1!==null)z.puntos.push({x:x1,y:y1,o:o});
       if(esSel){const xa=x1,xb=X(o.ci);if(xa!==null&&xb!==null){const W2=Math.max(xb,xa+30);
         const caja=(pr,col2)=>{if(!(pr>0))return;const yy=Y(pr);if(yy===null||y1===null)return;ctx.fillStyle=col2;ctx.fillRect(xa,Math.min(y1,yy),W2-xa,Math.abs(yy-y1))};
         caja(o.tp,"rgba(8,153,129,.28)");caja(o.sli>0?o.sli:o.sl,"rgba(242,54,69,.28)");
         [[o.sli>0?o.sli:o.sl,"#F23645"],[o.tp,"#089981"]].forEach(([pr,cc])=>{if(pr>0){const yy=Y(pr);if(yy!==null){ctx.strokeStyle=cc;ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(xa,yy);ctx.lineTo(W2,yy);ctx.stroke();ctx.setLineDash([])}}})}}
-      if(o.abierta){if(x1!==null&&y1!==null)flecha(x1,y1,c,col,true);return}
+      if(o.abierta){const x2=X(o.ci),y2=Y(o.pc),res=o.neto>=0?"#089981":"#F23645";
+        if(x1!==null&&y1!==null&&x2!==null&&y2!==null){ctx.setLineDash([5,4]);ctx.lineWidth=1.5;ctx.strokeStyle=res;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([])}
+        if(x1!==null&&y1!==null)flecha(x1,y1,c,col,true);return}
       const x2=X(o.ci),y2=Y(o.pc),res=o.neto>=0?"#089981":"#F23645";
       if(x2!==null&&y2!==null){z.puntos.push({x:x2,y:y2,o:o});z.puntos.push({x:x2,y:y2+(c===(o.neto>=0)?-15:16),o:o})}
       if(x1!==null&&y1!==null&&x2!==null&&y2!==null){ctx.setLineDash([5,4]);ctx.lineWidth=1.5;ctx.strokeStyle=res;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([])}
@@ -839,6 +839,7 @@ class ZonaPosicion{ // rectángulos verde (entrada→Take Profit) y rojo (entrad
     const caja=(precio,color)=>{if(!(precio>0))return;const y=z.series.priceToCoordinate(precio);if(y===null)return;
       ctx.fillStyle=color;ctx.fillRect(x1,Math.min(ye,y),W-x1,Math.abs(y-ye))};
     caja(z.p.tp,"rgba(8,153,129,.22)");caja(z.p.sl,"rgba(242,54,69,.22)");
+    ctx.strokeStyle="#2962FF";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x1,ye);ctx.lineTo(W,ye);ctx.stroke();   // entrada: desde que abrió hasta el borde
   })})}]}
 }
 const simDe=k=>k.split(":")[0];
@@ -883,7 +884,7 @@ function pintarGrafico(){
   const pos=(d.posiciones||[]).filter(p=>p.sim===sym&&p.bot===b);
   pos.forEach(p=>{
     const L=(price,color,style,title)=>{if(price>0)G.lineas.push(G.serie.createPriceLine({price,color,lineWidth:2,lineStyle:style,axisLabelVisible:true,title}))};
-    L(p.precio,"#2962FF",0,(p.lado==="compra"?"BUY ":"SELL ")+lote(p.lote));L(p.sl,"#F23645",2,"SL");L(p.tp,"#089981",2,"TP");
+    G.lineas.push(G.serie.createPriceLine({price:p.precio,color:"#2962FF",lineVisible:false,axisLabelVisible:true,title:(p.lado==="compra"?"BUY ":"SELL ")+lote(p.lote)}));L(p.sl,"#F23645",2,"SL");L(p.tp,"#089981",2,"TP");
     const z=new ZonaPosicion({t:p.desde-p.desde%tf,precio:p.precio,sl:p.sl,tp:p.tp});G.serie.attachPrimitive(z);G.zonas.push(z);
   });
   const ords=(d.ordenes||[]).filter(o=>o.sim===sym&&o.bot===b);
@@ -893,7 +894,8 @@ function pintarGrafico(){
   const t0=V.v.length?V.v[0][0]:0;
   const ops=(d.historial||[]).filter(h=>h.sim===sym&&h.bot===b&&h.ci>=t0&&h.pa>0&&h.pc>0).map(h=>Object.assign({},h));
   const nEt=$("graf").clientWidth<700?3:6;ops.forEach((o,i)=>o.etiqueta=i>=ops.length-nEt);
-  pos.forEach(p=>ops.push({abierta:1,lado:p.lado,ab:p.desde,pa:p.precio}));
+  pos.forEach(p=>ops.push({abierta:1,lado:p.lado,ab:p.desde,pa:p.precio,ci:V.v[V.v.length-1][0],pc:ultimo(V),neto:p.gan}));
+  G.serie.applyOptions({title:pos.length?usdS(pos.reduce((a,p)=>a+p.gan,0)):""});   // como TradingView: ganancia al lado del precio actual
   const tz=new Trazos(ops,tf,G.sel);G.serie.attachPrimitive(tz);G.zonas.push(tz);G.trazos=tz;
   const selOp=ops.find(o=>!o.abierta&&(o.ab+"_"+o.ci)===G.sel);
   $("g_det").innerHTML=selOp&&window.innerWidth>=900?detalleTrade(selOp,true):'<div class="hint">Tap a trade marker on the chart for details.</div>';
