@@ -214,12 +214,12 @@ details[open] summary:before{transform:rotate(45deg)}
 .lhead .sel{width:auto;padding:7px 32px 7px 11px;font-size:13px;background-position:right 9px center}
 
 /* gráficos */
-.mks{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}   /* mercados como botoncitos chicos: el gráfico queda a la vista */
-.mk{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;background:var(--card);border:1px solid var(--ln2);cursor:pointer;font-size:12.5px;font-weight:700;color:var(--tx)}
+.mks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-bottom:10px}   /* mercados como botoncitos chicos: el gráfico queda a la vista */
+.mk{display:flex;flex-direction:column;align-items:center;gap:0;padding:4px 2px;border-radius:9px;background:var(--card);border:1px solid var(--ln2);cursor:pointer;font-size:11.5px;font-weight:700;color:var(--tx);line-height:1.25;min-width:0;white-space:nowrap}
 .mk:hover{border-color:var(--ln)}
 .mk.on{background:rgba(79,140,255,.16);border-color:rgba(79,140,255,.6)}
-.mk-c{font-size:11px;font-weight:600}
-.mk-o{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--pri);box-shadow:0 0 6px var(--pri)}
+.mk-c{font-size:10.5px;font-weight:600}
+.mk-o{display:inline-block;width:6px;height:6px;margin-right:3px;vertical-align:1px;border-radius:50%;background:var(--pri);box-shadow:0 0 6px var(--pri)}
 .gcard{padding:14px;scroll-margin-top:80px}
 .gh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .gh-n{flex:1;min-width:0}.gh-s{display:flex;align-items:center;gap:7px}.gh-s b{font-size:19px;font-weight:700;letter-spacing:-.02em}
@@ -857,7 +857,7 @@ const ultimo=V=>V.v.length?V.v[V.v.length-1][4]:0;
 function pintarMercados(){   // mercados: botoncitos chicos, todos a la vista, sin deslizar (punto azul = operación abierta)
   if(!VELAS)return;const d=ULT||{};
   $("mercados").innerHTML=Object.keys(VELAS).map(k=>{const V=VELAS[k],sym=simDe(k),c=cambio(V),pos=(d.posiciones||[]).find(p=>p.sim===sym&&p.bot===botDeClave(k));
-    return `<button class="mk${k===MERC?" on":""}" data-k="${k}" title="${V.tf}">${pos?'<i class="mk-o"></i>':""}${sym}<span class="mk-c num ${cl(c)}">${c>=0?"+":""}${c.toFixed(1)}%</span></button>`}).join("");
+    return `<button class="mk${k===MERC?" on":""}" data-k="${k}" title="${V.tf}"><span>${pos?'<i class="mk-o"></i>':""}${sym}</span><span class="mk-c num ${cl(c)}">${c>=0?"+":""}${c.toFixed(1)}%</span></button>`}).join("");
 }
 $("mercados").onclick=e=>{const b=e.target.closest(".mk");if(b)elegirMercado(b.dataset.k)};
 function elegirMercado(k){MERC=k;LS.set("panel_mercado",k);if(G){G.nuevo=true;G.sel=null}pintarMercados();pintarGrafico()}
