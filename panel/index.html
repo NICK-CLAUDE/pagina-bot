@@ -399,9 +399,9 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
     </div>
     <div class="card" id="c_ops"><div class="sec"><h2>Open trades</h2><span id="t_ops" class="mut"></span></div><div id="abiertas"></div><div id="cerradas"></div><p class="toque" id="t_toque">Tap a trade to see it on its chart.</p></div>
     <div class="card c-obj"><div class="sec"><h2>Challenge objectives</h2><span class="mut" id="t_fase"></span></div>
-      <div class="obj"><span class="oi" id="o_meta"></span><span class="on-t">Profit target</span><span class="ov num" id="t_meta"></span><div class="pista meta"><i id="b_meta"></i></div><div class="obj-x" id="x_meta"></div></div>
-      <div class="obj"><span class="oi" id="o_dia"></span><span class="on-t">Daily loss limit</span><span class="ov num" id="t_dia"></span><div class="pista"><i id="b_dia"></i><u id="f_dia"></u></div><div class="obj-x" id="x_dia"></div></div>
-      <div class="obj"><span class="oi" id="o_tot"></span><span class="on-t">Max loss limit</span><span class="ov num" id="t_tot"></span><div class="pista"><i id="b_tot"></i><u id="f_tot"></u></div><div class="obj-x" id="x_tot"></div></div>
+      <div class="obj"><span class="oi" id="o_meta"></span><span class="on-t">Profit target</span><span class="ov num" id="t_meta"></span><div class="pista meta"><i id="b_meta"></i></div></div>
+      <div class="obj"><span class="oi" id="o_dia"></span><span class="on-t">Daily loss limit</span><span class="ov num" id="t_dia"></span><div class="pista"><i id="b_dia"></i><u id="f_dia"></u></div></div>
+      <div class="obj"><span class="oi" id="o_tot"></span><span class="on-t">Max loss limit</span><span class="ov num" id="t_tot"></span><div class="pista"><i id="b_tot"></i><u id="f_tot"></u></div></div>
       <div class="obj sin"><span class="oi" id="o_dias"></span><span class="on-t">Minimum trading days</span><span class="ov num" id="s_dias"></span></div>
       <p class="ley-o"><u></u>where the bots stop by themselves, before the firm's limit</p>
     </div>
@@ -1014,7 +1014,7 @@ function estadoTexto(d){
   const falta=Math.max(0,d.meta_pct-metaReal(d));
   return["verde","All systems normal",c2(falta)+"% to the target."];
 }
-const metaReal=d=>100*(d.saldo-d.capital)/d.capital;   // Funding Pips cuenta el objetivo con el balance (lo cerrado), no con lo flotante
+const metaReal=d=>d.total_pct;   // a pedido del usuario la meta cuenta lo flotante (Funding Pips solo cuenta lo cerrado)
 function pintar(d){
   ULT=d;
   {const e=estadoTexto(d);banner("estado",e[0],e[1],e[2])}
@@ -1032,18 +1032,14 @@ function pintar(d){
   $("k_flo").textContent=usdS(d.flotante||0);$("k_flo").className="num "+cl(d.flotante||0);
   $("k_hoy").textContent=usdS(d.hoy_usd);$("k_hoy").className="num "+cl(d.hoy_usd);
   // objetivos del challenge
-  const pd=Math.max(0,-d.hoy_pct),pt=Math.max(0,-d.total_pct);
-  pista("b_dia",pd,d.lim_diario,d.freno_diario);pista("b_tot",pt,d.lim_total,d.freno_total);
-  $("f_dia").style.left=(100*d.freno_diario/d.lim_diario)+"%";$("f_tot").style.left=(100*d.freno_total/d.lim_total)+"%";
-  // como el panel de Funding Pips: cuánta plata se puede perder todavía (contando lo abierto) y cuándo se reinicia el día (00:00 UTC+3 = 21:00 UTC)
-  {const ref=d.ref_dia||d.capital,pisoDia=ref*(1-Math.round(10*d.lim_diario*d.capital/ref)/1000),permitida=ref-pisoDia,perdidaHoy=Math.max(0,ref-d.patrimonio),pisoTot=d.capital*(1-d.lim_total/100),base=Math.min(d.saldo,d.patrimonio),
-   ms=((21*3600e3-Date.now()%86400e3)+86400e3)%86400e3||86400e3,hm=Math.floor(ms/3600e3)+"h "+String(Math.floor(ms/60e3)%60).padStart(2,"0")+"m";
-   // mismas cuentas que el panel de Funding Pips: diaria = permitida (5 % del capital de hoy) menos lo perdido hoy; total = el menor entre balance y patrimonio menos el piso de 4.500
-   $("x_dia").innerHTML=`Can still lose <b>${usd(Math.max(0,permitida-perdidaHoy))}</b> today · floor ${usd(pisoDia)} · start of today ${usd(ref)} · resets in <b>${hm}</b>`;
-   $("x_tot").innerHTML=`Can still lose <b>${usd(Math.max(0,base-pisoTot))}</b> in total · floor ${usd(pisoTot)} (never resets)`}
-  $("t_dia").innerHTML=c2(pd)+"%<small> / "+(Math.round(d.lim_diario*10)/10)+"%</small>";$("t_tot").innerHTML=c2(pt)+"%<small> / "+d.lim_total+"%</small>";
+  // mismas cuentas que el panel de Funding Pips: diaria = lo perdido desde el inicio de hoy contra el 5 % de ese inicio; total = lo perdido desde el capital (con el menor entre balance y patrimonio) contra el 10 %
+  const ref=d.ref_dia||d.capital,permitida=d.capital*d.lim_diario/100,perdidaHoy=Math.max(0,ref-d.patrimonio),perdidaTot=Math.max(0,d.capital-Math.min(d.saldo,d.patrimonio));
+  const pd=100*perdidaHoy/d.capital,pt=100*perdidaTot/d.capital,limD=d.lim_diario;
+  pista("b_dia",pd,limD,d.freno_diario);pista("b_tot",pt,d.lim_total,d.freno_total);
+  $("f_dia").style.left=(100*d.freno_diario/limD)+"%";$("f_tot").style.left=(100*d.freno_total/d.lim_total)+"%";
+  $("t_dia").innerHTML=usd(perdidaHoy)+"<small> / "+usd(permitida)+"</small>";$("t_tot").innerHTML=usd(perdidaTot)+"<small> / "+usd(d.capital*d.lim_total/100)+"</small>";
   $("b_meta").style.width=Math.max(0,Math.min(100,100*metaReal(d)/d.meta_pct))+"%";
-  $("t_meta").innerHTML=c2(Math.max(0,metaReal(d)))+"%<small> / "+d.meta_pct+"%</small>";$("x_meta").innerHTML=`<b>${usd(Math.max(0,d.saldo-d.capital))}</b> of ${usd(d.capital*d.meta_pct/100)} closed profit (open trades don't count until they close)`;
+  $("t_meta").innerHTML=c2(Math.max(0,metaReal(d)))+"%<small> / "+d.meta_pct+"%</small>";
   $("s_dias").innerHTML=d.dias_operados+"<small> / "+d.dias_minimos+"</small>";
   objetivo("o_meta",metaReal(d)>=d.meta_pct?"ok":"run");
   objetivo("o_dia",pd>=d.freno_diario?"rojo":pd>=d.freno_diario*.6?"amb":"ok");
