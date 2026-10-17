@@ -418,7 +418,6 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
     <div class="graf" id="graf"></div>
     <div class="gpos" id="g_pos"></div>
     <div class="gdet" id="g_det"></div>
-    <details class="gayuda"><summary>Legend</summary><div class="ley"><span><i style="border-color:#2962FF"></i>Entry</span><span><i style="border-color:#f6465d;border-top-style:dashed"></i>Stop Loss</span><span><i style="border-color:#2ebd85;border-top-style:dashed"></i>Take Profit</span><span>Arrow = entry · circle = exit</span></div></details>
   </div>
   <p class="credito">Server time. Charts: <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noopener">TradingView Lightweight Charts</a>.</p>
 </section>
@@ -911,8 +910,8 @@ function pintarGrafico(){
   const bc=$("g_det").querySelector("[data-cerrar]");if(bc)bc.onclick=()=>{G.sel=null;pintarGrafico()};
   const celda=(k,v,c2)=>`<div><small>${k}</small><b class="num ${c2||""}">${v}</b></div>`;
   let h="";
-  pos.forEach(p=>{const lock=p.sl>0?(p.lado==="compra"?p.sl-p.precio:p.precio-p.sl):-1;
-    h+=`<div class="gp-h">${ladoChip(p.lado)}<b>${lote(p.lote)} lots</b><span class="mut">open since ${fh(p.desde||0)}</span>${lock>=0?`<span class="chip">${lock>0?"Profit locked":"No risk"}</span>`:""}</div>
+  pos.forEach(p=>{
+    h+=`<div class="gp-h">${ladoChip(p.lado)}<b>${lote(p.lote)} lots</b><span class="mut">open since ${fh(p.desde||0)}</span></div>
       ${p.riesgo_ini>0?`<div class="gp-r">Risked <b class="rojo">${riesgoTxt(p.riesgo_ini)}</b> if it hits the first Stop Loss${p.riesgo>0&&Math.abs(p.riesgo-p.riesgo_ini)>.01?` · now <b>${riesgoTxt(p.riesgo)}</b>`:p.riesgo<0?` · now <b class="verde">+$${nf(-p.riesgo,2)}</b> locked`:""}</div>`:""}
       <div class="gp">${celda("Entry",p.precio)}${celda("Stop Loss",p.sl>0?p.sl:"none")}${celda("Take Profit",p.tp>0?p.tp:"none")}${celda("P&L",usdS(p.gan),cl(p.gan))}</div>`});
   if(ords.length)h+=`<div class="gp-h">Pending orders</div><div class="gp">${ords.map(o=>celda(o.lado==="compra"?"Buy stop":"Sell stop",o.precio)).join("")}</div>`;
