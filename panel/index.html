@@ -770,7 +770,7 @@ async function abrirFicha(h){
   $("fic_c").innerHTML=detalleTrade(h,true);$("fic").showModal();
   const b=$("fic_c").querySelector("[data-cerrar]");if(b)b.onclick=()=>$("fic").close();
 }
-$("fic").addEventListener("close",()=>{if(G){G.sel=null;pintarGrafico()}});
+$("fic").addEventListener("close",()=>{const o=PEND;PEND=null;if(o){irATrade(o);return}if(G){G.sel=null;pintarGrafico()}});
 let PEDIDO=null;
 function pedirCambio(bot,accion){
   const d=ULT||{};const quien=bot==="todos"?"all bots":nb(bot);
@@ -864,7 +864,20 @@ const TFS=[["M5","5m"],["M15","15m"],["H1","1h"],["H4","4h"],["D1","1D"]];
 function getV(){const base=VELAS[MERC];if(!base||!TFSEL||TFSEL===base.tf)return base;const t=TFDATA[TFSEL]&&TFDATA[TFSEL][simDe(MERC)];return t||base}
 async function bajarTF(tf,fuerza){if(!tf||(!fuerza&&Date.now()-(TFHORA[tf]||0)<25000))return;TFHORA[tf]=Date.now();try{TFDATA[tf]=await (await api("velas_"+tf+".json")).json()}catch(e){TFHORA[tf]=0}}
 function pintarTFs(){const V=VELAS&&VELAS[MERC];if(!V)return;const act=TFSEL||V.tf;$("tfs").innerHTML=TFS.map(([k,n])=>`<button data-tf="${k}" class="${k===act?"on":""}">${n}</button>`).join("")}
-$("g_hist").onclick=e=>{const t=e.target.closest(".tr[data-g]");if(t)abrirFicha(GH[+t.dataset.g])};
+// tocar una operación de la lista abre su información; al cerrarla (X) se ve el gráfico centrado en esa operación y marcada
+let PEND=null;
+async function irATrade(o){
+  const orden=TFS.map(x=>x[0]);let guard=0;
+  for(;;){const V=getV(),ia=V.v.findIndex(x=>x[0]>=o.ab);
+    if(ia>=0){const ib=V.v.findIndex(x=>x[0]>=o.ci),n=V.v.length;
+      G.sel=o.ab+"_"+o.ci;pintarTFs();pintarGrafico();
+      G.chart.timeScale().setVisibleLogicalRange({from:Math.max(0,ia-18),to:Math.min(n+4,(ib<0?n:ib)+22)});
+      $("graf").scrollIntoView({behavior:"smooth",block:"center"});return}
+    const i=orden.indexOf(V.tf);if(guard++>=4||i>=orden.length-1)break;   // la operación es más vieja que las velas: se pasa a una temporalidad más grande
+    TFSEL=orden[i+1];LS.set("panel_tf",TFSEL);await bajarTF(TFSEL,true)}
+  $("graf").scrollIntoView({behavior:"smooth",block:"center"});
+}
+$("g_hist").onclick=e=>{const t=e.target.closest(".tr[data-g]");if(t){PEND=GH[+t.dataset.g];abrirFicha(PEND)}};
 $("tfs").onclick=async e=>{const b=e.target.closest("button");if(!b)return;TFSEL=b.dataset.tf;LS.set("panel_tf",TFSEL);await bajarTF(TFSEL,true);if(G){G.nuevo=true;G.sel=null}pintarTFs();pintarGrafico()};
 const botDeClave=k=>VELAS[k]&&VELAS[k].tf==="H4"?"Tendencia 4H":simDe(k).includes("JPY")?"Rango Asiatico":"Williams Ruptura";
 const velasDe=(sim,bot)=>{if(!VELAS)return null;const k=Object.keys(VELAS).find(k=>simDe(k)===sim&&botDeClave(k)===bot);return k?VELAS[k]:null};
