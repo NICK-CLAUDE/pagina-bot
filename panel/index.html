@@ -1054,6 +1054,7 @@ function pintar(d){
     return `<div class="brow">${avatar(b.nombre)}<div class="bm"><div class="bn"><b>${nb(b.nombre)}</b><span class="est ${est[0]}"><i></i>${est[1]}</span></div><small>${inf[0]} · ${inf[1]} risk per trade</small>${pos?`<small class="bp">Open now: ${pos.sim} ${pos.lado==="compra"?"buy":"sell"} ${lote(pos.lote)}<em class="${cl(pos.gan)}">${usdS(pos.gan)}</em></small>`:""}</div><div class="tot"><b class="num ${cl(tot)}">${usdS(tot)}</b><small>total so far</small></div></div>`}).join("");
   // operaciones (arriba del todo)
   const nAb=d.posiciones.length,nCe=d.cerradas_hoy.length;
+  if(nAb&&(!VELAS||Date.now()-ULTV>12000)){ULTV=Date.now();leerVelas().then(v=>{VELAS=v;pintar(d)}).catch(()=>{})}   // el "Now" sale de la última vela: se bajan acá también
   $("t_ops").textContent=nAb+" open · "+nCe+" closed today";
   const dia=t=>Math.floor(t/86400)===Math.floor((d.actualizado||0)/86400)?"today "+hhmm(t):fdm(t);
   $("abiertas").innerHTML=d.posiciones.map(p=>{const lock=p.sl>0?(p.lado==="compra"?p.sl-p.precio:p.precio-p.sl):-1;
