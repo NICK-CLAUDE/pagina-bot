@@ -861,6 +861,22 @@ class ZonaPosicion{ // rectángulos verde (entrada→Take Profit) y rojo (entrad
       ctx.strokeStyle=c;ctx.beginPath();ctx.moveTo(x1,y);ctx.lineTo(W,y);ctx.stroke()});ctx.setLineDash([]);
   })})}]}
 }
+class Extremos{ // como Pionex: el máximo y el mínimo de lo que se ve en pantalla, con un cartelito "----- precio" junto a la vela; se recalcula solo al deslizar
+  constructor(){this.v=[];this.dig=2}
+  attached({chart,series}){this.chart=chart;this.series=series}
+  detached(){}
+  updateAllViews(){}
+  paneViews(){const z=this;return [{zOrder:()=>"top",renderer:()=>({draw:target=>target.useMediaCoordinateSpace(sc=>{
+    const ctx=sc.context,ts=z.chart.timeScale(),W=sc.mediaSize.width;let hi=null,lo=null;
+    z.v.forEach(b=>{const x=ts.timeToCoordinate(b[0]);if(x===null||x<0||x>W-60)return;if(!hi||b[2]>hi.p)hi={p:b[2],x};if(!lo||b[3]<lo.p)lo={p:b[3],x}});
+    if(!hi||hi.p===lo.p)return;
+    ctx.font="12px Inter,system-ui,sans-serif";ctx.fillStyle=ctx.strokeStyle="#848e9c";ctx.lineWidth=1;ctx.textBaseline="middle";
+    [[hi,-1],[lo,1]].forEach(([e,s])=>{const y=z.series.priceToCoordinate(e.p);if(y===null)return;
+      const txt=e.p.toLocaleString("en-US",{minimumFractionDigits:z.dig,maximumFractionDigits:z.dig}),w=ctx.measureText(txt).width,ladoIzq=e.x+14+8+w>W-60,x0=ladoIzq?e.x-4:e.x+4,x1=ladoIzq?x0-14:x0+14;
+      ctx.setLineDash([3,2]);ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.stroke();ctx.setLineDash([]);
+      ctx.textAlign=ladoIzq?"right":"left";ctx.fillText(txt,ladoIzq?x1-4:x1+4,y)});
+  })})}]}
+}
 const simDe=k=>k.split(":")[0];
 const TFS=[["M5","5m"],["M15","15m"],["H1","1h"],["H4","4h"],["D1","1D"]];
 // velas del mercado elegido: las de su temporalidad normal, o las de la que se elige arriba del gráfico (el MT5 las manda cada 30 s)
@@ -906,7 +922,7 @@ function armarGraficos(){
     crosshair:{mode:0},localization:{locale:"en-US"},
     handleScroll:{vertTouchDrag:false},handleScale:{axisPressedMouseMove:{time:true,price:true}}});   // la barra de precios de la derecha se estira con un dedo; deslizar en el resto del gráfico baja la página
   const se=ch.addCandlestickSeries({upColor:"#089981",downColor:"#F23645",borderVisible:false,wickUpColor:"#089981",wickDownColor:"#F23645"});
-  G={chart:ch,serie:se,lineas:[],zonas:[],nuevo:true,sel:null,trazos:null};
+  G={chart:ch,serie:se,lineas:[],zonas:[],nuevo:true,sel:null,trazos:null,ext:new Extremos()};se.attachPrimitive(G.ext);
   // dedo sobre la barra de precios (derecha): el navegador no debe tomarlo como scroll de la página, así la escala se estira con un dedo
   let enBarra=false,y0=0,k0=1;const g=$("graf");G.k=1;
   se.applyOptions({autoscaleInfoProvider:o=>{const r=o();if(!r||!r.priceRange||G.k===1)return r;const{minValue:a,maxValue:z}=r.priceRange,m=(a+z)/2,h=(z-a)/2*G.k;return{...r,priceRange:{minValue:m-h,maxValue:m+h}}}});   // zoom vertical propio: la escala se multiplica por G.k
@@ -922,7 +938,7 @@ function pintarGrafico(){
   $("g_sym").textContent=sym;$("g_tf").textContent=V.tf;$("g_bot").textContent=nb(b);
   $("g_px").textContent=precio(ultimo(V),dig);$("g_ch").textContent=(c>=0?"+":"")+c.toFixed(2)+"% 1D";$("g_ch").className=cl(c);
   G.serie.applyOptions({priceFormat:{type:"price",precision:dig,minMove:1/Math.pow(10,dig)}});
-  G.serie.setData(V.v.map(x=>({time:x[0],open:x[1],high:x[2],low:x[3],close:x[4]})));
+  G.serie.setData(V.v.map(x=>({time:x[0],open:x[1],high:x[2],low:x[3],close:x[4]})));G.ext.v=V.v;G.ext.dig=dig;
   if(G.nuevo){const n=V.v.length;G.k=1;G.chart.priceScale("right").applyOptions({autoScale:true});
     const t1=Math.min(Infinity,...(d.historial||[]).filter(h=>h.sim===sym&&h.bot===b&&h.pa>0).map(h=>h.ab)),i1=V.v.findIndex(x=>x[0]>=t1);   // en el celu se empieza viendo desde la primera operación, no solo las últimas horas
     if($("graf").clientWidth<700)G.chart.timeScale().setVisibleLogicalRange({from:Math.max(0,Math.min(n-55,i1>=0?i1-6:n-55)),to:n+10});else G.chart.timeScale().fitContent();G.nuevo=false}
