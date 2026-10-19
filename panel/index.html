@@ -121,10 +121,10 @@ svg{flex:none}
 .pos-g{font-size:17px;font-weight:700;text-align:right;white-space:nowrap}
 .pos-b{font-size:12.5px;color:var(--mut);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pos-v{font-size:12.5px;color:var(--pri);font-weight:600;text-align:right;white-space:nowrap}
-.pos-c{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:12.5px;color:var(--mut);margin-top:6px;padding-top:9px;border-top:1px solid var(--ln2)}
-.pos-c b{color:var(--tx);font-weight:600}
-.pos-c .ahora{background:var(--prib);color:var(--pri);padding:3px 10px;border-radius:8px}.pos-c .ahora b{color:var(--pri);font-size:14px}
-.pos-c .chip{margin-left:auto}
+.pos-c{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.pos-c div{background:var(--raise);border-radius:9px;padding:7px 9px;font-size:11.5px;color:var(--mut)}
+.pos-c b{display:block;margin-top:2px;font-size:14px;color:var(--tx);font-weight:600}
+.pos-c .ahora{background:var(--prib);color:var(--pri)}.pos-c .ahora b{color:var(--pri)}
 #abiertas:not(:empty)+#cerradas .pos:first-child{margin-top:8px}
 .toque{margin:10px 2px 0;font-size:12.5px;color:var(--mut)}
 .ld{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:6px;font-weight:700;font-size:11px;letter-spacing:.03em;white-space:nowrap}
@@ -1061,10 +1061,10 @@ function pintar(d){
   const dia=t=>Math.floor(t/86400)===Math.floor((d.actualizado||0)/86400)?"today "+hhmm(t):fdm(t);
   $("abiertas").innerHTML=d.posiciones.map(p=>{const lock=p.sl>0?(p.lado==="compra"?p.sl-p.precio:p.precio-p.sl):-1;
     return `<div class="pos" data-sim="${p.sim}" data-bot="${p.bot}" role="button" tabindex="0">
-      <div class="pos-a"><span class="sym">${p.sim}</span>${ladoChip(p.lado)}<span class="mut" style="font-size:12.5px">${lote(p.lote)} lots${p.riesgo_ini>0?" · risk "+riesgoTxt(p.riesgo_ini):""}</span></div>
+      <div class="pos-a"><span class="sym">${p.sim}</span>${ladoChip(p.lado)}</div>
       <b class="pos-g num ${cl(p.gan)}">${usdS(p.gan)}</b>
-      <div class="pos-b">${nb(p.bot)} · since ${dia(p.desde||0)}</div><span class="pos-v">Chart ›</span>
-      <div class="pos-c"><span>Entry <b>${p.precio}</b></span>${(()=>{const V=velasDe(p.sim,p.bot),n=p.actual||(V&&ultimo(V));return n?`<span class="ahora">Now <b>${n}</b></span>`:""})()}<span>Stop Loss <b>${p.sl>0?p.sl:"none"}</b></span>${lock>=0?`<span class="chip">${lock>0?"Profit locked":"No risk"}</span>`:""}</div></div>`}).join("");
+      <div class="pos-b">${nb(p.bot)} · ${lote(p.lote)} lots · since ${dia(p.desde||0)}</div>${lock>=0?`<span class="chip">${lock>0?"Profit locked":"No risk"}</span>`:`<span class="pos-v">Chart ›</span>`}
+      <div class="pos-c"><div>Entry<b>${p.precio}</b></div>${(()=>{const V=velasDe(p.sim,p.bot),n=p.actual||(V&&ultimo(V));return `<div class="ahora">Now<b>${n||"–"}</b></div>`})()}<div>Stop Loss<b>${p.sl>0?p.sl:"none"}</b></div></div></div>`}).join("");
   $("cerradas").innerHTML=d.cerradas_hoy.map(p=>`<div class="pos" data-sim="${p.sim}" data-bot="${p.bot}" role="button" tabindex="0">
       <div class="pos-a"><span class="sym">${p.sim}</span><span class="tag">closed ${hhmm(p.t)}</span></div><b class="pos-g num ${cl(p.neto)}">${usdS(p.neto)}</b>
       <div class="pos-b">${nb(p.bot)}</div><span class="pos-v">Chart ›</span></div>`).join("")||(nAb?"":'<div class="vacio">No open trades right now.</div>');
