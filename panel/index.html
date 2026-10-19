@@ -1061,7 +1061,7 @@ function pintar(d){
       <div class="pos-a"><span class="sym">${p.sim}</span>${ladoChip(p.lado)}<span class="mut" style="font-size:12.5px">${lote(p.lote)} lots${p.riesgo_ini>0?" · risk "+riesgoTxt(p.riesgo_ini):""}</span></div>
       <b class="pos-g num ${cl(p.gan)}">${usdS(p.gan)}</b>
       <div class="pos-b">${nb(p.bot)} · since ${dia(p.desde||0)}</div><span class="pos-v">Chart ›</span>
-      <div class="pos-c"><span>Entry <b>${p.precio}</b></span><span>Stop Loss <b>${p.sl>0?p.sl:"none"}</b></span>${lock>=0?`<span class="chip">${lock>0?"Profit locked":"No risk"}</span>`:""}</div></div>`}).join("");
+      <div class="pos-c"><span>Entry <b>${p.precio}</b></span>${p.actual?`<span>Now <b>${p.actual}</b></span>`:""}<span>Stop Loss <b>${p.sl>0?p.sl:"none"}</b></span>${lock>=0?`<span class="chip">${lock>0?"Profit locked":"No risk"}</span>`:""}</div></div>`}).join("");
   $("cerradas").innerHTML=d.cerradas_hoy.map(p=>`<div class="pos" data-sim="${p.sim}" data-bot="${p.bot}" role="button" tabindex="0">
       <div class="pos-a"><span class="sym">${p.sim}</span><span class="tag">closed ${hhmm(p.t)}</span></div><b class="pos-g num ${cl(p.neto)}">${usdS(p.neto)}</b>
       <div class="pos-b">${nb(p.bot)}</div><span class="pos-v">Chart ›</span></div>`).join("")||(nAb?"":'<div class="vacio">No open trades right now.</div>');
