@@ -112,6 +112,7 @@ svg{flex:none}
 .hst{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:16px;padding-top:14px;border-top:1px solid var(--ln)}
 .hst>div{display:flex;flex-direction:column;gap:3px;min-width:0}.hst>div+div{padding-left:12px;border-left:1px solid var(--ln)}
 .hst small{font-size:12px;color:var(--mut);font-weight:500}.hst b{font-size:15.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hst em{font-style:normal;font-size:11.5px;font-weight:500;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* operaciones abiertas */
 .pos{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:3px 12px;padding:12px 13px;margin-top:8px;border-radius:13px;background:var(--card2);border:1px solid var(--ln2);cursor:pointer}
@@ -168,8 +169,8 @@ svg.gr{width:100%;height:210px;display:block}
 .bot{margin:0}
 .bot-h{display:flex;align-items:center;gap:12px}
 .bot-h .av-b{width:42px;height:42px;font-size:14px;border-radius:13px}
-.bot-n{flex:1;min-width:0}.bot-n h2{margin:0;font-size:17px;font-weight:700;letter-spacing:-.01em}.bot-n small{display:block;font-size:11.5px;font-weight:600;letter-spacing:.04em;color:var(--mut);margin-top:2px;text-transform:uppercase}
-.bot-r{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:16px 0 4px}
+.bot-n{flex:1;min-width:0}.bot-n h2{margin:0;font-size:17px;font-weight:700;letter-spacing:-.01em}.bot-n small{display:block;font-size:12.5px;color:var(--mut);margin-top:2px}
+.bot-r{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 10px;margin:16px 0 4px}
 .bot-r small{display:block;font-size:12px;color:var(--mut);font-weight:500}
 .bot-r .eq{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.15}.bot-r .eq span{font-size:14px;font-weight:600;margin-left:8px}
 .bot>svg{width:100%;height:46px;margin:8px 0 12px;display:block}
@@ -199,11 +200,10 @@ details[open] summary:before{transform:rotate(45deg)}
 .tr-a{display:flex;align-items:center;gap:8px;min-width:0}.tr-a b{font-size:14.5px;font-weight:600}
 .tr-g{font-size:15px;font-weight:600;text-align:right;white-space:nowrap}
 .tr-b{font-size:12.5px;color:var(--mut);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tr-c{font-size:12px;color:var(--mut);text-align:right;white-space:nowrap}
-.dia{display:flex;justify-content:space-between;align-items:center;margin:18px 0 4px;padding:10px 12px;border-radius:10px;background:var(--card2);border-left:4px solid var(--mut);font-size:15px;font-weight:700;color:var(--tx)}
-.dia small{display:block;font-size:11.5px;font-weight:500;color:var(--mut)}
-.dia b{font-size:17px}
-.dia.g{background:var(--verdeb);border-left-color:var(--verde)}.dia.p{background:var(--rojob);border-left-color:var(--rojo)}
-.dia:first-child{margin-top:0}.dia+.tr{border-top:0}
+.dia{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 0;padding:0 0 8px;border-bottom:1px solid var(--ln);font-size:13.5px;font-weight:700;color:var(--tx)}
+.dia small{font-size:12px;font-weight:500;color:var(--mut);margin-left:8px}
+.dia b{font-size:14px}
+.dia:first-child{margin-top:4px}.dia+.tr{border-top:0}
 
 /* historial: filtros */
 .hbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-bottom:12px}
@@ -213,7 +213,7 @@ details[open] summary:before{transform:rotate(45deg)}
 .sel,.buscar{width:100%;min-width:0;background:var(--card2);border:1px solid var(--ln2);color:var(--tx);border-radius:11px;padding:10px 12px;font-size:16px}
 .sel{appearance:none;-webkit-appearance:none;padding-right:34px;cursor:pointer;font-size:14.5px;font-weight:500;
   background:var(--card2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23848e9c' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 11px center/15px}
-.buscar::placeholder{color:var(--mut2)}
+.buscar::placeholder{color:var(--mut)}
 .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
 .stats div{background:var(--card);border:1px solid var(--ln2);border-radius:13px;padding:11px 13px;min-width:0}
 .stats small{display:block;font-size:12px;color:var(--mut);font-weight:500}.stats b{font-size:19px;font-weight:700;letter-spacing:-.02em}
@@ -221,7 +221,7 @@ details[open] summary:before{transform:rotate(45deg)}
 .lhead .sel{width:auto;padding:7px 32px 7px 11px;font-size:13px;background-position:right 9px center}
 
 /* gráficos */
-.mks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-bottom:10px}   /* mercados como botoncitos chicos: el gráfico queda a la vista */
+.mks{display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:5px;margin-bottom:10px}   /* mercados como botoncitos chicos: el gráfico queda a la vista */
 .mk{display:flex;flex-direction:column;align-items:center;gap:0;padding:4px 2px;border-radius:9px;background:var(--card);border:1px solid var(--ln2);cursor:pointer;font-size:11.5px;font-weight:700;color:var(--tx);line-height:1.25;min-width:0;white-space:nowrap}
 .mk:hover{border-color:var(--ln)}
 .mk.on{background:rgba(79,140,255,.16);border-color:rgba(79,140,255,.6)}
@@ -249,7 +249,7 @@ details[open] summary:before{transform:rotate(45deg)}
 .ley{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--mut);margin:10px 0 4px}
 .ley i{display:inline-block;width:18px;height:0;border-top:2px solid;vertical-align:middle;margin-right:6px}
 .gdet{margin-top:10px}.hint{color:var(--mut);font-size:12.5px}
-.credito{font-size:11.5px;color:var(--mut2);margin:4px 2px}.credito a{color:var(--mut2)}
+.credito{font-size:11.5px;color:var(--mut);margin:4px 2px}.credito a{color:var(--mut)}
 
 /* ficha de una operación */
 .ficha{background:var(--card);border:1px solid var(--ln);border-radius:18px;padding:16px}
@@ -273,7 +273,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
 .acc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
 .btn{border-radius:12px;padding:13px 18px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid var(--ln);background:var(--card2);color:var(--tx)}
 .btn.rojo{background:var(--rojo);border-color:var(--rojo);color:#fff}.btn.verde{background:var(--verde);border-color:var(--verde);color:#062a1c}
-.btn.azul{background:var(--pri);border-color:var(--pri);color:#fff;width:100%}
+.btn.azul{background:var(--pri);border-color:var(--pri);color:#06142e;width:100%}
 .err{color:var(--rojo);min-height:1.2em;margin:0 0 6px;font-size:13.5px}
 
 /* pestaña PC */
@@ -395,9 +395,9 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
       <div class="eqv num" id="k_cap">–</div>
       <span class="delta" id="k_tot">–</span>
       <div class="hst">
-        <div><small>Balance</small><b class="num" id="k_bal">–</b></div>
-        <div><small>Open P&amp;L</small><b class="num" id="k_flo">–</b></div>
-        <div><small>Today</small><b class="num" id="k_hoy">–</b><small style="font-size:11px">since 18:00 Arg.</small></div>
+        <div><small>Balance</small><b class="num" id="k_bal">–</b><em id="k_balp">closed trades</em></div>
+        <div><small>Open trades</small><b class="num" id="k_flo">–</b><em>not closed yet</em></div>
+        <div><small>Today</small><b class="num" id="k_hoy">–</b><em>since 18:00 Arg.</em></div>
       </div>
     </div>
     <div class="card" id="c_ops"><div class="sec"><h2>Open trades</h2><span id="t_ops" class="mut"></span></div><div id="abiertas"></div><div id="cerradas"></div><p class="toque" id="t_toque">Tap a trade to see it on its chart.</p></div>
@@ -411,7 +411,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
     <div class="card c-bots"><div class="sec"><h2>Bots</h2><span class="mut">result since the start</span></div><div id="bots_res"></div></div>
     <div class="card c-curva"><div class="sec"><h2>Account curve</h2><span id="t_curva" class="mut"></span></div><svg class="gr" id="curva"></svg></div>
   </div>
-  <p class="nota" id="pie">Daily loss counted like Funding Pips: from the higher of balance and equity at 18:00 Argentina time (the firm's 00:00 UTC+3). Official numbers: Funding Pips dashboard.</p>
+  <p class="nota" id="pie">Limits counted like Funding Pips; their day starts at 18:00 Argentina time. Official numbers: Funding Pips dashboard.</p>
 </section>
 
 <!-- GRÁFICOS -->
@@ -429,7 +429,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
     <div class="gdet" id="g_det"></div>
     <div class="gdh" id="g_hist"></div>
   </div>
-  <p class="credito">Server time. Charts: <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noopener">TradingView Lightweight Charts</a>.</p>
+  <p class="credito">Argentina time. Charts: <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noopener">TradingView Lightweight Charts</a>.</p>
 </section>
 
 <!-- HISTORIAL -->
@@ -613,10 +613,10 @@ function avisos(d){
   if(!d.conectado)a.push(["rojo","DISCONNECTED","MT5 has no broker connection."]);
   if(!(d.algo_terminal&&d.algo_cuenta))a.push(["rojo","ALGO OFF","Algo trading disabled in MT5."]);
   const pd=Math.max(0,-d.hoy_pct),pt=Math.max(0,-d.total_pct);
-  if(pd>=d.freno_diario)a.push(["rojo","DAILY STOP","Daily DD hit the bot stop ("+d.freno_diario+"%)."]);
-  else if(pd>=d.freno_diario*0.6)a.push(["amb","DAILY DD","Above 60% of the daily stop."]);
-  if(pt>=d.freno_total)a.push(["rojo","TOTAL STOP","Max DD hit the bot stop ("+d.freno_total+"%)."]);
-  else if(pt>=d.freno_total*0.6)a.push(["amb","MAX DD","Above 60% of the total stop."]);
+  if(pd>=d.freno_diario)a.push(["rojo","DAILY STOP","Today's loss reached the bots' stop ("+d.freno_diario+"%)."]);
+  else if(pd>=d.freno_diario*0.6)a.push(["amb","DAILY LOSS","Today's loss is above 60% of the daily stop."]);
+  if(pt>=d.freno_total)a.push(["rojo","TOTAL STOP","Total loss reached the bots' stop ("+d.freno_total+"%)."]);
+  else if(pt>=d.freno_total*0.6)a.push(["amb","TOTAL LOSS","Total loss is above 60% of the bots' stop."]);
   if(metaReal(d)>=d.meta_pct)a.push(["","TARGET","Phase target reached."]);
   if(d.dias_operados<d.dias_minimos)a.push(["amb","MIN. DAYS",d.dias_operados+" / "+d.dias_minimos+" trading days."]);
   if(d.ult_cierre){const dias=Math.floor((d.actualizado-d.ult_cierre)/86400);
@@ -656,7 +656,7 @@ function resultados(c){
   const it=(b,s,c2)=>`<div class="kpi"><b class="num ${c2||""}">${b}</b><small>${s}</small></div>`;
   k.innerHTML=it(dif.length,"trades")+it(Math.round(100*g.length/dif.length)+"%","win rate")
     +it(usdS(sg-sp),"net result",(sg-sp)>=0?"verde":"rojo")+it(usdS(sg/(g.length||1)),"average win","verde")
-    +it(usdS(-sp/(p.length||1)),"average loss","rojo")+it(sp?(sg/sp).toFixed(2):"–","profit factor");
+    +it(usdS(-sp/(p.length||1)),"average loss","rojo")+it(sp?(sg/sp).toFixed(2):"–","profit factor (won ÷ lost)");
   $("t_res").textContent=dif.length+" closes";
 }
 function spark(v,col){
@@ -673,10 +673,10 @@ function realBot(b){
   return {n:r.length,gan:r.length?100*g.length/r.length:0,pg:g.length?sg/g.length:0,pp:l.length?-sl/l.length:0,x1:sl?sg/sl:0,racha:racha,actual:m};
 }
 function juicio(e,r){
-  if(r.n<20)return ["gris","Sample "+r.n+"/20"];
-  if(r.racha>e.racha*1.5||(r.n>=40&&r.x1<0.8))return ["rojo","Deviation"];
-  if(r.racha>e.racha||r.x1<1||r.gan<e.gan-15)return ["amb","Below backtest"];
-  return ["","In line"];
+  if(r.n<20)return ["gris","Too early · "+r.n+"/20"];
+  if(r.racha>e.racha*1.5||(r.n>=40&&r.x1<0.8))return ["rojo","Far from tests"];
+  if(r.racha>e.racha||r.x1<1||r.gan<e.gan-15)return ["amb","Below tests"];
+  return ["","As tested"];
 }
 function comparar(bots){   // una tarjeta por bot (sin tabla ancha: en el celular no hace falta deslizar)
   $("cmp").innerHTML=bots.map(b=>{const e=ESPERADO[b.nombre]||{},r=realBot(b),j=juicio(e,r);
@@ -716,7 +716,7 @@ const dur=s=>s<3600?Math.max(1,Math.floor(s/60))+" min":s<86400?Math.floor(s/360
 const lote=v=>Number(v).toLocaleString("en-US",{maximumFractionDigits:2});
 const estadoBot=(d,n)=>((d.control||{})[n]||"activo");
 const filaOp=(x,attr)=>`<div class="tr" ${attr||""}><div class="tr-a"><b>${x.sim}</b>${ladoChip(x.lado)}</div><b class="tr-g num ${cl(x.neto)}">${usdS(x.neto)}</b>
-  <div class="tr-b">${nb(x.bot)} · ${hhmm(x.ci)} · ${dur(x.ci-x.ab)}</div><div class="tr-c">${lote(x.lote)} lots${riesgoCerrada(x)!=null?" · risk ≈$"+nf(riesgoCerrada(x),0):""}</div></div>`;
+  <div class="tr-b">${nb(x.bot)} · ${hhmm(x.ci)} · ${dur(x.ci-x.ab)}</div><div class="tr-c">${riesgoCerrada(x)!=null?"risk ≈$"+nf(riesgoCerrada(x),0):lote(x.lote)+" lots"}</div></div>`;
 function botsDetalle(d){
   const ok=d.conectado&&d.algo_terminal&&d.algo_cuenta;
   const abiertos=new Set([...document.querySelectorAll("#bots_det details[open]")].map(x=>x.dataset.bot)),BI=[];
@@ -728,7 +728,7 @@ function botsDetalle(d){
       <div class="bot-r"><div><small>Result so far</small><div class="eq num ${cl(tot)}">${usdS(tot)}<span>${pct(100*tot/d.capital)}</span></div></div><span class="chip ${j[0]}">${j[1]}</span></div>
       ${spark(b.spark,tot>=0?"#2ebd85":"#f6465d")}
       <div class="mini"><div><small>Trades</small><b class="num">${b.ops||0}</b></div><div><small>Win rate</small><b class="num">${Math.round(r.gan)}%</b></div>
-        <div><small>Profit factor</small><b class="num">${r.x1.toFixed(2)}</b></div><div><small>Open</small><b class="num">${b.abiertas||0}</b></div></div>
+        <div><small>Profit factor · won÷lost</small><b class="num">${r.x1.toFixed(2)}</b></div><div><small>Open</small><b class="num">${b.abiertas||0}</b></div></div>
       <div class="sub"><span>Latest trades</span><button class="lnk" data-hist="${b.nombre}">All trades ›</button></div>
       ${ult.length?ult.map(h=>filaOp(h,`data-b="${BI.push(h)-1}"`)).join(""):'<div class="vacio">No closed trades yet.</div>'}
       <details data-bot="${b.nombre}"${abiertos.has(b.nombre)?" open":""}><summary>How it works</summary>${ds.slice(1).map(x=>`<p class="d"><span class="mut">${x[0]}:</span> ${x[1]}</p>`).join("")}</details></div>`}).join("");
@@ -754,14 +754,14 @@ function historial(d){
   h=h.slice().sort((a,b)=>{const va=k(a),vb=k(b);return (va<vb?-1:va>vb?1:0)*(HF.desc?-1:1)});
   const g=h.filter(x=>x.neto>0),tot=h.reduce((a,x)=>a+x.neto,0),sg=g.reduce((a,x)=>a+x.neto,0),sp=-h.filter(x=>x.neto<0).reduce((a,x)=>a+x.neto,0);
   $("h_res").innerHTML=`<div><small>Trades</small><b class="num">${h.length}</b></div><div><small>Win rate</small><b class="num">${h.length?Math.round(100*g.length/h.length):0}%</b></div>`
-    +`<div><small>Net result</small><b class="num ${cl(tot)}">${usdS(tot)}</b></div><div><small>Profit factor</small><b class="num">${sp?(sg/sp).toFixed(2):"–"}</b></div>`;
+    +`<div><small>Net result</small><b class="num ${cl(tot)}">${usdS(tot)}</b></div><div><small>Profit factor · won÷lost</small><b class="num">${sp?(sg/sp).toFixed(2):"–"}</b></div>`;
   let html="",dia=null;
   const porDia=HF.orden==="ci",suma={};
   const cant={};
-  if(porDia)h.forEach(x=>{const k2=Math.floor(x.ci/86400);suma[k2]=(suma[k2]||0)+x.neto;cant[k2]=(cant[k2]||0)+1});
+  if(porDia)h.forEach(x=>{const k2=Math.floor(AR(x.ci)/86400);suma[k2]=(suma[k2]||0)+x.neto;cant[k2]=(cant[k2]||0)+1});   // agrupado por día de Argentina
   h.slice(0,HF.max).forEach(x=>{
-    const k2=Math.floor(x.ci/86400);
-    if(porDia&&k2!==dia){dia=k2;html+=`<div class="dia ${suma[k2]>0?"g":suma[k2]<0?"p":""}"><span>${fdl(x.ci)}<small>${cant[k2]} trade${cant[k2]>1?"s":""} · day result</small></span><b class="num ${cl(suma[k2])}">${usdS(suma[k2])}</b></div>`}
+    const k2=Math.floor(AR(x.ci)/86400);
+    if(porDia&&k2!==dia){dia=k2;html+=`<div class="dia ${suma[k2]>0?"g":suma[k2]<0?"p":""}"><span>${fdl(x.ci)}<small>${cant[k2]} trade${cant[k2]>1?"s":""}</small></span><b class="num ${cl(suma[k2])}">${usdS(suma[k2])}</b></div>`}
     html+=filaOp(x,`data-i="${HIST_IDX.push(x)-1}"`);
   });
   $("h_lista").innerHTML=html||'<div class="vacio">No results.</div>';
@@ -919,8 +919,9 @@ function armarGraficos(){
   if(!VELAS[MERC]){const d=ULT||{};MERC=claves.find(k=>(d.posiciones||[]).some(p=>p.sim===simDe(k)&&p.bot===botDeClave(k)))||claves[0]}
   if(G)return;
   const ch=LightweightCharts.createChart($("graf"),{autoSize:true,layout:{background:{color:"#14181f"},textColor:"#848e9c",fontSize:12,fontFamily:"Inter,system-ui,Segoe UI,Roboto,sans-serif"},
-    grid:{vertLines:{visible:false},horzLines:{color:"#1c222b"}},rightPriceScale:{borderColor:"#252c37"},timeScale:{borderColor:"#252c37",timeVisible:true,secondsVisible:false,rightOffset:12},
-    crosshair:{mode:0},localization:{locale:"en-US"},
+    grid:{vertLines:{visible:false},horzLines:{color:"#1c222b"}},rightPriceScale:{borderColor:"#252c37"},timeScale:{borderColor:"#252c37",timeVisible:true,secondsVisible:false,rightOffset:12,
+      tickMarkFormatter:(t,k)=>k===0?String(new Date(AR(t)*1000).getUTCFullYear()):k===1?new Date(AR(t)*1000).toLocaleDateString("en-US",{month:"short",timeZone:"UTC"}):k===2?fdm(t):hhmm(t)},   // ejes en hora de Argentina (las velas siguen en hora del servidor)
+    crosshair:{mode:0},localization:{locale:"en-US",timeFormatter:t=>fh(t)},
     handleScroll:{vertTouchDrag:false},handleScale:{axisPressedMouseMove:{time:true,price:true}}});   // la barra de precios de la derecha se estira con un dedo; deslizar en el resto del gráfico baja la página
   const se=ch.addCandlestickSeries({upColor:"#089981",downColor:"#F23645",borderVisible:false,wickUpColor:"#089981",wickDownColor:"#F23645"});
   G={chart:ch,serie:se,lineas:[],zonas:[],nuevo:true,sel:null,trazos:null,ext:new Extremos()};se.attachPrimitive(G.ext);
@@ -967,10 +968,10 @@ function pintarGrafico(){
   const bc=$("g_det").querySelector("[data-cerrar]");if(bc)bc.onclick=()=>{G.sel=null;pintarGrafico()};
   // historial de este mercado, debajo del gráfico (mismo estilo que la pestaña History)
   {const cer=(d.historial||[]).filter(h=>h.sim===sym&&h.bot===b&&h.pa>0&&h.pc>0).sort((a,c)=>c.ci-a.ci),suma={},cant={};GH=cer;
-   cer.forEach(x=>{const k2=Math.floor(x.ci/86400);suma[k2]=(suma[k2]||0)+x.neto;cant[k2]=(cant[k2]||0)+1});
+   cer.forEach(x=>{const k2=Math.floor(AR(x.ci)/86400);suma[k2]=(suma[k2]||0)+x.neto;cant[k2]=(cant[k2]||0)+1});
    let html="",dia=null;
-   cer.forEach((x,i)=>{const k2=Math.floor(x.ci/86400);
-     if(k2!==dia){dia=k2;html+=`<div class="dia ${suma[k2]>0?"g":suma[k2]<0?"p":""}"><span>${fdl(x.ci)}<small>${cant[k2]} trade${cant[k2]>1?"s":""} · day result</small></span><b class="num ${cl(suma[k2])}">${usdS(suma[k2])}</b></div>`}
+   cer.forEach((x,i)=>{const k2=Math.floor(AR(x.ci)/86400);
+     if(k2!==dia){dia=k2;html+=`<div class="dia ${suma[k2]>0?"g":suma[k2]<0?"p":""}"><span>${fdl(x.ci)}<small>${cant[k2]} trade${cant[k2]>1?"s":""}</small></span><b class="num ${cl(suma[k2])}">${usdS(suma[k2])}</b></div>`}
      html+=filaOp(x,`data-g="${i}"`)});
    $("g_hist").innerHTML=cer.length?`<h3>${sym} trades · ${cer.length}</h3>`+html:`<h3>${sym} trades</h3><div class="vacio">No closed trades on ${sym} yet.</div>`}
   const celda=(k,v,c2)=>`<div><small>${k}</small><b class="num ${c2||""}">${v}</b></div>`;
@@ -978,7 +979,7 @@ function pintarGrafico(){
   pos.forEach(p=>{
     h+=`<div class="gp-h">${ladoChip(p.lado)}<b>${lote(p.lote)} lots</b><span class="mut">open since ${fh(p.desde||0)}</span></div>
       ${p.riesgo_ini>0?`<div class="gp-r">Risked <b class="rojo">${riesgoTxt(p.riesgo_ini)}</b> if it hits the first Stop Loss</div>`:""}
-      <div class="gp">${celda("Entry",p.precio)}${celda("Stop Loss",p.sl>0?p.sl:"none")}${celda("Take Profit",p.tp>0?p.tp:"none")}${celda("P&L",usdS(p.gan),cl(p.gan))}</div>`});
+      <div class="gp">${celda("Entry",p.precio)}${celda("Stop Loss",p.sl>0?p.sl:"none")}${celda("Take Profit",p.tp>0?p.tp:"none")}${celda("Result now",usdS(p.gan),cl(p.gan))}</div>`});
   if(ords.length)h+=`<div class="gp-h">Pending orders</div><div class="gp">${ords.map(o=>celda(o.lado==="compra"?"Buy stop":"Sell stop",o.precio)).join("")}</div>`;
   $("g_pos").innerHTML=h||`<div class="gp-v">No open position on ${sym}.</div>`;
 }
@@ -1028,12 +1029,12 @@ function estadoTexto(d){
   const pd=Math.max(0,-d.hoy_pct),pt=Math.max(0,-d.total_pct),ab=d.posiciones.length;
   if(!d.conectado)return["rojo","Disconnected","No broker connection."];
   if(!(d.algo_terminal&&d.algo_cuenta))return["rojo","Algo trading off","Bots inactive."];
-  if(pt>=d.freno_total)return["rojo","Total stop hit","Max DD "+d.freno_total+"%. Bots flat and disabled."];
-  if(pd>=d.freno_diario)return["rojo","Daily stop hit","Daily DD "+d.freno_diario+"% · firm limit "+(Math.round(d.lim_diario*10)/10)+"%. Resumes 18:00 Argentina time."];
+  if(pt>=d.freno_total)return["rojo","Total stop hit","Lost "+d.freno_total+"% in total. Bots closed everything and stopped."];
+  if(pd>=d.freno_diario)return["rojo","Daily stop hit","Lost "+d.freno_diario+"% today (firm limit "+(Math.round(d.lim_diario*10)/10)+"%). Bots resume at 18:00 Argentina time."];
   if(metaReal(d)>=d.meta_pct)return["verde","Target reached",usdS(d.saldo-d.capital)+" ("+pct(metaReal(d))+") closed · target "+d.meta_pct+"%"+(ab?" · "+ab+" open":" · flat")];
-  if(pd>=d.freno_diario*0.6||pt>=d.freno_total*0.6)return["amb","Approaching stop","DD above 60% of a bot stop."];
+  if(pd>=d.freno_diario*0.6||pt>=d.freno_total*0.6)return["amb","Approaching a stop","Losses are above 60% of where the bots stop."];
   const falta=Math.max(0,d.meta_pct-metaReal(d));
-  return["verde","All systems normal",c2(falta)+"% to the target."];
+  return["verde","All systems normal",c2(falta)+"% ("+usd0(d.capital*falta/100)+") to the target."];
 }
 const metaReal=d=>d.total_pct;   // a pedido del usuario la meta cuenta lo flotante (Funding Pips solo cuenta lo cerrado)
 function pintar(d){
@@ -1049,7 +1050,7 @@ function pintar(d){
   $("k_fase").textContent=fase+" · "+usd0(d.capital);$("t_fase").textContent=fase;
   $("k_cap").textContent=usd(d.patrimonio);
   $("k_tot").className="delta"+(d.total_usd<0?" rojo":"");$("k_tot").innerHTML=(d.total_usd<0?TRI_DN:TRI_UP)+usdS(d.total_usd)+" ("+pct(d.total_pct)+") since the start";
-  $("k_bal").innerHTML=usd(d.saldo)+`<span class="${cl(d.saldo-d.capital)}" style="display:block;font-size:12.5px">${pct(100*(d.saldo-d.capital)/d.capital)} closed</span>`;   // % ya cerrado, sin flotante
+  $("k_bal").textContent=usd(d.saldo);$("k_balp").textContent=pct(100*(d.saldo-d.capital)/d.capital)+" closed";$("k_balp").className=cl(d.saldo-d.capital);   // % ya cerrado, sin flotante
   $("k_flo").textContent=usdS(d.flotante||0);$("k_flo").className="num "+cl(d.flotante||0);
   $("k_hoy").textContent=usdS(d.hoy_usd);$("k_hoy").className="num "+cl(d.hoy_usd);
   // objetivos del challenge
@@ -1070,7 +1071,7 @@ function pintar(d){
   $("bots_res").innerHTML=bots.map(b=>{
     const tot=(b.cerrado||0)+(b.flotante||0),inf=INFO[b.nombre]||["",""],pos=d.posiciones.find(p=>p.bot===b.nombre),pa=estadoBot(d,b.nombre)==="pausado";
     const est=!ok?["mal","Off"]:pa?["amb",(d.pausa_bots||{})[b.nombre]>0?"Paused":"Pausing…"]:["","On"];
-    return `<div class="brow">${avatar(b.nombre)}<div class="bm"><div class="bn"><b>${nb(b.nombre)}</b><span class="est ${est[0]}"><i></i>${est[1]}</span></div><small>${inf[0]} · ${inf[1]} risk per trade</small>${pos?`<small class="bp">Open now: ${pos.sim} ${pos.lado==="compra"?"buy":"sell"} ${lote(pos.lote)}<em class="${cl(pos.gan)}">${usdS(pos.gan)}</em></small>`:""}</div><div class="tot"><b class="num ${cl(tot)}">${usdS(tot)}</b><small>total so far</small></div></div>`}).join("");
+    return `<div class="brow">${avatar(b.nombre)}<div class="bm"><div class="bn"><b>${nb(b.nombre)}</b><span class="est ${est[0]}"><i></i>${est[1]}</span></div><small>${inf[0]} · ${inf[1]} risk per trade</small>${pos?`<small class="bp">Open now: ${pos.sim} ${pos.lado==="compra"?"buy":"sell"}<em class="${cl(pos.gan)}">${usdS(pos.gan)}</em></small>`:""}</div><div class="tot"><b class="num ${cl(tot)}">${usdS(tot)}</b><small>total so far</small></div></div>`}).join("");
   // operaciones (arriba del todo)
   const nAb=d.posiciones.length,nCe=d.cerradas_hoy.length;
   if(nAb&&(!VELAS||Date.now()-ULTV>12000)){ULTV=Date.now();leerVelas().then(v=>{VELAS=v;pintar(d)}).catch(()=>{})}   // el "Now" sale de la última vela: se bajan acá también
