@@ -411,7 +411,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
     <div class="card c-bots"><div class="sec"><h2>Bots</h2><span class="mut">result since the start</span></div><div id="bots_res"></div></div>
     <div class="card c-curva"><div class="sec"><h2>Account curve</h2><span id="t_curva" class="mut"></span></div><svg class="gr" id="curva"></svg></div>
   </div>
-  <p class="nota" id="pie">Daily loss counted like Funding Pips: from the higher of balance and equity at 00:00 UTC+3. Official numbers: Funding Pips dashboard.</p>
+  <p class="nota" id="pie">Daily loss counted like Funding Pips: from the higher of balance and equity at 18:00 Argentina time (the firm's 00:00 UTC+3). Official numbers: Funding Pips dashboard.</p>
 </section>
 
 <!-- GRÁFICOS -->
@@ -482,7 +482,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
 <!-- REGLAS -->
 <section class="vista" id="v_reglas">
   <div class="card"><div class="sec"><h2>Firm rules vs. bot limits</h2></div>
-    <div class="regla"><b>Max daily loss</b><dl><dt>Firm</dt><dd>5% of the higher of balance and equity at 00:00 UTC+3</dd><dt>Bots</dt><dd>stop at 4%</dd></dl></div>
+    <div class="regla"><b>Max daily loss</b><dl><dt>Firm</dt><dd>5% of the higher of balance and equity at 18:00 Argentina time (00:00 UTC+3)</dd><dt>Bots</dt><dd>stop at 4%</dd></dl></div>
     <div class="regla"><b>Max total loss</b><dl><dt>Firm</dt><dd>10%</dd><dt>Bots</dt><dd>8% (Williams, Asian Range) · 9% (Trend 4H)</dd></dl></div>
     <div class="regla"><b>Target phase 1 / 2</b><dl><dt>Firm</dt><dd>8% / 5%</dd><dt>Bots</dt><dd>at 8.3% / 5.3% close everything and stop</dd></dl></div>
     <div class="regla"><b>Minimum trading days</b><dl><dt>Firm</dt><dd>3</dd><dt>Bots</dt><dd>a manual 0.01 lot if needed</dd></dl></div>
@@ -563,9 +563,10 @@ const usdS=v=>(v>0?"+":"")+usd(v);
 const c2=v=>v.toFixed(2);
 const pct=v=>(v>0?"+":"")+v.toFixed(2)+"%";
 const cl=v=>v>0?"verde":v<0?"rojo":"";
-const hhmm=t=>new Date(t*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"UTC"});
-const fdm=t=>new Date(t*1000).toLocaleDateString("en-US",{month:"short",day:"numeric",timeZone:"UTC"});
-const fdl=t=>new Date(t*1000).toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",timeZone:"UTC"});
+const AR=t=>t-offSrv()-10800;   // hora del servidor (MT5) -> hora de Argentina (UTC-3); solo para mostrar
+const hhmm=t=>new Date(AR(t)*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",hour12:false,timeZone:"UTC"});
+const fdm=t=>new Date(AR(t)*1000).toLocaleDateString("en-US",{month:"short",day:"numeric",timeZone:"UTC"});
+const fdl=t=>new Date(AR(t)*1000).toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",timeZone:"UTC"});
 const precio=(v,d)=>Number(v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
 const NOM={"Tendencia 4H":"Trend 4H","Williams Ruptura":"Williams Breakout","Rango Asiatico":"Asian Range","Manual / otro":"Manual / other"};
 const nb=n=>NOM[n]||n;   // nombre del bot en inglés (los datos siguen usando el nombre original)
@@ -621,7 +622,7 @@ function avisos(d){
   if(d.ult_cierre){const dias=Math.floor((d.actualizado-d.ult_cierre)/86400);
     if(dias>=20)a.push([dias>=26?"rojo":"amb","30-DAY RULE",dias+" days since last close (breach at 30)."])}
   const prox=(d.noticias||[]).filter(n=>n.t>=d.actualizado-300&&n.t-d.actualizado<=7200);
-  if(prox.length)a.push(["amb","HIGH-IMPACT NEWS",prox.map(n=>hhmm(n.t)+" "+n.n).join(" · ")+" (USD, server time).","Funded: ±5 min profit excluded."]);
+  if(prox.length)a.push(["amb","HIGH-IMPACT NEWS",prox.map(n=>hhmm(n.t)+" "+n.n).join(" · ")+" (USD, Argentina time).","Funded: ±5 min profit excluded."]);
   if(d.fondeada&&d.advertencias>0)a.push([d.advertencias>=3?"rojo":"amb","STRIKES",d.advertencias+" / 4 (ideas ≤ -"+d.idea_pct+"%).","Panel estimate."]);
   Object.keys(d.control||{}).forEach(n=>{const pedido=d.control[n]==="pausado",visto=(d.pausa_bots||{})[n];
     if(visto!=null&&pedido!==(visto>0))a.push(["amb","PENDING",nb(n)+(pedido?": pause not acknowledged.":": resume not acknowledged."),"Check the EA is running."])});
@@ -1028,7 +1029,7 @@ function estadoTexto(d){
   if(!d.conectado)return["rojo","Disconnected","No broker connection."];
   if(!(d.algo_terminal&&d.algo_cuenta))return["rojo","Algo trading off","Bots inactive."];
   if(pt>=d.freno_total)return["rojo","Total stop hit","Max DD "+d.freno_total+"%. Bots flat and disabled."];
-  if(pd>=d.freno_diario)return["rojo","Daily stop hit","Daily DD "+d.freno_diario+"% · firm limit "+(Math.round(d.lim_diario*10)/10)+"%. Resumes 00:00 UTC+3."];
+  if(pd>=d.freno_diario)return["rojo","Daily stop hit","Daily DD "+d.freno_diario+"% · firm limit "+(Math.round(d.lim_diario*10)/10)+"%. Resumes 18:00 Argentina time."];
   if(metaReal(d)>=d.meta_pct)return["verde","Target reached",usdS(d.saldo-d.capital)+" ("+pct(metaReal(d))+") closed · target "+d.meta_pct+"%"+(ab?" · "+ab+" open":" · flat")];
   if(pd>=d.freno_diario*0.6||pt>=d.freno_total*0.6)return["amb","Approaching stop","DD above 60% of a bot stop."];
   const falta=Math.max(0,d.meta_pct-metaReal(d));
@@ -1079,7 +1080,7 @@ function pintar(d){
     return `<div class="pos" data-sim="${p.sim}" data-bot="${p.bot}" role="button" tabindex="0">
       <div class="pos-a"><span class="sym">${p.sim}</span>${ladoChip(p.lado)}</div>
       <b class="pos-g num ${cl(p.gan)}">${usdS(p.gan)}</b>
-      <div class="pos-b">${nb(p.bot)} · ${lote(p.lote)} lots · since ${dia(p.desde||0)}</div>${lock>=0?`<span class="chip">${lock>0?"Profit locked":"No risk"}</span>`:`<span class="pos-v">Chart ›</span>`}
+      <div class="pos-b">${nb(p.bot)} · ${p.riesgo_ini>0?"risk "+riesgoTxt(p.riesgo_ini):lote(p.lote)+" lots"} · since ${dia(p.desde||0)}</div>${lock>=0?`<span class="chip">${lock>0?"Profit locked":"No risk"}</span>`:`<span class="pos-v">Chart ›</span>`}
       <div class="pos-c"><div>Entry<b>${p.precio}</b></div>${(()=>{const V=velasDe(p.sim,p.bot),n=p.actual||(V&&ultimo(V));return `<div class="ahora">Now<b>${n||"–"}</b></div>`})()}<div>Stop Loss<b>${p.sl>0?p.sl:"none"}</b></div></div></div>`}).join("");
   $("cerradas").innerHTML=d.cerradas_hoy.map(p=>`<div class="pos" data-sim="${p.sim}" data-bot="${p.bot}" role="button" tabindex="0">
       <div class="pos-a"><span class="sym">${p.sim}</span><span class="tag">closed ${hhmm(p.t)}</span></div><b class="pos-g num ${cl(p.neto)}">${usdS(p.neto)}</b>
@@ -1148,7 +1149,7 @@ async function cargar(){
   if(!d||d.sin_datos){const t=err?"Offline":"No data";
     $("vivo").className="vivo mal";$("vivo_t").textContent=t;$("vivo_m").className="vm mal";$("vivo_m").querySelector("em").textContent=t;
     if(err)banner("estado","rojo","Can't reach the computer","Off, asleep or without internet. Retrying…");else banner("estado","rojo","No data","Panel_Estado isn't running in MT5.");
-    $("subt").textContent=ULT?"last data "+hhmm(ULT.actualizado||0)+" server time":"";return}
+    $("subt").textContent=ULT?"last data "+hhmm(ULT.actualizado||0)+" Argentina time":"";return}
   pintar(d);
 }
 {const h=location.hash.slice(1)||LS.get("panel_vista");if(TITULOS[h])irA(h)}   // al recargar vuelve a la última pestaña
