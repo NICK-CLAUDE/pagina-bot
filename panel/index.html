@@ -823,7 +823,7 @@ class Trazos{ // operaciones en su precio exacto: punto de entrada y de salida u
       if(x1===null||y1===null)return;
       z.puntos.push({x:x1,y:y1,o:o});
       if(o.abierta){if(x2!==null&&y2!==null)tramo(x1,y1,x2,y2,res,true);punto(x1,y1,"#2962FF",6);return}   // abierta: punteada hasta el precio actual
-      if(!esSel){ctx.globalAlpha=.6;punto(x1,y1,res,3.5);if(x2!==null&&y2!==null){z.puntos.push({x:x2,y:y2,o:o});punto(x2,y2,res,3.5)}ctx.globalAlpha=1;return}   // cerradas sin elegir: solo puntitos; tocando uno se ve todo
+      if(!esSel){if(x2!==null&&y2!==null){z.puntos.push({x:x2,y:y2,o:o});tramo(x1,y1,x2,y2,res);punto(x2,y2,res)}punto(x1,y1,res);return}   // cerradas sin elegir: línea y puntos, sin carteles; tocando una salen
       if(esSel&&x2!==null){const W2=Math.max(x2,x1+30);
         const caja=(pr,col2)=>{if(!(pr>0))return;const yy=Y(pr);if(yy===null)return;ctx.fillStyle=col2;ctx.fillRect(x1,Math.min(y1,yy),W2-x1,Math.abs(yy-y1))};
         caja(o.tp,"rgba(8,153,129,.28)");caja(o.sli>0?o.sli:o.sl,"rgba(242,54,69,.28)");
@@ -968,7 +968,7 @@ function pintarGrafico(){
   G.serie.applyOptions({title:pos.length?usdS(pos.reduce((a,p)=>a+p.gan,0)):""});   // como TradingView: ganancia al lado del precio actual
   const tz=new Trazos(ops,tf,G.sel);G.serie.attachPrimitive(tz);G.zonas.push(tz);G.trazos=tz;
   const selOp=ops.find(o=>!o.abierta&&(o.ab+"_"+o.ci)===G.sel);
-  $("g_det").innerHTML=selOp?detalleTrade(selOp,true):'<div class="hint">Past trades are the small dots. Tap one to see it.</div>';
+  $("g_det").innerHTML=selOp?detalleTrade(selOp,true):'<div class="hint">Tap a past trade on the chart to see its details.</div>';
   const bc=$("g_det").querySelector("[data-cerrar]");if(bc)bc.onclick=()=>{G.sel=null;pintarGrafico()};
   // historial de este mercado, debajo del gráfico (mismo estilo que la pestaña History)
   {const cer=(d.historial||[]).filter(h=>h.sim===sym&&h.bot===b&&h.pa>0&&h.pc>0).sort((a,c)=>c.ci-a.ci),suma={},cant={};GH=cer;
