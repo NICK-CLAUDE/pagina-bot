@@ -397,7 +397,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
       <div class="hst">
         <div><small>Balance</small><b class="num" id="k_bal">–</b></div>
         <div><small>Open P&amp;L</small><b class="num" id="k_flo">–</b></div>
-        <div><small>Today</small><b class="num" id="k_hoy">–</b></div>
+        <div><small>Today (since 18:00 Arg., with open trades)</small><b class="num" id="k_hoy">–</b></div>
       </div>
     </div>
     <div class="card" id="c_ops"><div class="sec"><h2>Open trades</h2><span id="t_ops" class="mut"></span></div><div id="abiertas"></div><div id="cerradas"></div><p class="toque" id="t_toque">Tap a trade to see it on its chart.</p></div>
@@ -1049,7 +1049,7 @@ function pintar(d){
   $("k_fase").textContent=fase+" · "+usd0(d.capital);$("t_fase").textContent=fase;
   $("k_cap").textContent=usd(d.patrimonio);
   $("k_tot").className="delta"+(d.total_usd<0?" rojo":"");$("k_tot").innerHTML=(d.total_usd<0?TRI_DN:TRI_UP)+usdS(d.total_usd)+" ("+pct(d.total_pct)+") since the start";
-  $("k_bal").textContent=usd(d.saldo);
+  $("k_bal").innerHTML=usd(d.saldo)+` <span class="${cl(d.saldo-d.capital)}">${pct(100*(d.saldo-d.capital)/d.capital)}</span>`;   // % ya cerrado, sin flotante
   $("k_flo").textContent=usdS(d.flotante||0);$("k_flo").className="num "+cl(d.flotante||0);
   $("k_hoy").textContent=usdS(d.hoy_usd);$("k_hoy").className="num "+cl(d.hoy_usd);
   // objetivos del challenge
