@@ -200,10 +200,12 @@ details[open] summary:before{transform:rotate(45deg)}
 .tr-a{display:flex;align-items:center;gap:8px;min-width:0}.tr-a b{font-size:14.5px;font-weight:600}
 .tr-g{font-size:15px;font-weight:600;text-align:right;white-space:nowrap}
 .tr-b{font-size:12.5px;color:var(--mut);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tr-c{font-size:12px;color:var(--mut);text-align:right;white-space:nowrap}
-.dia{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 0;padding:0 0 8px;border-bottom:1px solid var(--ln);font-size:13.5px;font-weight:700;color:var(--tx)}
+.dgrp{background:var(--card2);border:1px solid var(--ln);border-radius:13px;padding:0 13px;margin-top:14px}   /* un bloque por día */
+.dgrp:first-child{margin-top:4px}
+.dia{display:flex;justify-content:space-between;align-items:center;margin:0 -13px;padding:10px 13px;border-bottom:1px solid var(--ln);border-radius:12px 12px 0 0;background:var(--raise);font-size:14px;font-weight:700;color:var(--tx)}
 .dia small{font-size:12px;font-weight:500;color:var(--mut);margin-left:8px}
-.dia b{font-size:14px}
-.dia:first-child{margin-top:4px}.dia+.tr{border-top:0}
+.dia b{font-size:15px}
+.dia+.tr{border-top:0}
 
 /* historial: filtros */
 .hbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-bottom:12px}
@@ -761,9 +763,10 @@ function historial(d){
   if(porDia)h.forEach(x=>{const k2=Math.floor(AR(x.ci)/86400);suma[k2]=(suma[k2]||0)+x.neto;cant[k2]=(cant[k2]||0)+1});   // agrupado por día de Argentina
   h.slice(0,HF.max).forEach(x=>{
     const k2=Math.floor(AR(x.ci)/86400);
-    if(porDia&&k2!==dia){dia=k2;html+=`<div class="dia ${suma[k2]>0?"g":suma[k2]<0?"p":""}"><span>${fdl(x.ci)}<small>${cant[k2]} trade${cant[k2]>1?"s":""}</small></span><b class="num ${cl(suma[k2])}">${usdS(suma[k2])}</b></div>`}
+    if(porDia&&k2!==dia){html+=(dia!==null?"</div>":"")+'<div class="dgrp">';dia=k2;html+=`<div class="dia ${suma[k2]>0?"g":suma[k2]<0?"p":""}"><span>${fdl(x.ci)}<small>${cant[k2]} trade${cant[k2]>1?"s":""}</small></span><b class="num ${cl(suma[k2])}">${usdS(suma[k2])}</b></div>`}
     html+=filaOp(x,`data-i="${HIST_IDX.push(x)-1}"`);
   });
+  if(dia!==null)html+="</div>";   // cierra el grupo del último día
   $("h_lista").innerHTML=html||'<div class="vacio">No results.</div>';
   $("h_mas").hidden=h.length<=HF.max;
   document.querySelectorAll("#h_lista .tr[data-i]").forEach(tr=>tr.onclick=()=>abrirFicha(HIST_IDX[+tr.dataset.i]));
@@ -971,8 +974,9 @@ function pintarGrafico(){
    cer.forEach(x=>{const k2=Math.floor(AR(x.ci)/86400);suma[k2]=(suma[k2]||0)+x.neto;cant[k2]=(cant[k2]||0)+1});
    let html="",dia=null;
    cer.forEach((x,i)=>{const k2=Math.floor(AR(x.ci)/86400);
-     if(k2!==dia){dia=k2;html+=`<div class="dia ${suma[k2]>0?"g":suma[k2]<0?"p":""}"><span>${fdl(x.ci)}<small>${cant[k2]} trade${cant[k2]>1?"s":""}</small></span><b class="num ${cl(suma[k2])}">${usdS(suma[k2])}</b></div>`}
+     if(k2!==dia){html+=(dia!==null?"</div>":"")+'<div class="dgrp">';dia=k2;html+=`<div class="dia ${suma[k2]>0?"g":suma[k2]<0?"p":""}"><span>${fdl(x.ci)}<small>${cant[k2]} trade${cant[k2]>1?"s":""}</small></span><b class="num ${cl(suma[k2])}">${usdS(suma[k2])}</b></div>`}
      html+=filaOp(x,`data-g="${i}"`)});
+   if(dia!==null)html+="</div>";
    $("g_hist").innerHTML=cer.length?`<h3>${sym} trades · ${cer.length}</h3>`+html:`<h3>${sym} trades</h3><div class="vacio">No closed trades on ${sym} yet.</div>`}
   const celda=(k,v,c2)=>`<div><small>${k}</small><b class="num ${c2||""}">${v}</b></div>`;
   let h="";
