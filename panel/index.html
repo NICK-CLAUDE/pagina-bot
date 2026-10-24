@@ -484,7 +484,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
 <!-- REGLAS -->
 <section class="vista" id="v_reglas">
   <div class="card"><div class="sec"><h2>Firm rules vs. bot limits</h2></div>
-    <div class="regla"><b>Max daily loss</b><dl><dt>Firm</dt><dd>5% of the higher of balance and equity at 18:00 Argentina time (00:00 UTC+3)</dd><dt>Bots</dt><dd>stop at 4%</dd></dl></div>
+    <div class="regla"><b>Max daily loss</b><dl><dt>Firm</dt><dd>5% of the higher of balance and equity at 00:00 server time (18:00 Argentina; 19:00 if the server moves to UTC+2 in winter)</dd><dt>Bots</dt><dd>stop at 4%</dd></dl></div>
     <div class="regla"><b>Max total loss</b><dl><dt>Firm</dt><dd>10%</dd><dt>Bots</dt><dd>8% (Williams, Asian Range) · 9% (Trend 4H)</dd></dl></div>
     <div class="regla"><b>Target phase 1 / 2</b><dl><dt>Firm</dt><dd>8% / 5%</dd><dt>Bots</dt><dd>at 8.3% / 5.3% close everything and stop</dd></dl></div>
     <div class="regla"><b>Minimum trading days</b><dl><dt>Firm</dt><dd>3</dd><dt>Bots</dt><dd>a manual 0.01 lot if needed</dd></dl></div>
