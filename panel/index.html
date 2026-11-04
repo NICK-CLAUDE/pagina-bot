@@ -542,8 +542,10 @@ let BASE=FIJA?LS.get("panel_base"):"",CLAVE=LS.get("panel_clave"),BUSCADO=0;
 {const m=location.hash.match(/k=([\w-]+)/);if(m){CLAVE=m[1];LS.set("panel_clave",CLAVE);history.replaceState(null,"",location.pathname+location.hash.replace(/k=[\w-]+&?/,""))}}
 async function buscarTunel(){   // como mucho una vez cada 90 s (GitHub deja 60 consultas por hora)
   if(!FIJA||Date.now()-BUSCADO<90000)return false;BUSCADO=Date.now();
-  try{const u=atob((await (await fetch(TUNEL_API,{cache:"no-store"})).json()).content).trim()+"/";
-    if(/^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/$/.test(u)&&u!==BASE){BASE=u;LS.set("panel_base",BASE);return true}}catch(e){}
+  const leer=[async()=>atob((await (await fetch(TUNEL_API,{cache:"no-store"})).json()).content),   // al día, pero GitHub corta si se agotó el límite de la red
+    async()=>(await fetch("tunel.txt?x="+Date.now(),{cache:"no-store"})).text()];   // sin límite, puede tardar unos minutos en actualizarse
+  for(const f of leer){try{const u=(await f()).trim()+"/";
+    if(/^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/$/.test(u)&&u!==BASE){BASE=u;LS.set("panel_base",BASE);return true}}catch(e){}}
   return false;
 }
 class SinClave extends Error{}
