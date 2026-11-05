@@ -1129,7 +1129,7 @@ async function cargarPC(){
   $("pc_top").innerHTML=`<div><small>Processor</small><b class="${tc(p.cpu_temp)}">${p.cpu_temp} °C</b><span>${p.cpu_uso}% in use</span></div>
     <div><small>Fans</small><b class="${ven>=2500?"amb":""}">${ven==null?"–":ven.toLocaleString("en-US")}</b><span>${ven==null?"sensors off":"rpm · "+(ven<2500?"quiet":ven<4000?"audible":"loud")}</span></div>
     <div><small>Power</small><b>${p.cpu_w==null?"–":p.cpu_w+" W"}</b><span>processor, last min</span></div>
-    <div><small>NVIDIA</small><b class="${p.nvidia===0?"":"verde"}">${p.nvidia===0?"Awake":"Asleep"}</b><span>${p.sensores?"<em style=\"font-style:normal\" class=\""+tc(p.gpu_temp)+"\">"+p.gpu_temp+" °C</em> · ":""}${p.nvidia===0?"idle, HDMI on":"saving power"}</span></div>`;
+    <div><small>NVIDIA</small><b class="${p.nvidia===0?"":"verde"}">${p.nvidia===0?"Awake":"Asleep"}</b><span>${p.sensores?"<em style=\"font-style:normal\" class=\""+tc(p.gpu_temp)+"\">"+p.gpu_temp+" °C</em> · ":""}${p.nvidia===0?"HDMI on":"saving power"}</span></div>`;
   const f=(a,b)=>`<div class="pcf"><span>${a}</span>${b}</div>`;
   $("pc_det").innerHTML=f("Board temperature",`<b>${p.sensores?p.placa_temp+" °C":"–"}</b>`)
     +f("Graphics card temperature",`<b>${p.gpu_temp?p.gpu_temp+" °C":"off"}</b>`)
