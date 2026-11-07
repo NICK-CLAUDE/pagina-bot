@@ -291,8 +291,8 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
 /* resultados */
 .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
 .cal .dn{font-size:11px;font-weight:600;color:var(--mut);text-align:center;padding-bottom:2px}
-.cal .d{min-height:50px;border-radius:9px;background:var(--card2);border:1px solid var(--ln2);padding:4px 5px;display:flex;flex-direction:column;justify-content:space-between;min-width:0}
-.cal .d .n{font-size:10.5px;color:var(--mut)}.cal .d b{font-size:11px;font-weight:600;text-align:right;white-space:nowrap;overflow:hidden}
+.cal .d{min-height:50px;border-radius:9px;background:var(--card2);border:1px solid var(--ln2);padding:4px 3px;display:flex;flex-direction:column;justify-content:space-between;min-width:0}
+.cal .d .n{font-size:10.5px;color:var(--mut)}.cal .d b{font-size:10px;font-weight:700;text-align:center;white-space:nowrap;letter-spacing:-.3px;margin:0 -2px}
 .cal .d.vac{background:transparent;border-color:transparent}
 .cal .d.hoy{outline:2px solid var(--pri);outline-offset:-2px}
 .cmps{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
@@ -1129,7 +1129,7 @@ async function cargarPC(){
   $("pc_top").innerHTML=`<div><small>Processor</small><b class="${tc(p.cpu_temp)}">${p.cpu_temp} °C</b><span>${p.cpu_uso}% in use</span></div>
     <div><small>Fans</small><b class="${ven>=2500?"amb":""}">${ven==null?"–":ven.toLocaleString("en-US")}</b><span>${ven==null?"sensors off":"rpm · "+(ven<2500?"quiet":ven<4000?"audible":"loud")}</span></div>
     <div><small>Power</small><b>${p.cpu_w==null?"–":p.cpu_w+" W"}</b><span>processor, last min</span></div>
-    <div><small>NVIDIA</small><b class="${p.nvidia===0?"":"verde"}">${p.nvidia===0?"Awake":"Asleep"}</b><span>${p.sensores?"<em style=\"font-style:normal\" class=\""+tc(p.gpu_temp)+"\">"+p.gpu_temp+" °C</em> · ":""}${p.nvidia===0?"HDMI on":"saving power"}</span></div>`;
+    <div><small>NVIDIA</small><b class="${p.nvidia===0?"":"verde"}">${p.nvidia===0?"Awake":"Asleep"}</b><span>${p.sensores?"<em style=\"font-style:normal\" class=\""+tc(p.gpu_temp)+"\">"+p.gpu_temp+" °C</em> · ":""}${p.nvidia===0?"a program is using it":"saving power"}</span></div>`;
   const f=(a,b)=>`<div class="pcf"><span>${a}</span>${b}</div>`;
   $("pc_det").innerHTML=f("Board temperature",`<b>${p.sensores?p.placa_temp+" °C":"–"}</b>`)
     +f("Graphics card temperature",`<b>${p.gpu_temp?p.gpu_temp+" °C":"off"}</b>`)
