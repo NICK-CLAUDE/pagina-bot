@@ -12,12 +12,13 @@ html{background:var(--bg)}
 body{margin:0;font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:calc(120px + env(safe-area-inset-bottom));font-variant-numeric:tabular-nums}
 ::selection{background:var(--acd);color:#fff}
 :focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:8px}
+[hidden]{display:none!important}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 * {scrollbar-width:thin;scrollbar-color:#2c323c transparent}
 
 /* barra superior */
-header{position:sticky;top:0;z-index:5;background:var(--bg);padding:max(14px,env(safe-area-inset-top)) 16px 0;border-bottom:1px solid var(--ln)}
+header{position:relative;z-index:5;background:var(--bg);padding:max(14px,env(safe-area-inset-top)) 16px 0;border-bottom:1px solid var(--ln)}
 .top{display:flex;align-items:center;gap:10px;min-height:48px}
 h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em;margin-right:auto}
 .chip{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px;border-radius:99px;font-size:13px;font-weight:600;background:var(--s2);color:var(--mu)}
@@ -25,6 +26,11 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em;margin-right:au
 .chip.g5{color:var(--ok);background:#52c48f1f}.chip.g2{color:var(--am);background:#f2b35b1f}
 .ib{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:var(--ac)}
 .ib:active{background:var(--s2)}
+#tabs{position:sticky;top:0;display:flex;background:var(--bg);border-bottom:1px solid var(--ln);z-index:4}
+#tabs button{flex:1;height:50px;font-size:15px;font-weight:600;color:var(--mu);border-bottom:3px solid transparent;display:flex;align-items:center;justify-content:center;gap:8px}
+#tabs button.on{color:var(--ac);border-color:var(--ac)}
+#tabs b{min-width:22px;padding:1px 7px;border-radius:99px;background:var(--s2);color:var(--tx);font-size:12px;font-weight:600}
+#tabs b:empty{display:none}#tabs button.on b{background:var(--acd);color:var(--ac)}
 .sum{display:flex;align-items:center;gap:12px;min-height:52px}
 .sum p{margin:0;flex:1;font-size:14px;color:var(--mu)}
 .sum b{color:var(--tx);font-weight:600;font-size:15px;margin-right:6px}
@@ -92,6 +98,7 @@ dialog textarea::placeholder{color:#7d8592}
   </div>
   <div class="sum"><p id="sum">Conectando con la PC…</p><button id="todo" hidden></button></div>
 </header>
+<nav id="tabs"><button data-t="d" class="on">Descargas<b id="nd"></b></button><button data-t="f">Carpeta DESCARGAS<b id="nf"></b></button></nav>
 <div id="off">Sin conexión con la PC. Reintentando…</div>
 <ul id="lista"></ul>
 <div id="vacio" hidden><b>No hay descargas ni archivos</b>Pegá o compartí un link de Mediafire, Drive, Dropbox o uno directo. La PC lo baja a su carpeta Descargas.</div>
@@ -161,29 +168,45 @@ function filaDescarga(d,pos,n){
     acc=B("pausa",k,"pause","Pausar")+B("quitar",k,"x","Cancelar","d")}
   else if(d.status=="waiting"){meta="En cola · "+(pos+1)+".º de "+n+" · espera su turno";acc=B("quitar",k,"x","Quitar de la cola","d")}
   else if(d.status=="paused"){meta="En pausa · "+num(p,0)+" % · "+sz(c)+(t?" de "+sz(t):"");acc=B("seguir",k,"play","Reanudar","p")+B("quitar",k,"x","Cancelar","d")}
+  else if(d.status=="complete"){meta=sz(t)+" · Completada";acc=B("descartar",k,"x","Quitar de la lista")}
   else{meta="Falló: "+(d.errorMessage||"error");acc=B("reintentar",k,"retry","Reintentar","p")+B("descartar",k,"x","Descartar","d")}
-  return fila(d.status,k,ext(nm),nm,meta,acc,d.status=="complete"?100:p)}
+  return fila(d.status,k,ext(nm),nm,meta,acc,d.status=="complete"?0:p)}
 function filaArchivo(f){const k="f:"+f.n,sure=SURE==k;
   return fila("file",k,ext(f.n),f.n,sz(f.s)+" · "+fecha(f.t),
     B("bajar",k,"dl","Bajar al celu","p")+`<button class="d${sure?" sure":""}" data-a="borrar" data-k="${esc(k)}">${I.trash}${sure?"Tocá de nuevo para borrar":"Borrar"}</button>`,0)}
 function fila(st,k,e,nm,meta,acc,p){return `<li class="row st-${st}${SEL==k?" open":""}" data-k="${esc(k)}"><div class="ft">${esc(e)}</div><div class="bd"><div class="nm">${esc(nm)}</div><div class="mt">${esc(meta)}</div>${p?`<div class="bar"><i style="--p:${p}%"></i></div>`:""}</div>${I.chev}<div class="ac">${acc}</div></li>`}
 
+let TAB="d";
 function pintar(){
-  const vivos=ITEMS.filter(d=>d.status!="complete"),ord={active:0,waiting:1,paused:2,error:3};
+  const vivos=ITEMS.filter(d=>["active","waiting","paused","error"].includes(d.status)),ord={active:0,waiting:1,paused:2,error:3};
   vivos.sort((a,b)=>ord[a.status]-ord[b.status]);
-  const cola=vivos.filter(d=>d.status=="waiting"),ocupados=new Set(vivos.map(nom)),arch=FILES.filter(f=>!ocupados.has(f.n));
-  $("lista").innerHTML=vivos.map(d=>filaDescarga(d,cola.indexOf(d),cola.length)).join("")+arch.map(filaArchivo).join("");
-  $("vacio").hidden=!!(vivos.length||arch.length)||!CONECTADO;
-  const act=vivos.filter(d=>d.status=="active").length,pau=vivos.filter(d=>d.status=="paused").length;
-  const v=+GS.downloadSpeed||0;
-  $("sum").innerHTML=!CLAVE?"Falta la clave: abrí el link completo una vez.":act||cola.length||pau?`<b>${act?sz(v)+"/s":"Pausado"}</b>${act} bajando${cola.length?" · "+cola.length+" en cola":""}${pau?" · "+pau+" en pausa":""}`:`<b>Sin descargas activas</b>${arch.length} archivo${arch.length==1?"":"s"} en Descargas`;
-  const b=$("todo");if(act+cola.length){b.hidden=false;b.dataset.a="pausatodo";b.innerHTML=I.pause+"Pausar todo"}else if(pau){b.hidden=false;b.dataset.a="seguirtodo";b.innerHTML=I.play+"Reanudar todo"}else b.hidden=true}
+  const hechos=ITEMS.filter(d=>d.status=="complete").reverse(),cola=vivos.filter(d=>d.status=="waiting");
+  const ocupados=new Set(vivos.map(nom)),arch=FILES.filter(f=>!ocupados.has(f.n));
+  const act=vivos.filter(d=>d.status=="active").length,pau=vivos.filter(d=>d.status=="paused").length,v=+GS.downloadSpeed||0;
+  $("nd").textContent=act||"";$("nf").textContent=arch.length||"";
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t==TAB));
+  const b=$("todo");
+  if(TAB=="d"){
+    $("lista").innerHTML=vivos.map(d=>filaDescarga(d,cola.indexOf(d),cola.length)).join("")+hechos.map(d=>filaDescarga(d,0,0)).join("");
+    $("vacio").innerHTML="<b>No hay descargas</b>Pegá o compartí un link de Mediafire, Drive, Dropbox o uno directo con el botón +. La PC lo baja a su carpeta Descargas.";
+    $("vacio").hidden=!!(vivos.length||hechos.length)||!CONECTADO;
+    $("sum").innerHTML=!CLAVE?"Falta la clave: abrí el link completo una vez.":act||cola.length||pau?`<b>${act?sz(v)+"/s":"Pausado"}</b>${act} bajando${cola.length?" · "+cola.length+" en cola":""}${pau?" · "+pau+" en pausa":""}`:`<b>Sin descargas activas</b>${hechos.length} completada${hechos.length==1?"":"s"}`;
+    if(act+cola.length){b.hidden=false;b.dataset.a="pausatodo";b.innerHTML=I.pause+"Pausar todo"}else if(pau){b.hidden=false;b.dataset.a="seguirtodo";b.innerHTML=I.play+"Reanudar todo"}else if(hechos.length){b.hidden=false;b.dataset.a="limpiar";b.innerHTML=I.x+"Limpiar lista"}else b.hidden=true}
+  else{
+    $("lista").innerHTML=arch.map(filaArchivo).join("");
+    $("vacio").innerHTML="<b>La carpeta está vacía</b>Acá aparecen los archivos que hay en la carpeta Descargas de la PC.";
+    $("vacio").hidden=!!arch.length||!CONECTADO;
+    const tot=arch.reduce((s,f)=>s+f.s,0);
+    $("sum").innerHTML=`<b>${arch.length} archivo${arch.length==1?"":"s"}</b>${arch.length?sz(tot)+" en total en la PC":"Carpeta Descargas de la PC"}`;
+    b.hidden=true}
+}
+$("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;TAB=b.dataset.t;SEL="";SURE="";pintar();window.scrollTo(0,0);if(TAB=="f")ver(1)};
 
 /* ---------- carga de datos ---------- */
-async function ver(){if(document.hidden||!CLAVE)return;
+async function ver(forzar){if(document.hidden||!CLAVE)return;
   try{const r=await pedir("downloads",{headers:H(),cache:"no-store"}),J=await r.json();if(!J.d)throw 0;
     GS=J.d[3][0];ITEMS=[...J.d[0][0],...J.d[1][0],...J.d[2][0]];LS.set("fdm_items",JSON.stringify(ITEMS.slice(0,60)));
-    if(CICLO++%3==0){FILES=await (await pedir("files",{headers:H(),cache:"no-store"})).json();LS.set("fdm_files",JSON.stringify(FILES.slice(0,80)))}
+    if(forzar||TAB=="f"||CICLO++%3==0){FILES=await (await pedir("files",{headers:H(),cache:"no-store"})).json();LS.set("fdm_files",JSON.stringify(FILES.slice(0,80)))}
     CONECTADO=true;$("off").classList.toggle("on",J.now-J.t>30);pintar()}
   catch(e){$("off").classList.add("on");CONECTADO=true;pintar()}}
 
@@ -201,7 +224,7 @@ $("lista").onclick=async e=>{const row=e.target.closest(".row");if(!row)return;c
     else if(a=="borrar"){if(SURE!=k){SURE=k;pintar();return}await api2("files/delete",{n:nombre});SURE="";SEL="";FILES=FILES.filter(f=>f.n!=nombre);pintar();aviso("Archivo borrado de la PC",3000)}
   }catch(x){aviso("No se pudo: "+x.message)}
   ver()};
-$("todo").onclick=async()=>{try{await rpc($("todo").dataset.a=="pausatodo"?"aria2.pauseAll":"aria2.unpauseAll");ver()}catch(e){aviso("No se pudo: "+e.message)}};
+$("todo").onclick=async()=>{try{const a=$("todo").dataset.a;await rpc(a=="pausatodo"?"aria2.pauseAll":a=="seguirtodo"?"aria2.unpauseAll":"aria2.purgeDownloadResult");ver()}catch(e){aviso("No se pudo: "+e.message)}};
 
 /* ---------- agregar varios links ---------- */
 const links=t=>[...new Set((String(t).match(/https?:\/\/[^\s"'<>]+/g)||[]).map(u=>u.replace(/[.,;:)\]]+$/,"")))];
