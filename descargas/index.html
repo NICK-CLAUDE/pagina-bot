@@ -23,7 +23,7 @@ header{position:relative;z-index:5;background:var(--bg);padding:max(14px,env(saf
 h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em;margin-right:auto}
 .chip{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px;border-radius:99px;font-size:13px;font-weight:600;background:var(--s2);color:var(--mu)}
 .chip i{width:7px;height:7px;border-radius:50%;background:currentColor}
-.chip.g5{color:var(--ok);background:#52c48f1f}.chip.g2{color:var(--am);background:#f2b35b1f}
+.chip.old{opacity:.55}.chip.g5{color:var(--ok);background:#52c48f1f}.chip.g2{color:var(--am);background:#f2b35b1f}
 .ib{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:var(--ac)}
 .ib:active{background:var(--s2)}
 #tabs{position:sticky;top:0;display:flex;background:var(--bg);border-bottom:1px solid var(--ln);z-index:4}
@@ -44,9 +44,18 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em;margin-right:au
 .row{position:relative;display:grid;grid-template-columns:44px 1fr 24px;column-gap:14px;align-items:start;padding:14px 16px 16px;border-bottom:1px solid var(--ln);cursor:pointer}
 .row:active{background:var(--s1)}
 .ft{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--s2);color:var(--mu);font-size:11px;font-weight:700;letter-spacing:.04em}
-.st-active .ft{background:var(--acd);color:var(--ac)}
+.st-active .ft{background:var(--acd);color:var(--ac)}.ft svg{width:24px;height:24px}
 .st-error .ft{background:#f06a6322;color:var(--er)}
 .bd{min-width:0}
+.pl{display:inline-flex;align-items:center;height:22px;padding:0 9px;margin-right:8px;border-radius:99px;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;vertical-align:1px;background:var(--s2);color:var(--mu)}
+.pl.a{background:var(--acd);color:var(--ac)}.pl.ok{background:#52c48f22;color:var(--ok)}.pl.q{background:#f2b35b1f;color:var(--am)}.pl.e{background:#f06a6322;color:var(--er)}
+.st-complete .ft{background:#52c48f22;color:var(--ok)}
+.st-waiting .ft{background:#f2b35b1f;color:var(--am)}
+.st-paused .ft{background:var(--s2);color:var(--mu)}
+.st-complete .nm{color:#b9c0cb;font-weight:500}
+.st-waiting{background:linear-gradient(90deg,#f2b35b0a,transparent 60%)}
+.st-active{background:linear-gradient(90deg,#55bff512,transparent 70%)}
+.mt2{margin-top:6px;font-size:13px;color:var(--ac);font-weight:600}
 .nm{font-size:15.5px;font-weight:500;line-height:1.35;word-break:break-word}
 .mt{margin-top:3px;font-size:13px;color:var(--mu)}
 .st-error .mt{color:var(--er)}
@@ -160,21 +169,25 @@ const B=(a,k,ic,txt,cls="")=>`<button class="${cls}" data-a="${a}" data-k="${esc
 let ITEMS=[],FILES=[],GS={},SEL="",SURE="",CICLO=0,CONECTADO=false;
 try{ITEMS=JSON.parse(LS.get("fdm_items")||"[]");FILES=JSON.parse(LS.get("fdm_files")||"[]")}catch(e){}
 
+const IS={dl:'<svg viewBox="0 0 24 24"><path d="M12 5v12M7 12l5 5 5-5"/></svg>',ok:'<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>',
+clk:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',pau:'<svg viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></svg>',err:'<svg viewBox="0 0 24 24"><path d="M12 6v8M12 18v.01"/></svg>'};
+const pill=(c,t)=>`<span class="pl ${c}">${t}</span>`;
 function filaDescarga(d,pos,n){
   const t=+d.totalLength,c=+d.completedLength,s=+d.downloadSpeed,p=t?c/t*100:0,k="g:"+d.gid,nm=nom(d);
-  let meta,acc;
-  if(d.status=="active"){const eta=s>0&&t?Math.round((t-c)/s):0;
-    meta=num(p,0)+" % · "+(t?num(c/1e9,2)+" de "+sz(t):sz(c))+" · "+sz(s)+"/s"+(eta?" · faltan "+dur(eta):"");
+  let box,meta,acc,extra="",bar=p;
+  if(d.status=="active"){const eta=s>0&&t&&s>2e5?Math.round((t-c)/s):0;
+    box=IS.dl;meta=pill("a","Bajando")+(c?num(p,0)+" % · "+num(c/1e9,2)+" de "+sz(t):"Iniciando…");
+    extra=sz(s)+"/s"+(eta?" · faltan "+dur(eta):"");
     acc=B("pausa",k,"pause","Pausar")+B("quitar",k,"x","Cancelar","d")}
-  else if(d.status=="waiting"){meta="En cola · "+(pos+1)+".º de "+n+" · espera su turno";acc=B("quitar",k,"x","Quitar de la cola","d")}
-  else if(d.status=="paused"){meta="En pausa · "+num(p,0)+" % · "+sz(c)+(t?" de "+sz(t):"");acc=B("seguir",k,"play","Reanudar","p")+B("quitar",k,"x","Cancelar","d")}
-  else if(d.status=="complete"){meta=sz(t)+" · Completada";acc=B("descartar",k,"x","Quitar de la lista")}
-  else{meta="Falló: "+(d.errorMessage||"error");acc=B("reintentar",k,"retry","Reintentar","p")+B("descartar",k,"x","Descartar","d")}
-  return fila(d.status,k,ext(nm),nm,meta,acc,d.status=="complete"?0:p)}
+  else if(d.status=="waiting"){box=IS.clk;meta=pill("q","En cola "+(pos+1)+"/"+n)+"Espera su turno";bar=0;acc=B("quitar",k,"x","Quitar de la cola","d")}
+  else if(d.status=="paused"){box=IS.pau;meta=pill("","En pausa")+num(p,0)+" % · "+sz(c)+(t?" de "+sz(t):"");acc=B("seguir",k,"play","Reanudar","p")+B("quitar",k,"x","Cancelar","d")}
+  else if(d.status=="complete"){box=IS.ok;meta=pill("ok","Completada")+sz(t);bar=0;acc=B("descartar",k,"x","Quitar de la lista")}
+  else{box=IS.err;meta=pill("e","Falló")+esc(d.errorMessage||"error");bar=0;acc=B("reintentar",k,"retry","Reintentar","p")+B("descartar",k,"x","Descartar","d")}
+  return fila(d.status,k,box,nm,meta,acc,bar,extra)}
 function filaArchivo(f){const k="f:"+f.n,sure=SURE==k;
-  return fila("file",k,ext(f.n),f.n,sz(f.s)+" · "+fecha(f.t),
-    B("bajar",k,"dl","Bajar al celu","p")+`<button class="d${sure?" sure":""}" data-a="borrar" data-k="${esc(k)}">${I.trash}${sure?"Tocá de nuevo para borrar":"Borrar"}</button>`,0)}
-function fila(st,k,e,nm,meta,acc,p){return `<li class="row st-${st}${SEL==k?" open":""}" data-k="${esc(k)}"><div class="ft">${esc(e)}</div><div class="bd"><div class="nm">${esc(nm)}</div><div class="mt">${esc(meta)}</div>${p?`<div class="bar"><i style="--p:${p}%"></i></div>`:""}</div>${I.chev}<div class="ac">${acc}</div></li>`}
+  return fila("file",k,esc(ext(f.n)),f.n,esc(sz(f.s)+" · "+fecha(f.t)),
+    B("bajar",k,"dl","Bajar al celu","p")+`<button class="d${sure?" sure":""}" data-a="borrar" data-k="${esc(k)}">${I.trash}${sure?"Tocá de nuevo para borrar":"Borrar"}</button>`,0,"")}
+function fila(st,k,box,nm,meta,acc,p,extra){return `<li class="row st-${st}${SEL==k?" open":""}" data-k="${esc(k)}"><div class="ft">${box}</div><div class="bd"><div class="nm">${esc(nm)}</div><div class="mt">${meta}</div>${p?`<div class="bar"><i style="--p:${p}%"></i></div>`:""}${extra?`<div class="mt2">${esc(extra)}</div>`:""}</div>${I.chev}<div class="ac">${acc}</div></li>`}
 
 let TAB="d";
 function pintar(){
@@ -207,8 +220,8 @@ async function ver(forzar){if(document.hidden||!CLAVE)return;
   try{const r=await pedir("downloads",{headers:H(),cache:"no-store"}),J=await r.json();if(!J.d)throw 0;
     GS=J.d[3][0];ITEMS=[...J.d[0][0],...J.d[1][0],...J.d[2][0]];LS.set("fdm_items",JSON.stringify(ITEMS.slice(0,60)));
     if(forzar||TAB=="f"||CICLO++%3==0){FILES=await (await pedir("files",{headers:H(),cache:"no-store"})).json();LS.set("fdm_files",JSON.stringify(FILES.slice(0,80)))}
-    CONECTADO=true;$("off").classList.toggle("on",J.now-J.t>30);pintar()}
-  catch(e){$("off").classList.add("on");CONECTADO=true;pintar()}}
+    CONECTADO=true;const ed=J.now-J.t;$("off").textContent=ed>30?"Datos de hace "+Math.round(ed)+" s: la PC está ocupada descargando":"";$("off").classList.toggle("on",ed>30);pintar()}
+  catch(e){$("off").textContent="Sin conexión con la PC. Reintentando…";$("off").classList.add("on");CONECTADO=true;pintar()}}
 
 /* ---------- acciones ---------- */
 function aviso(t,ms=5000){const e=$("toast");e.textContent=t;e.classList.add("on");clearTimeout(aviso.t);if(ms)aviso.t=setTimeout(()=>e.classList.remove("on"),ms)}
@@ -245,8 +258,10 @@ $("go").onclick=()=>{const t=$("u").value;$("u").value="";$("d").close();bajarVa
 
 /* ---------- WiFi de la PC ---------- */
 let SW=0;
-async function banda(){if(document.hidden||!CLAVE)return;try{const a=(await (await pedir("wifi",{headers:H(),cache:"no-store"})).json()).actual||{},b=$("wb");
-  if(!a.ssid){b.className="chip";b.lastChild.textContent="Sin WiFi"}else{const g5=/^[56]/.test(a.banda||"");b.className="chip "+(g5?"g5":"g2");b.lastChild.textContent=(g5?"5 GHz":a.banda||"?")+" · "+a.ssid}b.hidden=false}catch(e){}}
+function chipBanda(a,viejo){const b=$("wb");if(!a||!a.ssid){b.className="chip"+(viejo?" old":"");b.lastChild.textContent="Sin WiFi";b.hidden=false;return}
+  const g5=/^[56]/.test(a.banda||"");b.className="chip "+(g5?"g5":"g2")+(viejo?" old":"");b.lastChild.textContent=(g5?"5 GHz":a.banda||"?")+" · "+a.ssid;b.hidden=false}
+async function banda(){if(document.hidden||!CLAVE)return;try{const a=(await (await pedir("wifi",{headers:H(),cache:"no-store"})).json()).actual||{};LS.set("fdm_banda",JSON.stringify(a));chipBanda(a,false)}catch(e){try{const a=JSON.parse(LS.get("fdm_banda"));if(a)chipBanda(a,true)}catch(x){}}}
+try{const a=JSON.parse(LS.get("fdm_banda"));if(a)chipBanda(a,true)}catch(e){}
 async function wifi(){try{const j=await (await pedir("wifi",{headers:H(),cache:"no-store"})).json(),a=j.actual||{};
   $("wi").textContent=a.ssid?"Conectada a "+a.ssid+" · "+(a.banda||"?")+" · señal "+(a.senal||"?"):"Sin WiFi";
   $("wl").innerHTML=j.redes.map(n=>`<div class="rd ${n==a.ssid?"on":""}"><div><b>${esc(n)}</b>${/5\s*g/i.test(n)?"<small>5 GHz · más rápida, menos alcance</small>":""}</div>${n==a.ssid?"<small>actual</small>":`<button data-n="${esc(n)}">Conectar</button>`}</div>`).join("")}
