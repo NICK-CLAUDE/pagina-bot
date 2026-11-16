@@ -1,50 +1,124 @@
-<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FDM</title><link rel="manifest" href="fdm.webmanifest"><meta name="theme-color" content="#1a1a1e">
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FDM</title>
+<link rel="manifest" href="fdm.webmanifest">
+<meta name="theme-color" content="#0f1115">
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;font:16px system-ui,sans-serif;background:#101013;color:#ececf1;padding-bottom:96px}
-header{position:sticky;top:0;background:#17171b;padding:16px 16px 0;z-index:2;box-shadow:0 2px 12px #0008}
-h1{margin:0 0 10px;font-size:22px;display:flex;align-items:baseline;justify-content:space-between}
-.lg{font-weight:800;letter-spacing:.5px;color:#5bc0f8}#gs{font-size:13px;font-weight:400;color:#8d8d99}
-#tabs{display:flex}#tabs button{flex:1;background:none;border:0;color:#8d8d99;padding:12px 0;font-size:15px;border-bottom:3px solid transparent;transition:.2s}
-#tabs button.on{color:#5bc0f8;border-color:#5bc0f8;font-weight:600}
-#lista{padding:10px 12px}
-.it{background:#1a1a1f;border-radius:14px;padding:14px;margin-bottom:10px}.top{display:flex;align-items:center;gap:12px}
-.nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
-.ic{width:38px;height:38px;border-radius:50%;border:0;display:grid;place-items:center;background:#5bc0f822;color:#5bc0f8;flex:none;padding:0}
-.ok .ic{background:#4cc38a22;color:#4cc38a}.er .ic{background:#ef535022;color:#ef5350}.pa .ic{background:#ffffff14;color:#8d8d99}
-.ic svg,.x svg,nav svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
-.x{background:none;border:0;color:#6d6d79;padding:8px}
-.bar{height:6px;background:#2a2a31;border-radius:3px;margin:12px 0 8px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#3aa6e6,#5bc0f8);border-radius:3px;transition:width .6s}
-.ok .bar i{background:#4cc38a}.pa .bar i{background:#6d6d79}.er .bar i{background:#ef5350}
-.in{color:#8d8d99;font-size:13px}
-nav{position:fixed;bottom:0;left:0;right:0;background:#17171bf2;backdrop-filter:blur(10px);display:flex;justify-content:space-around;align-items:center;padding:10px 0 14px;border-top:1px solid #26262c}
-nav button{background:none;border:0;color:#5bc0f8;padding:10px 18px}
-nav .add{background:#5bc0f8;color:#101013;border-radius:50%;width:58px;height:58px;padding:0;margin-top:-26px;box-shadow:0 4px 16px #5bc0f855}nav .add svg{width:28px;height:28px}
-#msg{padding:48px 24px;color:#8d8d99;text-align:center}
-dialog{background:#1a1a1f;color:#ececf1;border:0;border-radius:18px;width:92%;max-width:440px;padding:20px}dialog::backdrop{background:#000a}
-dialog input,dialog textarea{width:100%;padding:14px;background:#101013;color:#ececf1;border:1px solid #333;border-radius:10px;font-size:16px;margin-top:12px}
-dialog button{margin-top:12px;padding:14px;width:100%;border:0;border-radius:10px;background:#5bc0f8;color:#101013;font-size:16px;font-weight:600}
-#wf{background:#5bc0f822;border:0;color:#5bc0f8;border-radius:50%;width:38px;height:38px;padding:0;display:grid;place-items:center}#wf svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
-.rd{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#101013;border-radius:10px;padding:12px;margin-top:8px}.rd b{font-weight:600}.rd small{display:block;color:#8d8d99}.rd button{margin:0;width:auto;padding:8px 14px;font-size:14px}.rd.on{outline:1px solid #5bc0f8}
-.wb{font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;margin-left:8px;align-self:center;background:#ffffff14;color:#8d8d99}.wb.g5{background:#4cc38a22;color:#4cc38a}.wb.g2{background:#ffb74d22;color:#ffb74d}
-.nm{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;word-break:break-word;font-size:15px;line-height:1.35}
-#chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:-2px 0 10px}#chips .wb{margin:0}
-#gs:not(:empty){background:#5bc0f822;color:#5bc0f8;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600}
-.bd{display:inline-block;min-width:20px;padding:1px 6px;margin-left:6px;border-radius:99px;background:#5bc0f8;color:#101013;font-size:12px}
-.bd.g{background:#4cc38a}
-.sh{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8d8d99;margin:14px 4px 8px}.sh:first-child{margin-top:4px}
-.sh b{background:#ffffff14;border-radius:99px;padding:1px 8px;color:#ececf1;letter-spacing:0}
-.it{box-shadow:0 1px 0 #ffffff08 inset}.it .in{margin-top:2px}
+:root{color-scheme:dark;--bg:#0f1115;--s1:#161a20;--s2:#1e232b;--ln:#252a33;--tx:#e8eaee;--mu:#9aa3b0;--ac:#55bff5;--acd:#17384b;--ok:#52c48f;--am:#f2b35b;--er:#f06a63}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{margin:0;font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:calc(120px + env(safe-area-inset-bottom));font-variant-numeric:tabular-nums}
+::selection{background:var(--acd);color:#fff}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:8px}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+* {scrollbar-width:thin;scrollbar-color:#2c323c transparent}
+
+/* barra superior */
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:max(14px,env(safe-area-inset-top)) 16px 0;border-bottom:1px solid var(--ln)}
+.top{display:flex;align-items:center;gap:10px;min-height:48px}
+h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em;margin-right:auto}
+.chip{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px;border-radius:99px;font-size:13px;font-weight:600;background:var(--s2);color:var(--mu)}
+.chip i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.chip.g5{color:var(--ok);background:#52c48f1f}.chip.g2{color:var(--am);background:#f2b35b1f}
+.ib{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:var(--ac)}
+.ib:active{background:var(--s2)}
+.sum{display:flex;align-items:center;gap:12px;min-height:52px}
+.sum p{margin:0;flex:1;font-size:14px;color:var(--mu)}
+.sum b{color:var(--tx);font-weight:600;font-size:15px;margin-right:6px}
+.sum button{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:99px;background:var(--s2);font-size:14px;font-weight:600;color:var(--ac)}
+.sum button svg{width:18px;height:18px}
+#off{display:none;padding:10px 16px;background:#f2b35b1a;color:var(--am);font-size:14px}
+#off.on{display:block}
+
+/* lista única */
+#lista{list-style:none;margin:0;padding:0}
+.row{position:relative;display:grid;grid-template-columns:44px 1fr 24px;column-gap:14px;align-items:start;padding:14px 16px 16px;border-bottom:1px solid var(--ln);cursor:pointer}
+.row:active{background:var(--s1)}
+.ft{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--s2);color:var(--mu);font-size:11px;font-weight:700;letter-spacing:.04em}
+.st-active .ft{background:var(--acd);color:var(--ac)}
+.st-error .ft{background:#f06a6322;color:var(--er)}
+.bd{min-width:0}
+.nm{font-size:15.5px;font-weight:500;line-height:1.35;word-break:break-word}
+.mt{margin-top:3px;font-size:13px;color:var(--mu)}
+.st-error .mt{color:var(--er)}
+.st-waiting .nm,.st-paused .nm{color:#c4c9d2}
+.chev{margin-top:10px;color:#5b6370;transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.row.open .chev{transform:rotate(90deg)}
+.bar{height:4px;border-radius:2px;background:var(--s2);margin-top:10px;overflow:hidden}
+.bar i{display:block;height:100%;width:var(--p,0%);background:var(--ac);border-radius:2px;transition:width .6s linear}
+.st-paused .bar i{background:#6c7482}
+.ac{grid-column:1/-1;display:none;gap:8px;margin-top:14px}
+.row.open .ac{display:flex}
+.ac button{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:12px;background:var(--s2);font-size:14.5px;font-weight:600}
+.ac button.p{background:var(--ac);color:#0b1217}
+.ac button.d{color:var(--er)}
+.ac button.d.sure{background:var(--er);color:#190b0a}
+.ac svg{width:19px;height:19px}
+
+#vacio{padding:56px 28px;text-align:center;color:var(--mu);font-size:15px}
+#vacio b{display:block;color:var(--tx);font-size:17px;margin-bottom:8px}
+
+/* botón agregar + aviso */
+.fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));width:60px;height:60px;border-radius:20px;background:var(--ac);color:#0b1217;display:grid;place-items:center;box-shadow:0 6px 18px #0009,0 1px 3px #0006}
+.fab svg{width:28px;height:28px;stroke-width:2.4}
+.fab:active{transform:scale(.96)}
+#toast{position:fixed;left:16px;right:92px;bottom:calc(24px + env(safe-area-inset-bottom));background:#262c36;border-radius:12px;padding:13px 14px;font-size:14px;line-height:1.35;display:none;box-shadow:0 6px 18px #0009}
+#toast.on{display:block}
+
+/* diálogos */
+dialog{background:var(--s1);color:var(--tx);border:1px solid var(--ln);border-radius:18px;width:calc(100% - 32px);max-width:460px;padding:20px}
+dialog::backdrop{background:#000b}
+dialog h2{margin:0 0 12px;font-size:18px}
+dialog textarea{width:100%;min-height:150px;padding:14px;border-radius:12px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,sans-serif;resize:vertical}
+dialog textarea::placeholder{color:#7d8592}
+.bt{width:100%;height:50px;margin-top:12px;border-radius:12px;background:var(--ac);color:#0b1217;font-weight:700;font-size:16px}
+.bt.s{background:var(--s2);color:var(--tx);font-weight:600}
+.rd{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:var(--bg);margin-top:8px}
+.rd div{flex:1;min-width:0}.rd b{font-weight:600}.rd small{display:block;color:var(--mu);font-size:13px}
+.rd button{height:40px;padding:0 16px;border-radius:99px;background:var(--s2);font-weight:600;color:var(--ac)}
+.rd.on{outline:1px solid var(--ac)}
+.nota{color:var(--mu);font-size:13px;margin-top:12px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
-<header><h1><span class="lg">FDM</span><button id="wf" title="WiFi de la PC"><svg viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20v.01"/></svg></button></h1><div id="chips"><span id="wb" class="wb" hidden></span><small id="gs"></small></div><div id="tabs"><button data-f="todo" class="on">Todo</button><button data-f="bajando">Bajando</button><button data-f="listas">Completadas</button><button data-f="archivos">Files</button></div></header>
-<div id="lista"></div><div id="msg"></div>
-<nav><button id="bi" title="Iniciar todo"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button><button id="bp" title="Pausar todo"><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button><button class="add" id="ba"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><button id="bl" title="Borrar completadas"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></nav>
-<dialog id="w"><b>WiFi de la PC</b><div id="wi" class="in" style="margin:8px 0">Cargando…</div><div id="wl"></div><div class="in" style="margin-top:12px">Al cambiar, la conexión se corta unos segundos y las descargas siguen solas. Si la red nueva no tiene internet, la PC vuelve a la anterior en 40 s.</div><button id="wc" style="background:#2a2a31;color:#ececf1">Cerrar</button></dialog>
-<dialog id="d"><b>Agregar descarga</b><br><br><textarea id="u" rows="6" placeholder="Pegá uno o varios links (aunque tengan texto en el medio)" autocomplete="off" style="width:100%;padding:14px;background:#101013;color:#ececf1;border:1px solid #333;border-radius:10px;font-size:15px;margin-top:12px;font-family:inherit"></textarea><button id="go">Bajar en la PC</button></dialog>
+
+<header>
+  <div class="top">
+    <h1>FDM</h1>
+    <span id="wb" class="chip" hidden><i></i><span></span></span>
+    <button class="ib" id="wf" aria-label="WiFi de la PC"><svg viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20v.01"/></svg></button>
+  </div>
+  <div class="sum"><p id="sum">Conectando con la PC…</p><button id="todo" hidden></button></div>
+</header>
+<div id="off">Sin conexión con la PC. Reintentando…</div>
+<ul id="lista"></ul>
+<div id="vacio" hidden><b>No hay descargas ni archivos</b>Pegá o compartí un link de Mediafire, Drive, Dropbox o uno directo. La PC lo baja a su carpeta Descargas.</div>
+<button class="fab" id="ba" aria-label="Agregar descarga"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+<div id="toast" role="status"></div>
+
+<dialog id="d">
+  <h2>Agregar descargas</h2>
+  <textarea id="u" placeholder="Pegá uno o varios links. Puede haber texto en el medio." autocomplete="off"></textarea>
+  <button class="bt" id="go">Bajar en la PC</button>
+  <button class="bt s" id="gc">Cancelar</button>
+</dialog>
+<dialog id="w">
+  <h2>WiFi de la PC</h2>
+  <div id="wi" class="nota" style="margin:0 0 4px">Cargando…</div>
+  <div id="wl"></div>
+  <p class="nota">Al cambiar, la conexión se corta unos segundos y las descargas siguen solas. Si la red nueva no tiene internet, la PC vuelve a la anterior en 40 s.</p>
+  <button class="bt s" id="wc">Cerrar</button>
+</dialog>
+
 <script>
-const $=id=>document.getElementById(id),LS={get:k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
-let BASE=location.hostname.endsWith("github.io")?LS.get("panel_base"):location.origin+"/",CLAVE=LS.get("panel_clave"),F="todo",ITEMS=[];
+const $=id=>document.getElementById(id);
+const LS={get:k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+let BASE=location.hostname.endsWith("github.io")?LS.get("panel_base"):location.origin+"/",CLAVE=LS.get("panel_clave");
 {const m=location.hash.match(/k=([\w-]+)/);if(m){CLAVE=m[1];LS.set("panel_clave",CLAVE);history.replaceState(null,"",location.pathname+location.search)}}
+
+/* ---------- conexión con la PC ---------- */
 let ULTT=0;
 async function tunel(){if(Date.now()-ULTT<20000)return false;ULTT=Date.now();
   const f=[async()=>atob((await (await fetch("https://api.github.com/repos/NICK-CLAUDE/pagina-bot/contents/panel/tunel.txt",{cache:"no-store"})).json()).content),
@@ -52,75 +126,116 @@ async function tunel(){if(Date.now()-ULTT<20000)return false;ULTT=Date.now();
   for(const g of f){try{const u=(await g()).trim()+"/";if(/^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/$/.test(u)&&u!==BASE){BASE=u;LS.set("panel_base",u);return true}}catch(e){}}return false}
 let LARGO=0;
 const ftm=(u,o)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),LARGO?90000:12000);return fetch(u,{...o,signal:c.signal}).finally(()=>clearTimeout(t))};
-async function rpc(method,params=[]){
-  const op={method:"POST",headers:{"X-Clave":CLAVE},body:JSON.stringify({jsonrpc:"2.0",id:1,method,params:method=="system.multicall"?params:["token:"+CLAVE,...params]})};
-  let r;try{r=await ftm(BASE+"rpc",op)}catch(e){if(await tunel())r=await ftm(BASE+"rpc",op);else throw e}
-  if(!r.ok)throw new Error(r.status);const j=await r.json();if(j.error)throw new Error(j.error.message);return j.result}
-const K=["gid","status","totalLength","completedLength","downloadSpeed","files","errorMessage"];
-const sz=b=>b>=1e9?(b/1e9).toFixed(2)+" GB":b>=1e6?(b/1e6).toFixed(1)+" MB":(b/1e3).toFixed(0)+" KB";
+async function pedir(ruta,op){let r;try{r=await ftm(BASE+ruta,op)}catch(e){if(await tunel())r=await ftm(BASE+ruta,op);else throw e}if(!r.ok)throw new Error(r.status);return r}
+const H=()=>({"X-Clave":CLAVE});
+const api2=async(ruta,cuerpo)=>(await pedir(ruta,{method:"POST",headers:H(),body:JSON.stringify(cuerpo)})).json();
+async function rpc(method,params=[]){const j=await (await pedir("rpc",{method:"POST",headers:H(),body:JSON.stringify({jsonrpc:"2.0",id:1,method,params:["token:"+CLAVE,...params]})})).json();if(j.error)throw new Error(j.error.message);return j.result}
+
+/* ---------- formato ---------- */
+const num=(n,d)=>n.toFixed(d).replace(".",",");
+const sz=b=>b>=1e9?num(b/1e9,2)+" GB":b>=1e6?num(b/1e6,1)+" MB":Math.max(1,Math.round(b/1e3))+" KB";
+const dur=s=>s>=3600?Math.floor(s/3600)+" h "+Math.floor(s%3600/60)+" min":Math.max(1,Math.round(s/60))+" min";
+const hhmm=d=>String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+function fecha(t){const d=new Date(t*1000),h=new Date(),a=new Date(h.getFullYear(),h.getMonth(),h.getDate());
+  if(d>=a)return "hoy "+hhmm(d);if(d>=new Date(a-864e5))return "ayer "+hhmm(d);return d.getDate()+" "+["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"][d.getMonth()]}
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
 const nom=d=>{const f=d.files&&d.files[0],ruta=f&&f.path,u=f&&f.uris&&f.uris[0]&&f.uris[0].uri;let p=(ruta||u||d.gid).split(/[\/]/).pop().split("?")[0];if(!ruta)p=p.replace(/\+/g," ");try{p=decodeURIComponent(p)}catch(e){}return p||d.gid};
-let FILES=[];
-const fecha=t=>new Date(t*1000).toLocaleString("es-AR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
-function pintarArchivos(){
-  $("lista").innerHTML=FILES.map((f,i)=>`<div class="it"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v4h4"/></svg></div><div class="nm" style="white-space:normal;word-break:break-all">${f.n.replace(/</g,"&lt;")}</div><button class="x" data-a="dl" data-i="${i}" style="color:#5bc0f8" title="Download to phone"><svg viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg></button><button class="x" data-a="rm" data-i="${i}"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="in" style="margin-top:6px">${sz(f.s)} • ${fecha(f.t)}</div></div>`).join("");
-  $("msg").textContent=FILES.length?"PC folder: Downloads":"The folder is empty"}
-const IC={pause:`<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>`,play:`<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>`,ok:`<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>`,err:`<svg viewBox="0 0 24 24"><path d="M12 6v8M12 18v.01"/></svg>`,x:`<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>`};
-function tarjeta(d,i,n){const t=+d.totalLength,c=+d.completedLength,s=+d.downloadSpeed,p=t?c/t*100:0,cls=d.status=="complete"?"ok":d.status=="error"?"er":d.status=="paused"?"pa":"";
-  const eta=s>0&&t?Math.round((t-c)/s):0,et=eta?(eta>=3600?Math.floor(eta/3600)+" h ":"")+Math.floor(eta%3600/60)+" min":"";
-  const info=d.status=="complete"?sz(t)+" · Completada":d.status=="error"?"Error: "+(d.errorMessage||""):d.status=="paused"?(t?p.toFixed(0)+" % · "+sz(c)+" / "+sz(t)+" · ":"")+"En pausa":d.status=="waiting"?"Espera su turno · puesto "+(i+1)+" de "+n+" (se bajan 2 a la vez)":p.toFixed(0)+" % · "+sz(c)+(t?" / "+sz(t):"")+" · "+sz(s)+"/s"+(et?" · faltan "+et:"");
-  const ic=cls=="ok"?IC.ok:cls=="er"?IC.err:cls=="pa"?IC.play:IC.pause;
-  return `<div class="it ${cls}"><div class="top"><button class="ic" data-a="t" data-g="${d.gid}">${ic}</button><div class="nm">${nom(d).replace(/</g,"&lt;")}</div><button class="x" data-a="x" data-g="${d.gid}">${IC.x}</button></div><div class="bar"><i style="width:${p}%"></i></div><div class="in">${info}</div></div>`}
-function contar(a,c,k){const tb=n=>document.querySelector('#tabs [data-f="'+n+'"]');
-  tb("bajando").innerHTML="Bajando"+(a?`<b class="bd">${a}</b>`:"");tb("listas").innerHTML="Completadas"+(k?`<b class="bd g">${k}</b>`:"")}
-function pintar(){if(F=="archivos")return pintarArchivos();
-  const L=s=>ITEMS.filter(d=>d.status==s),act=L("active"),col=L("waiting"),pau=L("paused"),err=L("error"),ok=L("complete");
-  contar(act.length,col.length+pau.length,ok.length);
-  const orden=F=="listas"?ok:[...act,...col,...pau,...err,...(F=="todo"?ok:[])];
-  const html=orden.map(d=>tarjeta(d,col.indexOf(d),col.length)).join("");
-  $("lista").innerHTML=html;$("msg").textContent=html?"":"No hay descargas";
-}
-async function api2(ruta,cuerpo){const op={method:"POST",headers:{"X-Clave":CLAVE},body:JSON.stringify(cuerpo)};let r;try{r=await ftm(BASE+ruta,op)}catch(e){if(await tunel())r=await ftm(BASE+ruta,op);else throw e}if(!r.ok)throw new Error(r.status);return r.json()}
-let OCUP=0;
-async function ver(){if(document.hidden||OCUP)return;OCUP=1;try{await ver2()}finally{OCUP=0}}
-const caido=on=>{$("gs").textContent=on?"reconectando…":$("gs").textContent};
-async function ver2(){
-  if(F=="archivos"){try{const r=await ftm(BASE+"files",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!r.ok)throw 0;FILES=await r.json();pintarArchivos()}catch(e){caido(1)}return}
-  if(!CLAVE){$("msg").textContent="Falta la clave: abrí el panel una vez con su link (el que tiene #k=...).";return}
-  try{const rr=await ftm(BASE+"downloads",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!rr.ok)throw 0;const J=await rr.json();if(!J.d)throw 0;const r=J.d,edad=J.now-J.t;const g=r[3][0];$("gs").textContent=edad>20?"datos de hace "+Math.round(edad)+" s":+g.numActive?"↓ "+sz(+g.downloadSpeed)+"/s · "+g.numActive+" bajando"+(+g.numWaiting?" · "+g.numWaiting+" en cola":""):"";
-    ITEMS=[...r[0][0],...r[1][0],...r[2][0].reverse()];LS.set("fdm_cache",JSON.stringify(ITEMS.slice(0,40)));pintar()}
-  catch(e){caido(1);if(!ITEMS.length)$("msg").textContent="No llega a la PC (¿está prendida?). Reintentando…"}}
+const ext=n=>{const m=n.match(/\.([A-Za-z0-9]{1,4})$/);return m?m[1].toUpperCase():"ARCH"};
+
+/* ---------- íconos ---------- */
+const I={pause:'<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>',play:'<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>',
+x:'<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',dl:'<svg viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>',
+trash:'<svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
+retry:'<svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 3 6.2M4 19v-5h5"/></svg>',chev:'<svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>'};
+const B=(a,k,ic,txt,cls="")=>`<button class="${cls}" data-a="${a}" data-k="${esc(k)}">${I[ic]}${txt}</button>`;
+
+/* ---------- estado ---------- */
+let ITEMS=[],FILES=[],GS={},SEL="",SURE="",CICLO=0,CONECTADO=false;
+try{ITEMS=JSON.parse(LS.get("fdm_items")||"[]");FILES=JSON.parse(LS.get("fdm_files")||"[]")}catch(e){}
+
+function filaDescarga(d,pos,n){
+  const t=+d.totalLength,c=+d.completedLength,s=+d.downloadSpeed,p=t?c/t*100:0,k="g:"+d.gid,nm=nom(d);
+  let meta,acc;
+  if(d.status=="active"){const eta=s>0&&t?Math.round((t-c)/s):0;
+    meta=num(p,0)+" % · "+(t?num(c/1e9,2)+" de "+sz(t):sz(c))+" · "+sz(s)+"/s"+(eta?" · faltan "+dur(eta):"");
+    acc=B("pausa",k,"pause","Pausar")+B("quitar",k,"x","Cancelar","d")}
+  else if(d.status=="waiting"){meta="En cola · "+(pos+1)+".º de "+n+" · espera su turno";acc=B("quitar",k,"x","Quitar de la cola","d")}
+  else if(d.status=="paused"){meta="En pausa · "+num(p,0)+" % · "+sz(c)+(t?" de "+sz(t):"");acc=B("seguir",k,"play","Reanudar","p")+B("quitar",k,"x","Cancelar","d")}
+  else{meta="Falló: "+(d.errorMessage||"error");acc=B("reintentar",k,"retry","Reintentar","p")+B("descartar",k,"x","Descartar","d")}
+  return fila(d.status,k,ext(nm),nm,meta,acc,d.status=="complete"?100:p)}
+function filaArchivo(f){const k="f:"+f.n,sure=SURE==k;
+  return fila("file",k,ext(f.n),f.n,sz(f.s)+" · "+fecha(f.t),
+    B("bajar",k,"dl","Bajar al celu","p")+`<button class="d${sure?" sure":""}" data-a="borrar" data-k="${esc(k)}">${I.trash}${sure?"Tocá de nuevo para borrar":"Borrar"}</button>`,0)}
+function fila(st,k,e,nm,meta,acc,p){return `<li class="row st-${st}${SEL==k?" open":""}" data-k="${esc(k)}"><div class="ft">${esc(e)}</div><div class="bd"><div class="nm">${esc(nm)}</div><div class="mt">${esc(meta)}</div>${p?`<div class="bar"><i style="--p:${p}%"></i></div>`:""}</div>${I.chev}<div class="ac">${acc}</div></li>`}
+
+function pintar(){
+  const vivos=ITEMS.filter(d=>d.status!="complete"),ord={active:0,waiting:1,paused:2,error:3};
+  vivos.sort((a,b)=>ord[a.status]-ord[b.status]);
+  const cola=vivos.filter(d=>d.status=="waiting"),ocupados=new Set(vivos.map(nom)),arch=FILES.filter(f=>!ocupados.has(f.n));
+  $("lista").innerHTML=vivos.map(d=>filaDescarga(d,cola.indexOf(d),cola.length)).join("")+arch.map(filaArchivo).join("");
+  $("vacio").hidden=!!(vivos.length||arch.length)||!CONECTADO;
+  const act=vivos.filter(d=>d.status=="active").length,pau=vivos.filter(d=>d.status=="paused").length;
+  const v=+GS.downloadSpeed||0;
+  $("sum").innerHTML=!CLAVE?"Falta la clave: abrí el link completo una vez.":act||cola.length||pau?`<b>${act?sz(v)+"/s":"Pausado"}</b>${act} bajando${cola.length?" · "+cola.length+" en cola":""}${pau?" · "+pau+" en pausa":""}`:`<b>Sin descargas activas</b>${arch.length} archivo${arch.length==1?"":"s"} en Descargas`;
+  const b=$("todo");if(act+cola.length){b.hidden=false;b.dataset.a="pausatodo";b.innerHTML=I.pause+"Pausar todo"}else if(pau){b.hidden=false;b.dataset.a="seguirtodo";b.innerHTML=I.play+"Reanudar todo"}else b.hidden=true}
+
+/* ---------- carga de datos ---------- */
+async function ver(){if(document.hidden||!CLAVE)return;
+  try{const r=await pedir("downloads",{headers:H(),cache:"no-store"}),J=await r.json();if(!J.d)throw 0;
+    GS=J.d[3][0];ITEMS=[...J.d[0][0],...J.d[1][0],...J.d[2][0]];LS.set("fdm_items",JSON.stringify(ITEMS.slice(0,60)));
+    if(CICLO++%3==0){FILES=await (await pedir("files",{headers:H(),cache:"no-store"})).json();LS.set("fdm_files",JSON.stringify(FILES.slice(0,80)))}
+    CONECTADO=true;$("off").classList.toggle("on",J.now-J.t>30);pintar()}
+  catch(e){$("off").classList.add("on");CONECTADO=true;pintar()}}
+
+/* ---------- acciones ---------- */
+function aviso(t,ms=5000){const e=$("toast");e.textContent=t;e.classList.add("on");clearTimeout(aviso.t);if(ms)aviso.t=setTimeout(()=>e.classList.remove("on"),ms)}
+$("lista").onclick=async e=>{const row=e.target.closest(".row");if(!row)return;const b=e.target.closest("button[data-a]"),k=row.dataset.k;
+  if(!b){SEL=SEL==k?"":k;SURE="";pintar();return}
+  const a=b.dataset.a,gid=k.startsWith("g:")?k.slice(2):"",nombre=k.startsWith("f:")?k.slice(2):"",d=ITEMS.find(x=>x.gid==gid);
+  try{
+    if(a=="pausa")await rpc("aria2.pause",[gid]);
+    else if(a=="seguir")await rpc("aria2.unpause",[gid]);
+    else if(a=="quitar"||a=="descartar"){if(d&&["active","waiting","paused"].includes(d.status))await rpc("aria2.forceRemove",[gid]);try{await rpc("aria2.removeDownloadResult",[gid])}catch(x){}SEL=""}
+    else if(a=="reintentar"){const u=d&&d.files[0].uris[0]&&d.files[0].uris[0].uri;if(u){await rpc("aria2.removeDownloadResult",[gid]);await rpc("aria2.addUri",[[u]])}}
+    else if(a=="bajar"){const j=await api2("files/link",{n:nombre});location.href=BASE+j.u}
+    else if(a=="borrar"){if(SURE!=k){SURE=k;pintar();return}await api2("files/delete",{n:nombre});SURE="";SEL="";FILES=FILES.filter(f=>f.n!=nombre);pintar();aviso("Archivo borrado de la PC",3000)}
+  }catch(x){aviso("No se pudo: "+x.message)}
+  ver()};
+$("todo").onclick=async()=>{try{await rpc($("todo").dataset.a=="pausatodo"?"aria2.pauseAll":"aria2.unpauseAll");ver()}catch(e){aviso("No se pudo: "+e.message)}};
+
+/* ---------- agregar varios links ---------- */
 const links=t=>[...new Set((String(t).match(/https?:\/\/[^\s"'<>]+/g)||[]).map(u=>u.replace(/[.,;:)\]]+$/,"")))];
 let OCUPADO=0;
-async function bajarVarios(texto){const L=links(texto);if(!L.length){alert("No encontré ningún link");return}
-  if(OCUPADO){alert("Todavía estoy agregando los anteriores");return}OCUPADO=1;LARGO=1;let ok=0,rep=0;const mal=[];
-  for(let i=0;i<L.length;i++){$("msg").textContent="Agregando "+(i+1)+" de "+L.length+"…";
-    try{const r=await api2("resolver",{url:L[i]});const nm=decodeURIComponent(r.url.split("?")[0].split("/").pop().replace(/\+/g," "));if(ITEMS.some(d=>d.status!="error"&&nom(d)==nm)){rep++;continue}await rpc("aria2.addUri",[[r.url]]);ok++}
-    catch(e){mal.push((L[i].match(/part\d+/i)||[L[i].slice(0,40)])[0]+": "+(String(e.message).startsWith("4")?"no pude sacar el archivo":e.message))}
+async function bajarVarios(texto){const L=links(texto);if(!L.length){aviso("No encontré ningún link");return}
+  if(OCUPADO){aviso("Todavía estoy agregando los anteriores");return}OCUPADO=1;LARGO=1;let ok=0,rep=0;const mal=[];
+  for(let i=0;i<L.length;i++){aviso("Agregando "+(i+1)+" de "+L.length+"…",0);
+    try{const r=await api2("resolver",{url:L[i]});const nm=decodeURIComponent(r.url.split("?")[0].split("/").pop().replace(/\+/g," "));
+      if(ITEMS.some(d=>d.status!="error"&&d.status!="complete"&&nom(d)==nm)||FILES.some(f=>f.n==nm)){rep++;continue}
+      await rpc("aria2.addUri",[[r.url]]);ok++}
+    catch(e){mal.push((L[i].match(/part\d+/i)||[L[i].slice(0,40)])[0]+" ("+(String(e.message).startsWith("4")?"no pude sacar el archivo":e.message)+")")}
     await new Promise(r=>setTimeout(r,1500))}
   LARGO=0;OCUPADO=0;ver();
-  alert(mal.length?"Agregadas "+ok+" de "+L.length+". Fallaron: "+mal.join(" | "):"Listo: "+ok+(ok==1?" descarga agregada":" descargas agregadas")+(rep?" ("+rep+" ya estaban)":""))}
-$("lista").onclick=async e=>{const b=e.target.closest("button");if(!b)return;
-  if(F=="archivos"){const f=FILES[b.dataset.i];if(!f)return;
-    try{if(b.dataset.a=="dl"){const j=await api2("files/link",{n:f.n});location.href=BASE+j.u}
-      else if(confirm("¿Borrar "+f.n+" de la PC? No se puede deshacer.")){await api2("files/delete",{n:f.n});ver()}}catch(e){alert("No se pudo: "+e.message)}return}const d=ITEMS.find(x=>x.gid==b.dataset.g);if(!d)return;
-  try{if(b.dataset.a=="t"){if(d.status=="paused")await rpc("aria2.unpause",[d.gid]);else if(d.status=="active"||d.status=="waiting")await rpc("aria2.pause",[d.gid]);else if(d.status=="error"){const u=d.files[0].uris[0]&&d.files[0].uris[0].uri;if(u){await rpc("aria2.removeDownloadResult",[d.gid]);await bajar(u)}}}
-    else{if(d.status=="active"||d.status=="waiting"||d.status=="paused")await rpc("aria2.forceRemove",[d.gid]);try{await rpc("aria2.removeDownloadResult",[d.gid])}catch(e){}}}catch(e){}ver()};
-$("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;F=b.dataset.f;if(F=="archivos"){FILES=[];$("lista").innerHTML=""}document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x==b));F=="archivos"?ver():pintar()};
-$("bi").onclick=()=>rpc("aria2.unpauseAll").then(ver);$("bp").onclick=()=>rpc("aria2.pauseAll").then(ver);$("bl").onclick=()=>rpc("aria2.purgeDownloadResult").then(ver);
+  aviso((ok?ok+(ok==1?" descarga agregada":" descargas agregadas"):"No se agregó ninguna")+(rep?" · "+rep+" ya estaban":"")+(mal.length?". Fallaron: "+mal.join(", "):""),9000)}
 $("ba").onclick=()=>{$("d").showModal();$("u").focus()};
+$("gc").onclick=()=>$("d").close();
 $("go").onclick=()=>{const t=$("u").value;$("u").value="";$("d").close();bajarVarios(t)};
-async function banda(){if(document.hidden||!BASE||!CLAVE)return;try{const r=await ftm(BASE+"wifi",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!r.ok)throw 0;const a=(await r.json()).actual||{},b=$("wb");
-  if(!a.ssid){b.className="wb";b.textContent="Sin WiFi"}else{const g5=/^5|6/.test(a.banda||"");b.className="wb "+(g5?"g5":"g2");b.textContent=(g5?"5 GHz":a.banda||"?")+" · "+a.ssid}b.hidden=false}catch(e){}}
+
+/* ---------- WiFi de la PC ---------- */
 let SW=0;
-async function wifi(){try{const r=await ftm(BASE+"wifi",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!r.ok)throw 0;const j=await r.json(),a=j.actual||{};
-  $("wi").textContent=a.ssid?"Conectada a: "+a.ssid+" · "+(a.banda||"?")+" · señal "+(a.senal||"?"):"Sin WiFi";
-  $("wl").innerHTML=j.redes.map(n=>`<div class="rd ${n==a.ssid?"on":""}"><div><b>${n.replace(/</g,"&lt;")}</b>${/5\s*g/i.test(n)?"<small>5 GHz · más rápida, menos alcance</small>":""}</div>${n==a.ssid?"<small>actual</small>":`<button data-n="${n.replace(/"/g,"&quot;")}">Conectar</button>`}</div>`).join("")}catch(e){$("wi").textContent=SW?"Cambiando… reconectando con la PC":"No llega a la PC"}}
+async function banda(){if(document.hidden||!CLAVE)return;try{const a=(await (await pedir("wifi",{headers:H(),cache:"no-store"})).json()).actual||{},b=$("wb");
+  if(!a.ssid){b.className="chip";b.lastChild.textContent="Sin WiFi"}else{const g5=/^[56]/.test(a.banda||"");b.className="chip "+(g5?"g5":"g2");b.lastChild.textContent=(g5?"5 GHz":a.banda||"?")+" · "+a.ssid}b.hidden=false}catch(e){}}
+async function wifi(){try{const j=await (await pedir("wifi",{headers:H(),cache:"no-store"})).json(),a=j.actual||{};
+  $("wi").textContent=a.ssid?"Conectada a "+a.ssid+" · "+(a.banda||"?")+" · señal "+(a.senal||"?"):"Sin WiFi";
+  $("wl").innerHTML=j.redes.map(n=>`<div class="rd ${n==a.ssid?"on":""}"><div><b>${esc(n)}</b>${/5\s*g/i.test(n)?"<small>5 GHz · más rápida, menos alcance</small>":""}</div>${n==a.ssid?"<small>actual</small>":`<button data-n="${esc(n)}">Conectar</button>`}</div>`).join("")}
+  catch(e){$("wi").textContent=SW?"Cambiando… reconectando con la PC":"No llega a la PC"}}
 $("wf").onclick=()=>{$("w").showModal();wifi()};$("wc").onclick=()=>$("w").close();
 $("wl").onclick=async e=>{const b=e.target.closest("button");if(!b)return;if(!confirm("¿Cambiar la PC a "+b.dataset.n+"? Se corta unos segundos."))return;
-  try{await api2("wifi/conectar",{name:b.dataset.n});SW=1;setTimeout(()=>SW=0,70000);$("wi").textContent="Cambiando… la conexión se corta unos segundos";$("wl").innerHTML="";let n=0;const iv=setInterval(async()=>{n++;await wifi();banda();if(!/No llega|Cambiando/.test($("wi").textContent)||n>15)clearInterval(iv)},4000)}catch(e){alert("No se pudo: "+e.message)}};
+  try{await api2("wifi/conectar",{name:b.dataset.n});SW=1;setTimeout(()=>SW=0,70000);$("wi").textContent="Cambiando… la conexión se corta unos segundos";$("wl").innerHTML="";
+    let n=0;const iv=setInterval(async()=>{n++;await wifi();banda();if(!/No llega|Cambiando/.test($("wi").textContent)||n>15)clearInterval(iv)},4000)}catch(x){aviso("No se pudo: "+x.message)}};
+
+/* ---------- compartir desde otras apps + arranque ---------- */
 const q=new URLSearchParams(location.search),txt=(q.get("url")||"")+" "+(q.get("text")||"");
 if(links(txt).length){history.replaceState(null,"",location.pathname);bajarVarios(txt)}
-try{ITEMS=JSON.parse(LS.get("fdm_cache")||"[]");pintar()}catch(e){}
-ver();setInterval(ver,2000);banda();setInterval(banda,12000);
+pintar();ver();setInterval(ver,2000);banda();setInterval(banda,12000);
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
 </script>
