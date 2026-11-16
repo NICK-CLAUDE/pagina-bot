@@ -37,8 +37,11 @@ dialog button{margin-top:12px;padding:14px;width:100%;border:0;border-radius:10p
 const $=id=>document.getElementById(id),LS={get:k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 let BASE=LS.get("panel_base"),CLAVE=LS.get("panel_clave"),F="todo",ITEMS=[];
 {const m=location.hash.match(/k=([\w-]+)/);if(m){CLAVE=m[1];LS.set("panel_clave",CLAVE);history.replaceState(null,"",location.pathname+location.search)}}
-async function tunel(){try{const u=(await (await fetch("../panel/tunel.txt?x="+Date.now(),{cache:"no-store"})).text()).trim()+"/";
-  if(/^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/$/.test(u)&&u!==BASE){BASE=u;LS.set("panel_base",u);return true}}catch(e){}return false}
+let ULTT=0;
+async function tunel(){if(Date.now()-ULTT<20000)return false;ULTT=Date.now();
+  const f=[async()=>atob((await (await fetch("https://api.github.com/repos/NICK-CLAUDE/pagina-bot/contents/panel/tunel.txt",{cache:"no-store"})).json()).content),
+    async()=>(await fetch("../panel/tunel.txt?x="+Date.now(),{cache:"no-store"})).text()];
+  for(const g of f){try{const u=(await g()).trim()+"/";if(/^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/$/.test(u)&&u!==BASE){BASE=u;LS.set("panel_base",u);return true}}catch(e){}}return false}
 let LARGO=0;
 const ftm=(u,o)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),LARGO?90000:12000);return fetch(u,{...o,signal:c.signal}).finally(()=>clearTimeout(t))};
 async function rpc(method,params=[]){
