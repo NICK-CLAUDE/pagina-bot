@@ -64,8 +64,8 @@ async function ver(){if(document.hidden)return;
     ITEMS=[...r[0][0],...r[1][0],...r[2][0].reverse()];pintar()}
   catch(e){$("msg").textContent="No llega a la PC (¿está prendida y aria2 abierto?)";ITEMS=[];$("lista").innerHTML=""}}
 const bajar=async u=>{try{
-  if(/^https?:\/\/([\w-]+\.)*mediafire\.com\//i.test(u)){$("msg").textContent="Buscando el archivo en Mediafire...";u=(await api2("resolver",{url:u})).url}
-  await rpc("aria2.addUri",[[u]]);ver()}catch(e){alert("No se pudo: "+e.message)}};
+  $("msg").textContent="Buscando el archivo...";u=(await api2("resolver",{url:u})).url;
+  await rpc("aria2.addUri",[[u]]);ver()}catch(e){alert("No se pudo bajar: "+(String(e.message).startsWith("4")?"no pude sacar el archivo de esa página (puede pedir clave, captcha o publicidad)":e.message));ver()}};
 $("lista").onclick=async e=>{const b=e.target.closest("button");if(!b)return;
   if(F=="archivos"){const f=FILES[b.dataset.i];if(!f)return;
     try{if(b.dataset.a=="dl"){const j=await api2("files/link",{n:f.n});location.href=BASE+j.u}
