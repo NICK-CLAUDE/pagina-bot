@@ -26,8 +26,9 @@ dialog input{width:100%;padding:14px;background:#101013;color:#ececf1;border:1px
 dialog button{margin-top:12px;padding:14px;width:100%;border:0;border-radius:10px;background:#5bc0f8;color:#101013;font-size:16px;font-weight:600}
 #wf{background:#5bc0f822;border:0;color:#5bc0f8;border-radius:50%;width:38px;height:38px;padding:0;display:grid;place-items:center}#wf svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
 .rd{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#101013;border-radius:10px;padding:12px;margin-top:8px}.rd b{font-weight:600}.rd small{display:block;color:#8d8d99}.rd button{margin:0;width:auto;padding:8px 14px;font-size:14px}.rd.on{outline:1px solid #5bc0f8}
+.wb{font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;margin-left:8px;align-self:center;background:#ffffff14;color:#8d8d99}.wb.g5{background:#4cc38a22;color:#4cc38a}.wb.g2{background:#ffb74d22;color:#ffb74d}
 </style>
-<header><h1><span class="lg">FDM</span><small id="gs"></small><button id="wf" title="WiFi de la PC"><svg viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20v.01"/></svg></button></h1><div id="tabs"><button data-f="todo" class="on">Todo</button><button data-f="bajando">Bajando</button><button data-f="listas">Completadas</button><button data-f="archivos">Files</button></div></header>
+<header><h1><span class="lg">FDM</span><span id="wb" class="wb" hidden></span><small id="gs"></small><button id="wf" title="WiFi de la PC"><svg viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20v.01"/></svg></button></h1><div id="tabs"><button data-f="todo" class="on">Todo</button><button data-f="bajando">Bajando</button><button data-f="listas">Completadas</button><button data-f="archivos">Files</button></div></header>
 <div id="lista"></div><div id="msg"></div>
 <nav><button id="bi" title="Iniciar todo"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button><button id="bp" title="Pausar todo"><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button><button class="add" id="ba"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><button id="bl" title="Borrar completadas"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></nav>
 <dialog id="w"><b>WiFi de la PC</b><div id="wi" class="in" style="margin:8px 0">Cargando…</div><div id="wl"></div><div class="in" style="margin-top:12px">Al cambiar, la conexión se corta unos segundos y las descargas siguen solas. Si la red nueva no tiene internet, la PC vuelve a la anterior en 40 s.</div><button id="wc" style="background:#2a2a31;color:#ececf1">Cerrar</button></dialog>
@@ -83,16 +84,18 @@ $("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;F=b.datase
 $("bi").onclick=()=>rpc("aria2.unpauseAll").then(ver);$("bp").onclick=()=>rpc("aria2.pauseAll").then(ver);$("bl").onclick=()=>rpc("aria2.purgeDownloadResult").then(ver);
 $("ba").onclick=()=>{$("d").showModal();$("u").focus()};
 $("go").onclick=()=>{const m=$("u").value.match(/https?:\/\/\S+/);if(m){bajar(m[0]);$("u").value="";$("d").close()}};
+async function banda(){if(document.hidden||!BASE||!CLAVE)return;try{const r=await ftm(BASE+"wifi",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!r.ok)throw 0;const a=(await r.json()).actual||{},b=$("wb");
+  if(!a.ssid){b.className="wb";b.textContent="Sin WiFi"}else{const g5=/^5|6/.test(a.banda||"");b.className="wb "+(g5?"g5":"g2");b.textContent=(g5?"5 GHz":a.banda||"?")+" · "+a.ssid}b.hidden=false}catch(e){}}
 let SW=0;
 async function wifi(){try{const r=await ftm(BASE+"wifi",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!r.ok)throw 0;const j=await r.json(),a=j.actual||{};
   $("wi").textContent=a.ssid?"Conectada a: "+a.ssid+" · "+(a.banda||"?")+" · señal "+(a.senal||"?"):"Sin WiFi";
   $("wl").innerHTML=j.redes.map(n=>`<div class="rd ${n==a.ssid?"on":""}"><div><b>${n.replace(/</g,"&lt;")}</b>${/5\s*g/i.test(n)?"<small>5 GHz · más rápida, menos alcance</small>":""}</div>${n==a.ssid?"<small>actual</small>":`<button data-n="${n.replace(/"/g,"&quot;")}">Conectar</button>`}</div>`).join("")}catch(e){$("wi").textContent=SW?"Cambiando… reconectando con la PC":"No llega a la PC"}}
 $("wf").onclick=()=>{$("w").showModal();wifi()};$("wc").onclick=()=>$("w").close();
 $("wl").onclick=async e=>{const b=e.target.closest("button");if(!b)return;if(!confirm("¿Cambiar la PC a "+b.dataset.n+"? Se corta unos segundos."))return;
-  try{await api2("wifi/conectar",{name:b.dataset.n});SW=1;setTimeout(()=>SW=0,70000);$("wi").textContent="Cambiando… la conexión se corta unos segundos";$("wl").innerHTML="";let n=0;const iv=setInterval(async()=>{n++;await wifi();if(!/No llega|Cambiando/.test($("wi").textContent)||n>15)clearInterval(iv)},4000)}catch(e){alert("No se pudo: "+e.message)}};
+  try{await api2("wifi/conectar",{name:b.dataset.n});SW=1;setTimeout(()=>SW=0,70000);$("wi").textContent="Cambiando… la conexión se corta unos segundos";$("wl").innerHTML="";let n=0;const iv=setInterval(async()=>{n++;await wifi();banda();if(!/No llega|Cambiando/.test($("wi").textContent)||n>15)clearInterval(iv)},4000)}catch(e){alert("No se pudo: "+e.message)}};
 const q=new URLSearchParams(location.search),m=((q.get("url")||"")+" "+(q.get("text")||"")).match(/https?:\/\/\S+/);
 if(m){history.replaceState(null,"",location.pathname);bajar(m[0])}
 try{ITEMS=JSON.parse(LS.get("fdm_cache")||"[]");pintar()}catch(e){}
-ver();setInterval(ver,2000);
+ver();setInterval(ver,2000);banda();setInterval(banda,12000);
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
 </script>
