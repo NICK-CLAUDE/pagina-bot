@@ -27,15 +27,23 @@ dialog button{margin-top:12px;padding:14px;width:100%;border:0;border-radius:10p
 #wf{background:#5bc0f822;border:0;color:#5bc0f8;border-radius:50%;width:38px;height:38px;padding:0;display:grid;place-items:center}#wf svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
 .rd{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#101013;border-radius:10px;padding:12px;margin-top:8px}.rd b{font-weight:600}.rd small{display:block;color:#8d8d99}.rd button{margin:0;width:auto;padding:8px 14px;font-size:14px}.rd.on{outline:1px solid #5bc0f8}
 .wb{font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;margin-left:8px;align-self:center;background:#ffffff14;color:#8d8d99}.wb.g5{background:#4cc38a22;color:#4cc38a}.wb.g2{background:#ffb74d22;color:#ffb74d}
+.nm{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;word-break:break-word;font-size:15px;line-height:1.35}
+#chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:-2px 0 10px}#chips .wb{margin:0}
+#gs:not(:empty){background:#5bc0f822;color:#5bc0f8;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.bd{display:inline-block;min-width:20px;padding:1px 6px;margin-left:6px;border-radius:99px;background:#5bc0f8;color:#101013;font-size:12px}
+.bd.g{background:#4cc38a}
+.sh{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8d8d99;margin:14px 4px 8px}.sh:first-child{margin-top:4px}
+.sh b{background:#ffffff14;border-radius:99px;padding:1px 8px;color:#ececf1;letter-spacing:0}
+.it{box-shadow:0 1px 0 #ffffff08 inset}.it .in{margin-top:2px}
 </style>
-<header><h1><span class="lg">FDM</span><span id="wb" class="wb" hidden></span><small id="gs"></small><button id="wf" title="WiFi de la PC"><svg viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20v.01"/></svg></button></h1><div id="tabs"><button data-f="todo" class="on">Todo</button><button data-f="bajando">Bajando</button><button data-f="listas">Completadas</button><button data-f="archivos">Files</button></div></header>
+<header><h1><span class="lg">FDM</span><button id="wf" title="WiFi de la PC"><svg viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20v.01"/></svg></button></h1><div id="chips"><span id="wb" class="wb" hidden></span><small id="gs"></small></div><div id="tabs"><button data-f="todo" class="on">Todo</button><button data-f="bajando">Bajando</button><button data-f="listas">Completadas</button><button data-f="archivos">Files</button></div></header>
 <div id="lista"></div><div id="msg"></div>
 <nav><button id="bi" title="Iniciar todo"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button><button id="bp" title="Pausar todo"><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button><button class="add" id="ba"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><button id="bl" title="Borrar completadas"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></nav>
 <dialog id="w"><b>WiFi de la PC</b><div id="wi" class="in" style="margin:8px 0">Cargando…</div><div id="wl"></div><div class="in" style="margin-top:12px">Al cambiar, la conexión se corta unos segundos y las descargas siguen solas. Si la red nueva no tiene internet, la PC vuelve a la anterior en 40 s.</div><button id="wc" style="background:#2a2a31;color:#ececf1">Cerrar</button></dialog>
 <dialog id="d"><b>Agregar descarga</b><br><br><textarea id="u" rows="6" placeholder="Pegá uno o varios links (aunque tengan texto en el medio)" autocomplete="off" style="width:100%;padding:14px;background:#101013;color:#ececf1;border:1px solid #333;border-radius:10px;font-size:15px;margin-top:12px;font-family:inherit"></textarea><button id="go">Bajar en la PC</button></dialog>
 <script>
 const $=id=>document.getElementById(id),LS={get:k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
-let BASE=LS.get("panel_base"),CLAVE=LS.get("panel_clave"),F="todo",ITEMS=[];
+let BASE=location.hostname.endsWith("github.io")?LS.get("panel_base"):location.origin+"/",CLAVE=LS.get("panel_clave"),F="todo",ITEMS=[];
 {const m=location.hash.match(/k=([\w-]+)/);if(m){CLAVE=m[1];LS.set("panel_clave",CLAVE);history.replaceState(null,"",location.pathname+location.search)}}
 let ULTT=0;
 async function tunel(){if(Date.now()-ULTT<20000)return false;ULTT=Date.now();
@@ -50,20 +58,26 @@ async function rpc(method,params=[]){
   if(!r.ok)throw new Error(r.status);const j=await r.json();if(j.error)throw new Error(j.error.message);return j.result}
 const K=["gid","status","totalLength","completedLength","downloadSpeed","files","errorMessage"];
 const sz=b=>b>=1e9?(b/1e9).toFixed(2)+" GB":b>=1e6?(b/1e6).toFixed(1)+" MB":(b/1e3).toFixed(0)+" KB";
-const nom=d=>{const f=d.files&&d.files[0];let p=f&&(f.path||(f.uris&&f.uris[0]&&f.uris[0].uri))||d.gid;return decodeURIComponent(p.split(/[\/]/).pop().split("?")[0])||d.gid};
+const nom=d=>{const f=d.files&&d.files[0],ruta=f&&f.path,u=f&&f.uris&&f.uris[0]&&f.uris[0].uri;let p=(ruta||u||d.gid).split(/[\/]/).pop().split("?")[0];if(!ruta)p=p.replace(/\+/g," ");try{p=decodeURIComponent(p)}catch(e){}return p||d.gid};
 let FILES=[];
 const fecha=t=>new Date(t*1000).toLocaleString("es-AR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
 function pintarArchivos(){
   $("lista").innerHTML=FILES.map((f,i)=>`<div class="it"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v4h4"/></svg></div><div class="nm" style="white-space:normal;word-break:break-all">${f.n.replace(/</g,"&lt;")}</div><button class="x" data-a="dl" data-i="${i}" style="color:#5bc0f8" title="Download to phone"><svg viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg></button><button class="x" data-a="rm" data-i="${i}"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="in" style="margin-top:6px">${sz(f.s)} • ${fecha(f.t)}</div></div>`).join("");
   $("msg").textContent=FILES.length?"PC folder: Downloads":"The folder is empty"}
+const IC={pause:`<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>`,play:`<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>`,ok:`<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>`,err:`<svg viewBox="0 0 24 24"><path d="M12 6v8M12 18v.01"/></svg>`,x:`<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>`};
+function tarjeta(d,i,n){const t=+d.totalLength,c=+d.completedLength,s=+d.downloadSpeed,p=t?c/t*100:0,cls=d.status=="complete"?"ok":d.status=="error"?"er":d.status=="paused"?"pa":"";
+  const eta=s>0&&t?Math.round((t-c)/s):0,et=eta?(eta>=3600?Math.floor(eta/3600)+" h ":"")+Math.floor(eta%3600/60)+" min":"";
+  const info=d.status=="complete"?sz(t)+" · Completada":d.status=="error"?"Error: "+(d.errorMessage||""):d.status=="paused"?(t?p.toFixed(0)+" % · "+sz(c)+" / "+sz(t)+" · ":"")+"En pausa":d.status=="waiting"?"Espera su turno · puesto "+(i+1)+" de "+n+" (se bajan 2 a la vez)":p.toFixed(0)+" % · "+sz(c)+(t?" / "+sz(t):"")+" · "+sz(s)+"/s"+(et?" · faltan "+et:"");
+  const ic=cls=="ok"?IC.ok:cls=="er"?IC.err:cls=="pa"?IC.play:IC.pause;
+  return `<div class="it ${cls}"><div class="top"><button class="ic" data-a="t" data-g="${d.gid}">${ic}</button><div class="nm">${nom(d).replace(/</g,"&lt;")}</div><button class="x" data-a="x" data-g="${d.gid}">${IC.x}</button></div><div class="bar"><i style="width:${p}%"></i></div><div class="in">${info}</div></div>`}
+function contar(a,c,k){const tb=n=>document.querySelector('#tabs [data-f="'+n+'"]');
+  tb("bajando").innerHTML="Bajando"+(a?`<b class="bd">${a}</b>`:"");tb("listas").innerHTML="Completadas"+(k?`<b class="bd g">${k}</b>`:"")}
 function pintar(){if(F=="archivos")return pintarArchivos();
-  const v=ITEMS.filter(d=>F=="todo"||(F=="listas"?d.status=="complete":d.status!="complete"));
-  $("lista").innerHTML=v.map(d=>{const t=+d.totalLength,c=+d.completedLength,s=+d.downloadSpeed,p=t?c/t*100:0,cls=d.status=="complete"?"ok":d.status=="error"?"er":d.status=="paused"?"pa":"";
-    const eta=s>0&&t?Math.round((t-c)/s):0,et=eta?(eta>=3600?Math.floor(eta/3600)+"h ":"")+String(Math.floor(eta%3600/60)).padStart(2,"0")+":"+String(eta%60).padStart(2,"0"):"";
-    const info=d.status=="complete"?sz(t)+" • Completada":d.status=="error"?"Error: "+(d.errorMessage||""):d.status=="paused"?sz(c)+(t?" / "+sz(t):"")+" • En pausa":d.status=="waiting"?"En cola":sz(c)+(t?" / "+sz(t):"")+" • "+sz(s)+"/s"+(et?" • "+et:"");
-    const IC={pause:`<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>`,play:`<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>`,ok:`<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>`,err:`<svg viewBox="0 0 24 24"><path d="M12 6v8M12 18v.01"/></svg>`,x:`<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>`};const ic=cls=="ok"?IC.ok:cls=="er"?IC.err:cls=="pa"?IC.play:IC.pause;
-    return `<div class="it ${cls}"><div class="top"><button class="ic" data-a="t" data-g="${d.gid}">${ic}</button><div class="nm">${nom(d).replace(/</g,"&lt;")}</div><button class="x" data-a="x" data-g="${d.gid}">${IC.x}</button></div><div class="bar"><i style="width:${p}%"></i></div><div class="in">${info}</div></div>`}).join("");
-  $("msg").textContent=v.length?"":"No hay descargas";
+  const L=s=>ITEMS.filter(d=>d.status==s),act=L("active"),col=L("waiting"),pau=L("paused"),err=L("error"),ok=L("complete");
+  contar(act.length,col.length+pau.length,ok.length);
+  const sec=(t,l)=>l.length?`<div class="sh">${t}<b>${l.length}</b></div>`+l.map((d,i)=>tarjeta(d,i,l.length)).join(""):"";
+  const html=F=="listas"?sec("Completadas",ok):(sec("Bajando ahora",act)+sec("En cola",col)+sec("En pausa",pau)+sec("Con error",err)+(F=="todo"?sec("Completadas",ok):""));
+  $("lista").innerHTML=html;$("msg").textContent=html?"":"No hay descargas";
 }
 async function api2(ruta,cuerpo){const op={method:"POST",headers:{"X-Clave":CLAVE},body:JSON.stringify(cuerpo)};let r;try{r=await ftm(BASE+ruta,op)}catch(e){if(await tunel())r=await ftm(BASE+ruta,op);else throw e}if(!r.ok)throw new Error(r.status);return r.json()}
 let OCUP=0;
@@ -72,7 +86,7 @@ const caido=on=>{$("gs").textContent=on?"reconectando…":$("gs").textContent};
 async function ver2(){
   if(F=="archivos"){try{const r=await ftm(BASE+"files",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!r.ok)throw 0;FILES=await r.json();pintarArchivos()}catch(e){caido(1)}return}
   if(!CLAVE){$("msg").textContent="Falta la clave: abrí el panel una vez con su link (el que tiene #k=...).";return}
-  try{const rr=await ftm(BASE+"downloads",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!rr.ok)throw 0;const J=await rr.json();if(!J.d)throw 0;const r=J.d,edad=J.now-J.t;const g=r[3][0];$("gs").textContent=edad>20?"datos de hace "+Math.round(edad)+" s":+g.numActive?"↓ "+sz(+g.downloadSpeed)+"/s · "+g.numActive+" bajando":"";
+  try{const rr=await ftm(BASE+"downloads",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!rr.ok)throw 0;const J=await rr.json();if(!J.d)throw 0;const r=J.d,edad=J.now-J.t;const g=r[3][0];$("gs").textContent=edad>20?"datos de hace "+Math.round(edad)+" s":+g.numActive?"↓ "+sz(+g.downloadSpeed)+"/s · "+g.numActive+" bajando"+(+g.numWaiting?" · "+g.numWaiting+" en cola":""):"";
     ITEMS=[...r[0][0],...r[1][0],...r[2][0].reverse()];LS.set("fdm_cache",JSON.stringify(ITEMS.slice(0,40)));pintar()}
   catch(e){caido(1);if(!ITEMS.length)$("msg").textContent="No llega a la PC (¿está prendida?). Reintentando…"}}
 const links=t=>[...new Set((String(t).match(/https?:\/\/[^\s"'<>]+/g)||[]).map(u=>u.replace(/[.,;:)\]]+$/,"")))];
