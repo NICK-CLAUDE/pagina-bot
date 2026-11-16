@@ -1,30 +1,33 @@
 <!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bajar PC</title><link rel="manifest" href="bajar.webmanifest"><meta name="theme-color" content="#1a1a1e">
+<title>FDM</title><link rel="manifest" href="bajar.webmanifest"><meta name="theme-color" content="#1a1a1e">
 <style>
-*{box-sizing:border-box}body{margin:0;font:16px system-ui,sans-serif;background:#141417;color:#e8e8ec;padding-bottom:84px}
-header{position:sticky;top:0;background:#1d1d22;padding:14px 16px 0;z-index:2}
-h1{margin:0 0 8px;font-size:20px}#tabs{display:flex;gap:6px}
-#tabs button{flex:1;background:none;border:0;color:#9a9aa5;padding:10px 0;font-size:15px;border-bottom:3px solid transparent}
-#tabs button.on{color:#5bc0f8;border-color:#5bc0f8}
-.it{padding:12px 16px;border-bottom:1px solid #26262c}.top{display:flex;align-items:center;gap:10px}
-.nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ic{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:14px;color:#141417;background:#5bc0f8;flex:none}
-.ok .ic{background:#4cc38a}.er .ic{background:#ef5350}.pa .ic{background:#9a9aa5}
-.x{background:none;border:0;color:#9a9aa5;font-size:20px;padding:4px 8px}
-.bar{height:6px;background:#2a2a31;border-radius:3px;margin:8px 0 4px;overflow:hidden}.bar i{display:block;height:100%;background:#5bc0f8}
-.ok .bar i{background:#4cc38a}.pa .bar i{background:#9a9aa5}
-.in{color:#9a9aa5;font-size:13px}
-nav{position:fixed;bottom:0;left:0;right:0;background:#1d1d22;display:flex;justify-content:space-around;align-items:center;padding:10px 0;border-top:1px solid #26262c}
-nav button{background:none;border:0;color:#5bc0f8;font-size:26px;padding:6px 14px}
-nav .add{background:#5bc0f8;color:#141417;border-radius:50%;width:54px;height:54px;font-size:32px;padding:0}
-#msg{padding:24px 16px;color:#9a9aa5;text-align:center}
-dialog{background:#1d1d22;color:#e8e8ec;border:1px solid #333;border-radius:12px;width:90%;max-width:440px}
-dialog input{width:100%;padding:12px;background:#141417;color:#e8e8ec;border:1px solid #333;border-radius:8px}
-dialog button{margin-top:10px;padding:12px;width:100%;border:0;border-radius:8px;background:#5bc0f8;color:#141417;font-size:16px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;font:16px system-ui,sans-serif;background:#101013;color:#ececf1;padding-bottom:96px}
+header{position:sticky;top:0;background:#17171b;padding:16px 16px 0;z-index:2;box-shadow:0 2px 12px #0008}
+h1{margin:0 0 10px;font-size:22px;display:flex;align-items:baseline;justify-content:space-between}
+.lg{font-weight:800;letter-spacing:.5px;color:#5bc0f8}#gs{font-size:13px;font-weight:400;color:#8d8d99}
+#tabs{display:flex}#tabs button{flex:1;background:none;border:0;color:#8d8d99;padding:12px 0;font-size:15px;border-bottom:3px solid transparent;transition:.2s}
+#tabs button.on{color:#5bc0f8;border-color:#5bc0f8;font-weight:600}
+#lista{padding:10px 12px}
+.it{background:#1a1a1f;border-radius:14px;padding:14px;margin-bottom:10px}.top{display:flex;align-items:center;gap:12px}
+.nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.ic{width:38px;height:38px;border-radius:50%;border:0;display:grid;place-items:center;background:#5bc0f822;color:#5bc0f8;flex:none;padding:0}
+.ok .ic{background:#4cc38a22;color:#4cc38a}.er .ic{background:#ef535022;color:#ef5350}.pa .ic{background:#ffffff14;color:#8d8d99}
+.ic svg,.x svg,nav svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.x{background:none;border:0;color:#6d6d79;padding:8px}
+.bar{height:6px;background:#2a2a31;border-radius:3px;margin:12px 0 8px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#3aa6e6,#5bc0f8);border-radius:3px;transition:width .6s}
+.ok .bar i{background:#4cc38a}.pa .bar i{background:#6d6d79}.er .bar i{background:#ef5350}
+.in{color:#8d8d99;font-size:13px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#17171bf2;backdrop-filter:blur(10px);display:flex;justify-content:space-around;align-items:center;padding:10px 0 14px;border-top:1px solid #26262c}
+nav button{background:none;border:0;color:#5bc0f8;padding:10px 18px}
+nav .add{background:#5bc0f8;color:#101013;border-radius:50%;width:58px;height:58px;padding:0;margin-top:-26px;box-shadow:0 4px 16px #5bc0f855}nav .add svg{width:28px;height:28px}
+#msg{padding:48px 24px;color:#8d8d99;text-align:center}
+dialog{background:#1a1a1f;color:#ececf1;border:0;border-radius:18px;width:92%;max-width:440px;padding:20px}dialog::backdrop{background:#000a}
+dialog input{width:100%;padding:14px;background:#101013;color:#ececf1;border:1px solid #333;border-radius:10px;font-size:16px;margin-top:12px}
+dialog button{margin-top:12px;padding:14px;width:100%;border:0;border-radius:10px;background:#5bc0f8;color:#101013;font-size:16px;font-weight:600}
 </style>
-<header><h1>Descargas en la PC</h1><div id="tabs"><button data-f="todo" class="on">Todo</button><button data-f="bajando">Bajando</button><button data-f="listas">Completadas</button></div></header>
+<header><h1><span class="lg">FDM</span><small id="gs"></small></h1><div id="tabs"><button data-f="todo" class="on">Todo</button><button data-f="bajando">Bajando</button><button data-f="listas">Completadas</button></div></header>
 <div id="lista"></div><div id="msg"></div>
-<nav><button id="bi" title="Iniciar todo">▶</button><button id="bp" title="Pausar todo">⏸</button><button class="add" id="ba">+</button><button id="bl" title="Borrar completadas">🗑</button></nav>
+<nav><button id="bi" title="Iniciar todo"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button><button id="bp" title="Pausar todo"><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button><button class="add" id="ba"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><button id="bl" title="Borrar completadas"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></nav>
 <dialog id="d"><b>Agregar descarga</b><br><br><input id="u" placeholder="Pegá el link" autocomplete="off"><button id="go">Bajar en la PC</button></dialog>
 <script>
 const $=id=>document.getElementById(id),LS={get:k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
@@ -44,13 +47,13 @@ function pintar(){
   $("lista").innerHTML=v.map(d=>{const t=+d.totalLength,c=+d.completedLength,s=+d.downloadSpeed,p=t?c/t*100:0,cls=d.status=="complete"?"ok":d.status=="error"?"er":d.status=="paused"?"pa":"";
     const eta=s>0&&t?Math.round((t-c)/s):0,et=eta?(eta>=3600?Math.floor(eta/3600)+"h ":"")+String(Math.floor(eta%3600/60)).padStart(2,"0")+":"+String(eta%60).padStart(2,"0"):"";
     const info=d.status=="complete"?sz(t)+" • Completada":d.status=="error"?"Error: "+(d.errorMessage||""):d.status=="paused"?sz(c)+(t?" / "+sz(t):"")+" • En pausa":d.status=="waiting"?"En cola":sz(c)+(t?" / "+sz(t):"")+" • "+sz(s)+"/s"+(et?" • "+et:"");
-    const ic=cls=="ok"?"✓":cls=="er"?"!":cls=="pa"?"▶":"⏸";
-    return `<div class="it ${cls}"><div class="top"><button class="ic" style="border:0" data-a="t" data-g="${d.gid}">${ic}</button><div class="nm">${nom(d).replace(/</g,"&lt;")}</div><button class="x" data-a="x" data-g="${d.gid}">✕</button></div><div class="bar"><i style="width:${p}%"></i></div><div class="in">${info}</div></div>`}).join("");
+    const IC={pause:`<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>`,play:`<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>`,ok:`<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>`,err:`<svg viewBox="0 0 24 24"><path d="M12 6v8M12 18v.01"/></svg>`,x:`<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>`};const ic=cls=="ok"?IC.ok:cls=="er"?IC.err:cls=="pa"?IC.play:IC.pause;
+    return `<div class="it ${cls}"><div class="top"><button class="ic" data-a="t" data-g="${d.gid}">${ic}</button><div class="nm">${nom(d).replace(/</g,"&lt;")}</div><button class="x" data-a="x" data-g="${d.gid}">${IC.x}</button></div><div class="bar"><i style="width:${p}%"></i></div><div class="in">${info}</div></div>`}).join("");
   $("msg").textContent=v.length?"":"No hay descargas";
 }
 async function ver(){if(document.hidden)return;
   if(!CLAVE){$("msg").textContent="Falta la clave: abrí el panel una vez con su link (el que tiene #k=...).";return}
-  try{const r=await rpc("system.multicall",[[{methodName:"aria2.tellActive",params:["token:"+CLAVE,K]},{methodName:"aria2.tellWaiting",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.tellStopped",params:["token:"+CLAVE,0,100,K]}]]);
+  try{const r=await rpc("system.multicall",[[{methodName:"aria2.tellActive",params:["token:"+CLAVE,K]},{methodName:"aria2.tellWaiting",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.tellStopped",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.getGlobalStat",params:["token:"+CLAVE]}]]);const g=r[3][0];$("gs").textContent=+g.numActive?"↓ "+sz(+g.downloadSpeed)+"/s · "+g.numActive+" bajando":"";
     ITEMS=[...r[0][0],...r[1][0],...r[2][0].reverse()];pintar()}
   catch(e){$("msg").textContent="No llega a la PC (¿está prendida y aria2 abierto?)";ITEMS=[];$("lista").innerHTML=""}}
 const bajar=u=>rpc("aria2.addUri",[[u]]).then(ver).catch(e=>alert("No se pudo: "+e.message));
