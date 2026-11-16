@@ -69,7 +69,7 @@ const caido=on=>{$("gs").textContent=on?"reconectando…":$("gs").textContent};
 async function ver2(){
   if(F=="archivos"){try{const r=await ftm(BASE+"files",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!r.ok)throw 0;FILES=await r.json();pintarArchivos()}catch(e){caido(1)}return}
   if(!CLAVE){$("msg").textContent="Falta la clave: abrí el panel una vez con su link (el que tiene #k=...).";return}
-  try{const r=await rpc("system.multicall",[[{methodName:"aria2.tellActive",params:["token:"+CLAVE,K]},{methodName:"aria2.tellWaiting",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.tellStopped",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.getGlobalStat",params:["token:"+CLAVE]}]]);const g=r[3][0];$("gs").textContent=+g.numActive?"↓ "+sz(+g.downloadSpeed)+"/s · "+g.numActive+" bajando":"";
+  try{const rr=await ftm(BASE+"downloads",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!rr.ok)throw 0;const J=await rr.json();if(!J.d)throw 0;const r=J.d,edad=J.now-J.t;const g=r[3][0];$("gs").textContent=edad>20?"datos de hace "+Math.round(edad)+" s":+g.numActive?"↓ "+sz(+g.downloadSpeed)+"/s · "+g.numActive+" bajando":"";
     ITEMS=[...r[0][0],...r[1][0],...r[2][0].reverse()];LS.set("fdm_cache",JSON.stringify(ITEMS.slice(0,40)));pintar()}
   catch(e){caido(1);if(!ITEMS.length)$("msg").textContent="No llega a la PC (¿está prendida?). Reintentando…"}}
 const links=t=>[...new Set((String(t).match(/https?:\/\/[^\s"'<>]+/g)||[]).map(u=>u.replace(/[.,;:)\]]+$/,"")))];
