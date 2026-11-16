@@ -5,6 +5,7 @@
 <input id="u" placeholder="Pegá un link" style="width:100%;padding:12px;box-sizing:border-box">
 <button id="b" style="width:100%;padding:14px;margin:8px 0">Bajar en la PC</button>
 <p id="s"></p>
+<h3>FDM en vivo</h3><img id="v" style="width:100%;border-radius:8px"><p id="vs"></p>
 <script>
 const $=id=>document.getElementById(id),LS={get:k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 let BASE=LS.get("panel_base"),CLAVE=LS.get("panel_clave");
@@ -21,5 +22,10 @@ async function enviar(url){
 $("b").onclick=()=>{const m=$("u").value.match(/https?:\/\/\S+/);if(m){enviar(m[0]);$("u").value=""}};
 const q=new URLSearchParams(location.search),m=((q.get("url")||"")+" "+(q.get("text")||"")).match(/https?:\/\/\S+/);
 if(m){history.replaceState(null,"",location.pathname);enviar(m[0])}
+async function ver(){if(document.hidden||!BASE||!CLAVE)return;
+  try{const r=await fetch(BASE+"fdm.jpg",{headers:{"X-Clave":CLAVE},cache:"no-store"});
+    if(r.ok){const o=$("v").src;$("v").src=URL.createObjectURL(await r.blob());o&&URL.revokeObjectURL(o);$("vs").textContent=""}else $("vs").textContent="FDM no está abierto"}
+  catch(e){$("vs").textContent="Sin conexión con la PC";tunel()}}
+ver();setInterval(ver,2000);
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
 </script>
