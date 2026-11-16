@@ -63,7 +63,9 @@ async function ver(){if(document.hidden)return;
   try{const r=await rpc("system.multicall",[[{methodName:"aria2.tellActive",params:["token:"+CLAVE,K]},{methodName:"aria2.tellWaiting",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.tellStopped",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.getGlobalStat",params:["token:"+CLAVE]}]]);const g=r[3][0];$("gs").textContent=+g.numActive?"↓ "+sz(+g.downloadSpeed)+"/s · "+g.numActive+" bajando":"";
     ITEMS=[...r[0][0],...r[1][0],...r[2][0].reverse()];pintar()}
   catch(e){$("msg").textContent="No llega a la PC (¿está prendida y aria2 abierto?)";ITEMS=[];$("lista").innerHTML=""}}
-const bajar=u=>rpc("aria2.addUri",[[u]]).then(ver).catch(e=>alert("No se pudo: "+e.message));
+const bajar=async u=>{try{
+  if(/^https?:\/\/([\w-]+\.)*mediafire\.com\//i.test(u)){$("msg").textContent="Buscando el archivo en Mediafire...";u=(await api2("resolver",{url:u})).url}
+  await rpc("aria2.addUri",[[u]]);ver()}catch(e){alert("No se pudo: "+e.message)}};
 $("lista").onclick=async e=>{const b=e.target.closest("button");if(!b)return;
   if(F=="archivos"){const f=FILES[b.dataset.i];if(!f)return;
     try{if(b.dataset.a=="dl"){const j=await api2("files/link",{n:f.n});location.href=BASE+j.u}
