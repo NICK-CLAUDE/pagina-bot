@@ -25,7 +25,7 @@ dialog{background:#1a1a1f;color:#ececf1;border:0;border-radius:18px;width:92%;ma
 dialog input{width:100%;padding:14px;background:#101013;color:#ececf1;border:1px solid #333;border-radius:10px;font-size:16px;margin-top:12px}
 dialog button{margin-top:12px;padding:14px;width:100%;border:0;border-radius:10px;background:#5bc0f8;color:#101013;font-size:16px;font-weight:600}
 </style>
-<header><h1><span class="lg">FDM</span><small id="gs"></small></h1><div id="tabs"><button data-f="todo" class="on">Todo</button><button data-f="bajando">Bajando</button><button data-f="listas">Completadas</button></div></header>
+<header><h1><span class="lg">FDM</span><small id="gs"></small></h1><div id="tabs"><button data-f="todo" class="on">Todo</button><button data-f="bajando">Bajando</button><button data-f="listas">Completadas</button><button data-f="archivos">Files</button></div></header>
 <div id="lista"></div><div id="msg"></div>
 <nav><button id="bi" title="Iniciar todo"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button><button id="bp" title="Pausar todo"><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button><button class="add" id="ba"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><button id="bl" title="Borrar completadas"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></nav>
 <dialog id="d"><b>Agregar descarga</b><br><br><input id="u" placeholder="Pegá el link" autocomplete="off"><button id="go">Bajar en la PC</button></dialog>
@@ -42,7 +42,12 @@ async function rpc(method,params=[]){
 const K=["gid","status","totalLength","completedLength","downloadSpeed","files","errorMessage"];
 const sz=b=>b>=1e9?(b/1e9).toFixed(2)+" GB":b>=1e6?(b/1e6).toFixed(1)+" MB":(b/1e3).toFixed(0)+" KB";
 const nom=d=>{const f=d.files&&d.files[0];let p=f&&(f.path||(f.uris&&f.uris[0]&&f.uris[0].uri))||d.gid;return decodeURIComponent(p.split(/[\/]/).pop().split("?")[0])||d.gid};
-function pintar(){
+let FILES=[];
+const fecha=t=>new Date(t*1000).toLocaleString("es-AR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+function pintarArchivos(){
+  $("lista").innerHTML=FILES.map((f,i)=>`<div class="it"><div class="top"><div class="ic"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v4h4"/></svg></div><div class="nm" style="white-space:normal;word-break:break-all">${f.n.replace(/</g,"&lt;")}</div><button class="x" data-a="dl" data-i="${i}" style="color:#5bc0f8" title="Download to phone"><svg viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg></button><button class="x" data-a="rm" data-i="${i}"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="in" style="margin-top:6px">${sz(f.s)} • ${fecha(f.t)}</div></div>`).join("");
+  $("msg").textContent=FILES.length?"PC folder: Downloads":"The folder is empty"}
+function pintar(){if(F=="archivos")return pintarArchivos();
   const v=ITEMS.filter(d=>F=="todo"||(F=="listas"?d.status=="complete":d.status!="complete"));
   $("lista").innerHTML=v.map(d=>{const t=+d.totalLength,c=+d.completedLength,s=+d.downloadSpeed,p=t?c/t*100:0,cls=d.status=="complete"?"ok":d.status=="error"?"er":d.status=="paused"?"pa":"";
     const eta=s>0&&t?Math.round((t-c)/s):0,et=eta?(eta>=3600?Math.floor(eta/3600)+"h ":"")+String(Math.floor(eta%3600/60)).padStart(2,"0")+":"+String(eta%60).padStart(2,"0"):"";
@@ -51,16 +56,21 @@ function pintar(){
     return `<div class="it ${cls}"><div class="top"><button class="ic" data-a="t" data-g="${d.gid}">${ic}</button><div class="nm">${nom(d).replace(/</g,"&lt;")}</div><button class="x" data-a="x" data-g="${d.gid}">${IC.x}</button></div><div class="bar"><i style="width:${p}%"></i></div><div class="in">${info}</div></div>`}).join("");
   $("msg").textContent=v.length?"":"No hay descargas";
 }
+async function api2(ruta,cuerpo){const op={method:"POST",headers:{"X-Clave":CLAVE},body:JSON.stringify(cuerpo)};let r;try{r=await fetch(BASE+ruta,op)}catch(e){if(await tunel())r=await fetch(BASE+ruta,op);else throw e}if(!r.ok)throw new Error(r.status);return r.json()}
 async function ver(){if(document.hidden)return;
+  if(F=="archivos"){try{const r=await fetch(BASE+"files",{headers:{"X-Clave":CLAVE},cache:"no-store"});FILES=await r.json();pintarArchivos()}catch(e){$("msg").textContent="No llega a la PC"}return}
   if(!CLAVE){$("msg").textContent="Falta la clave: abrí el panel una vez con su link (el que tiene #k=...).";return}
   try{const r=await rpc("system.multicall",[[{methodName:"aria2.tellActive",params:["token:"+CLAVE,K]},{methodName:"aria2.tellWaiting",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.tellStopped",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.getGlobalStat",params:["token:"+CLAVE]}]]);const g=r[3][0];$("gs").textContent=+g.numActive?"↓ "+sz(+g.downloadSpeed)+"/s · "+g.numActive+" bajando":"";
     ITEMS=[...r[0][0],...r[1][0],...r[2][0].reverse()];pintar()}
   catch(e){$("msg").textContent="No llega a la PC (¿está prendida y aria2 abierto?)";ITEMS=[];$("lista").innerHTML=""}}
 const bajar=u=>rpc("aria2.addUri",[[u]]).then(ver).catch(e=>alert("No se pudo: "+e.message));
-$("lista").onclick=async e=>{const b=e.target.closest("button");if(!b)return;const d=ITEMS.find(x=>x.gid==b.dataset.g);if(!d)return;
+$("lista").onclick=async e=>{const b=e.target.closest("button");if(!b)return;
+  if(F=="archivos"){const f=FILES[b.dataset.i];if(!f)return;
+    try{if(b.dataset.a=="dl"){const j=await api2("files/link",{n:f.n});location.href=BASE+j.u}
+      else if(confirm("¿Borrar "+f.n+" de la PC? No se puede deshacer.")){await api2("files/delete",{n:f.n});ver()}}catch(e){alert("No se pudo: "+e.message)}return}const d=ITEMS.find(x=>x.gid==b.dataset.g);if(!d)return;
   try{if(b.dataset.a=="t"){if(d.status=="paused")await rpc("aria2.unpause",[d.gid]);else if(d.status=="active"||d.status=="waiting")await rpc("aria2.pause",[d.gid]);else if(d.status=="error"){const u=d.files[0].uris[0]&&d.files[0].uris[0].uri;if(u){await rpc("aria2.removeDownloadResult",[d.gid]);await bajar(u)}}}
     else{if(d.status=="active"||d.status=="waiting"||d.status=="paused")await rpc("aria2.forceRemove",[d.gid]);try{await rpc("aria2.removeDownloadResult",[d.gid])}catch(e){}}}catch(e){}ver()};
-$("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;F=b.dataset.f;document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x==b));pintar()};
+$("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;F=b.dataset.f;if(F=="archivos"){FILES=[];$("lista").innerHTML=""}document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x==b));F=="archivos"?ver():pintar()};
 $("bi").onclick=()=>rpc("aria2.unpauseAll").then(ver);$("bp").onclick=()=>rpc("aria2.pauseAll").then(ver);$("bl").onclick=()=>rpc("aria2.purgeDownloadResult").then(ver);
 $("ba").onclick=()=>{$("d").showModal();$("u").focus()};
 $("go").onclick=()=>{const m=$("u").value.match(/https?:\/\/\S+/);if(m){bajar(m[0]);$("u").value="";$("d").close()}};
