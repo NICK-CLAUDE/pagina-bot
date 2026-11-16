@@ -1,31 +1,68 @@
 <!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bajar en la PC</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#090e16">
-<body style="font:18px sans-serif;background:#090e16;color:#eee;max-width:480px;margin:auto;padding:16px">
-<h3>Bajar en la PC</h3>
-<input id="u" placeholder="Pegá un link" style="width:100%;padding:12px;box-sizing:border-box">
-<button id="b" style="width:100%;padding:14px;margin:8px 0">Bajar en la PC</button>
-<p id="s"></p>
-<h3>FDM en vivo</h3><img id="v" style="width:100%;border-radius:8px"><p id="vs"></p>
+<title>Bajar PC</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#1a1a1e">
+<style>
+*{box-sizing:border-box}body{margin:0;font:16px system-ui,sans-serif;background:#141417;color:#e8e8ec;padding-bottom:84px}
+header{position:sticky;top:0;background:#1d1d22;padding:14px 16px 0;z-index:2}
+h1{margin:0 0 8px;font-size:20px}#tabs{display:flex;gap:6px}
+#tabs button{flex:1;background:none;border:0;color:#9a9aa5;padding:10px 0;font-size:15px;border-bottom:3px solid transparent}
+#tabs button.on{color:#5bc0f8;border-color:#5bc0f8}
+.it{padding:12px 16px;border-bottom:1px solid #26262c}.top{display:flex;align-items:center;gap:10px}
+.nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ic{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:14px;color:#141417;background:#5bc0f8;flex:none}
+.ok .ic{background:#4cc38a}.er .ic{background:#ef5350}.pa .ic{background:#9a9aa5}
+.x{background:none;border:0;color:#9a9aa5;font-size:20px;padding:4px 8px}
+.bar{height:6px;background:#2a2a31;border-radius:3px;margin:8px 0 4px;overflow:hidden}.bar i{display:block;height:100%;background:#5bc0f8}
+.ok .bar i{background:#4cc38a}.pa .bar i{background:#9a9aa5}
+.in{color:#9a9aa5;font-size:13px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#1d1d22;display:flex;justify-content:space-around;align-items:center;padding:10px 0;border-top:1px solid #26262c}
+nav button{background:none;border:0;color:#5bc0f8;font-size:26px;padding:6px 14px}
+nav .add{background:#5bc0f8;color:#141417;border-radius:50%;width:54px;height:54px;font-size:32px;padding:0}
+#msg{padding:24px 16px;color:#9a9aa5;text-align:center}
+dialog{background:#1d1d22;color:#e8e8ec;border:1px solid #333;border-radius:12px;width:90%;max-width:440px}
+dialog input{width:100%;padding:12px;background:#141417;color:#e8e8ec;border:1px solid #333;border-radius:8px}
+dialog button{margin-top:10px;padding:12px;width:100%;border:0;border-radius:8px;background:#5bc0f8;color:#141417;font-size:16px}
+</style>
+<header><h1>Descargas en la PC</h1><div id="tabs"><button data-f="todo" class="on">Todo</button><button data-f="bajando">Bajando</button><button data-f="listas">Completadas</button></div></header>
+<div id="lista"></div><div id="msg"></div>
+<nav><button id="bi" title="Iniciar todo">▶</button><button id="bp" title="Pausar todo">⏸</button><button class="add" id="ba">+</button><button id="bl" title="Borrar completadas">🗑</button></nav>
+<dialog id="d"><b>Agregar descarga</b><br><br><input id="u" placeholder="Pegá el link" autocomplete="off"><button id="go">Bajar en la PC</button></dialog>
 <script>
 const $=id=>document.getElementById(id),LS={get:k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
-let BASE=LS.get("panel_base"),CLAVE=LS.get("panel_clave");
+let BASE=LS.get("panel_base"),CLAVE=LS.get("panel_clave"),F="todo",ITEMS=[];
 {const m=location.hash.match(/k=([\w-]+)/);if(m){CLAVE=m[1];LS.set("panel_clave",CLAVE);history.replaceState(null,"",location.pathname+location.search)}}
 async function tunel(){try{const u=(await (await fetch("../panel/tunel.txt?x="+Date.now(),{cache:"no-store"})).text()).trim()+"/";
   if(/^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/$/.test(u)&&u!==BASE){BASE=u;LS.set("panel_base",u);return true}}catch(e){}return false}
-async function enviar(url){
-  if(!CLAVE){$("s").textContent="Falta la clave: abrí el panel una vez con su link (el que tiene #k=...).";return}
-  $("s").textContent="Enviando...";
-  const op={method:"POST",headers:{"X-Clave":CLAVE},body:JSON.stringify({url})};
-  let r;try{r=await fetch(BASE+"bajar",op)}catch(e){if(await tunel()){try{r=await fetch(BASE+"bajar",op)}catch(e2){}}}
-  $("s").textContent=r&&r.ok?"✔ Enviado: FDM lo baja en la PC":r?"Error "+r.status+(r.status==401?" (clave mala)":""):"No llega a la PC (¿está prendida?)";
+async function rpc(method,params=[]){
+  const op={method:"POST",headers:{"X-Clave":CLAVE},body:JSON.stringify({jsonrpc:"2.0",id:1,method,params:["token:"+CLAVE,...params]})};
+  let r;try{r=await fetch(BASE+"rpc",op)}catch(e){if(await tunel())r=await fetch(BASE+"rpc",op);else throw e}
+  if(!r.ok)throw new Error(r.status);const j=await r.json();if(j.error)throw new Error(j.error.message);return j.result}
+const K=["gid","status","totalLength","completedLength","downloadSpeed","files","errorMessage"];
+const sz=b=>b>=1e9?(b/1e9).toFixed(2)+" GB":b>=1e6?(b/1e6).toFixed(1)+" MB":(b/1e3).toFixed(0)+" KB";
+const nom=d=>{const f=d.files&&d.files[0];let p=f&&(f.path||(f.uris&&f.uris[0]&&f.uris[0].uri))||d.gid;return decodeURIComponent(p.split(/[\/]/).pop().split("?")[0])||d.gid};
+function pintar(){
+  const v=ITEMS.filter(d=>F=="todo"||(F=="listas"?d.status=="complete":d.status!="complete"));
+  $("lista").innerHTML=v.map(d=>{const t=+d.totalLength,c=+d.completedLength,s=+d.downloadSpeed,p=t?c/t*100:0,cls=d.status=="complete"?"ok":d.status=="error"?"er":d.status=="paused"?"pa":"";
+    const eta=s>0&&t?Math.round((t-c)/s):0,et=eta?(eta>=3600?Math.floor(eta/3600)+"h ":"")+String(Math.floor(eta%3600/60)).padStart(2,"0")+":"+String(eta%60).padStart(2,"0"):"";
+    const info=d.status=="complete"?sz(t)+" • Completada":d.status=="error"?"Error: "+(d.errorMessage||""):d.status=="paused"?sz(c)+(t?" / "+sz(t):"")+" • En pausa":d.status=="waiting"?"En cola":sz(c)+(t?" / "+sz(t):"")+" • "+sz(s)+"/s"+(et?" • "+et:"");
+    const ic=cls=="ok"?"✓":cls=="er"?"!":cls=="pa"?"▶":"⏸";
+    return `<div class="it ${cls}"><div class="top"><button class="ic" style="border:0" data-a="t" data-g="${d.gid}">${ic}</button><div class="nm">${nom(d).replace(/</g,"&lt;")}</div><button class="x" data-a="x" data-g="${d.gid}">✕</button></div><div class="bar"><i style="width:${p}%"></i></div><div class="in">${info}</div></div>`}).join("");
+  $("msg").textContent=v.length?"":"No hay descargas";
 }
-$("b").onclick=()=>{const m=$("u").value.match(/https?:\/\/\S+/);if(m){enviar(m[0]);$("u").value=""}};
+async function ver(){if(document.hidden)return;
+  if(!CLAVE){$("msg").textContent="Falta la clave: abrí el panel una vez con su link (el que tiene #k=...).";return}
+  try{const r=await rpc("system.multicall",[[{methodName:"aria2.tellActive",params:["token:"+CLAVE,K]},{methodName:"aria2.tellWaiting",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.tellStopped",params:["token:"+CLAVE,0,100,K]}]]);
+    ITEMS=[...r[0][0],...r[1][0],...r[2][0].reverse()];pintar()}
+  catch(e){$("msg").textContent="No llega a la PC (¿está prendida y aria2 abierto?)";ITEMS=[];$("lista").innerHTML=""}}
+const bajar=u=>rpc("aria2.addUri",[[u]]).then(ver).catch(e=>alert("No se pudo: "+e.message));
+$("lista").onclick=async e=>{const b=e.target.closest("button");if(!b)return;const d=ITEMS.find(x=>x.gid==b.dataset.g);if(!d)return;
+  try{if(b.dataset.a=="t"){if(d.status=="paused")await rpc("aria2.unpause",[d.gid]);else if(d.status=="active"||d.status=="waiting")await rpc("aria2.pause",[d.gid]);else if(d.status=="error"){const u=d.files[0].uris[0]&&d.files[0].uris[0].uri;if(u){await rpc("aria2.removeDownloadResult",[d.gid]);await bajar(u)}}}
+    else{if(d.status=="active"||d.status=="waiting"||d.status=="paused")await rpc("aria2.forceRemove",[d.gid]);try{await rpc("aria2.removeDownloadResult",[d.gid])}catch(e){}}}catch(e){}ver()};
+$("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;F=b.dataset.f;document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x==b));pintar()};
+$("bi").onclick=()=>rpc("aria2.unpauseAll").then(ver);$("bp").onclick=()=>rpc("aria2.pauseAll").then(ver);$("bl").onclick=()=>rpc("aria2.purgeDownloadResult").then(ver);
+$("ba").onclick=()=>{$("d").showModal();$("u").focus()};
+$("go").onclick=()=>{const m=$("u").value.match(/https?:\/\/\S+/);if(m){bajar(m[0]);$("u").value="";$("d").close()}};
 const q=new URLSearchParams(location.search),m=((q.get("url")||"")+" "+(q.get("text")||"")).match(/https?:\/\/\S+/);
-if(m){history.replaceState(null,"",location.pathname);enviar(m[0])}
-async function ver(){if(document.hidden||!BASE||!CLAVE)return;
-  try{const r=await fetch(BASE+"fdm.jpg",{headers:{"X-Clave":CLAVE},cache:"no-store"});
-    if(r.ok){const o=$("v").src;$("v").src=URL.createObjectURL(await r.blob());o&&URL.revokeObjectURL(o);$("vs").textContent=""}else $("vs").textContent="FDM no está abierto"}
-  catch(e){$("vs").textContent="Sin conexión con la PC";tunel()}}
-ver();setInterval(ver,2000);
+if(m){history.replaceState(null,"",location.pathname);bajar(m[0])}
+ver();setInterval(ver,1500);
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
 </script>
