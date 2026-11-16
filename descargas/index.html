@@ -22,7 +22,7 @@ nav button{background:none;border:0;color:#5bc0f8;padding:10px 18px}
 nav .add{background:#5bc0f8;color:#101013;border-radius:50%;width:58px;height:58px;padding:0;margin-top:-26px;box-shadow:0 4px 16px #5bc0f855}nav .add svg{width:28px;height:28px}
 #msg{padding:48px 24px;color:#8d8d99;text-align:center}
 dialog{background:#1a1a1f;color:#ececf1;border:0;border-radius:18px;width:92%;max-width:440px;padding:20px}dialog::backdrop{background:#000a}
-dialog input{width:100%;padding:14px;background:#101013;color:#ececf1;border:1px solid #333;border-radius:10px;font-size:16px;margin-top:12px}
+dialog input,dialog textarea{width:100%;padding:14px;background:#101013;color:#ececf1;border:1px solid #333;border-radius:10px;font-size:16px;margin-top:12px}
 dialog button{margin-top:12px;padding:14px;width:100%;border:0;border-radius:10px;background:#5bc0f8;color:#101013;font-size:16px;font-weight:600}
 #wf{background:#5bc0f822;border:0;color:#5bc0f8;border-radius:50%;width:38px;height:38px;padding:0;display:grid;place-items:center}#wf svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
 .rd{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#101013;border-radius:10px;padding:12px;margin-top:8px}.rd b{font-weight:600}.rd small{display:block;color:#8d8d99}.rd button{margin:0;width:auto;padding:8px 14px;font-size:14px}.rd.on{outline:1px solid #5bc0f8}
@@ -32,14 +32,15 @@ dialog button{margin-top:12px;padding:14px;width:100%;border:0;border-radius:10p
 <div id="lista"></div><div id="msg"></div>
 <nav><button id="bi" title="Iniciar todo"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button><button id="bp" title="Pausar todo"><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button><button class="add" id="ba"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button><button id="bl" title="Borrar completadas"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></nav>
 <dialog id="w"><b>WiFi de la PC</b><div id="wi" class="in" style="margin:8px 0">Cargando…</div><div id="wl"></div><div class="in" style="margin-top:12px">Al cambiar, la conexión se corta unos segundos y las descargas siguen solas. Si la red nueva no tiene internet, la PC vuelve a la anterior en 40 s.</div><button id="wc" style="background:#2a2a31;color:#ececf1">Cerrar</button></dialog>
-<dialog id="d"><b>Agregar descarga</b><br><br><input id="u" placeholder="Pegá el link" autocomplete="off"><button id="go">Bajar en la PC</button></dialog>
+<dialog id="d"><b>Agregar descarga</b><br><br><textarea id="u" rows="6" placeholder="Pegá uno o varios links (aunque tengan texto en el medio)" autocomplete="off" style="width:100%;padding:14px;background:#101013;color:#ececf1;border:1px solid #333;border-radius:10px;font-size:15px;margin-top:12px;font-family:inherit"></textarea><button id="go">Bajar en la PC</button></dialog>
 <script>
 const $=id=>document.getElementById(id),LS={get:k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 let BASE=LS.get("panel_base"),CLAVE=LS.get("panel_clave"),F="todo",ITEMS=[];
 {const m=location.hash.match(/k=([\w-]+)/);if(m){CLAVE=m[1];LS.set("panel_clave",CLAVE);history.replaceState(null,"",location.pathname+location.search)}}
 async function tunel(){try{const u=(await (await fetch("../panel/tunel.txt?x="+Date.now(),{cache:"no-store"})).text()).trim()+"/";
   if(/^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/$/.test(u)&&u!==BASE){BASE=u;LS.set("panel_base",u);return true}}catch(e){}return false}
-const ftm=(u,o)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),12000);return fetch(u,{...o,signal:c.signal}).finally(()=>clearTimeout(t))};
+let LARGO=0;
+const ftm=(u,o)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),LARGO?90000:12000);return fetch(u,{...o,signal:c.signal}).finally(()=>clearTimeout(t))};
 async function rpc(method,params=[]){
   const op={method:"POST",headers:{"X-Clave":CLAVE},body:JSON.stringify({jsonrpc:"2.0",id:1,method,params:method=="system.multicall"?params:["token:"+CLAVE,...params]})};
   let r;try{r=await ftm(BASE+"rpc",op)}catch(e){if(await tunel())r=await ftm(BASE+"rpc",op);else throw e}
@@ -71,9 +72,16 @@ async function ver2(){
   try{const r=await rpc("system.multicall",[[{methodName:"aria2.tellActive",params:["token:"+CLAVE,K]},{methodName:"aria2.tellWaiting",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.tellStopped",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.getGlobalStat",params:["token:"+CLAVE]}]]);const g=r[3][0];$("gs").textContent=+g.numActive?"↓ "+sz(+g.downloadSpeed)+"/s · "+g.numActive+" bajando":"";
     ITEMS=[...r[0][0],...r[1][0],...r[2][0].reverse()];LS.set("fdm_cache",JSON.stringify(ITEMS.slice(0,40)));pintar()}
   catch(e){caido(1);if(!ITEMS.length)$("msg").textContent="No llega a la PC (¿está prendida?). Reintentando…"}}
-const bajar=async u=>{try{
-  $("msg").textContent="Buscando el archivo...";u=(await api2("resolver",{url:u})).url;
-  await rpc("aria2.addUri",[[u]]);ver()}catch(e){alert("No se pudo bajar: "+(String(e.message).startsWith("4")?"no pude sacar el archivo de esa página (puede pedir clave, captcha o publicidad)":e.message));ver()}};
+const links=t=>[...new Set((String(t).match(/https?:\/\/[^\s"'<>]+/g)||[]).map(u=>u.replace(/[.,;:)\]]+$/,"")))];
+let OCUPADO=0;
+async function bajarVarios(texto){const L=links(texto);if(!L.length){alert("No encontré ningún link");return}
+  if(OCUPADO){alert("Todavía estoy agregando los anteriores");return}OCUPADO=1;LARGO=1;let ok=0,rep=0;const mal=[];
+  for(let i=0;i<L.length;i++){$("msg").textContent="Agregando "+(i+1)+" de "+L.length+"…";
+    try{const r=await api2("resolver",{url:L[i]});const nm=decodeURIComponent(r.url.split("?")[0].split("/").pop().replace(/\+/g," "));if(ITEMS.some(d=>d.status!="error"&&nom(d)==nm)){rep++;continue}await rpc("aria2.addUri",[[r.url]]);ok++}
+    catch(e){mal.push((L[i].match(/part\d+/i)||[L[i].slice(0,40)])[0]+": "+(String(e.message).startsWith("4")?"no pude sacar el archivo":e.message))}
+    await new Promise(r=>setTimeout(r,1500))}
+  LARGO=0;OCUPADO=0;ver();
+  alert(mal.length?"Agregadas "+ok+" de "+L.length+". Fallaron: "+mal.join(" | "):"Listo: "+ok+(ok==1?" descarga agregada":" descargas agregadas")+(rep?" ("+rep+" ya estaban)":""))}
 $("lista").onclick=async e=>{const b=e.target.closest("button");if(!b)return;
   if(F=="archivos"){const f=FILES[b.dataset.i];if(!f)return;
     try{if(b.dataset.a=="dl"){const j=await api2("files/link",{n:f.n});location.href=BASE+j.u}
@@ -83,7 +91,7 @@ $("lista").onclick=async e=>{const b=e.target.closest("button");if(!b)return;
 $("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;F=b.dataset.f;if(F=="archivos"){FILES=[];$("lista").innerHTML=""}document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x==b));F=="archivos"?ver():pintar()};
 $("bi").onclick=()=>rpc("aria2.unpauseAll").then(ver);$("bp").onclick=()=>rpc("aria2.pauseAll").then(ver);$("bl").onclick=()=>rpc("aria2.purgeDownloadResult").then(ver);
 $("ba").onclick=()=>{$("d").showModal();$("u").focus()};
-$("go").onclick=()=>{const m=$("u").value.match(/https?:\/\/\S+/);if(m){bajar(m[0]);$("u").value="";$("d").close()}};
+$("go").onclick=()=>{const t=$("u").value;$("u").value="";$("d").close();bajarVarios(t)};
 async function banda(){if(document.hidden||!BASE||!CLAVE)return;try{const r=await ftm(BASE+"wifi",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!r.ok)throw 0;const a=(await r.json()).actual||{},b=$("wb");
   if(!a.ssid){b.className="wb";b.textContent="Sin WiFi"}else{const g5=/^5|6/.test(a.banda||"");b.className="wb "+(g5?"g5":"g2");b.textContent=(g5?"5 GHz":a.banda||"?")+" · "+a.ssid}b.hidden=false}catch(e){}}
 let SW=0;
@@ -93,8 +101,8 @@ async function wifi(){try{const r=await ftm(BASE+"wifi",{headers:{"X-Clave":CLAV
 $("wf").onclick=()=>{$("w").showModal();wifi()};$("wc").onclick=()=>$("w").close();
 $("wl").onclick=async e=>{const b=e.target.closest("button");if(!b)return;if(!confirm("¿Cambiar la PC a "+b.dataset.n+"? Se corta unos segundos."))return;
   try{await api2("wifi/conectar",{name:b.dataset.n});SW=1;setTimeout(()=>SW=0,70000);$("wi").textContent="Cambiando… la conexión se corta unos segundos";$("wl").innerHTML="";let n=0;const iv=setInterval(async()=>{n++;await wifi();banda();if(!/No llega|Cambiando/.test($("wi").textContent)||n>15)clearInterval(iv)},4000)}catch(e){alert("No se pudo: "+e.message)}};
-const q=new URLSearchParams(location.search),m=((q.get("url")||"")+" "+(q.get("text")||"")).match(/https?:\/\/\S+/);
-if(m){history.replaceState(null,"",location.pathname);bajar(m[0])}
+const q=new URLSearchParams(location.search),txt=(q.get("url")||"")+" "+(q.get("text")||"");
+if(links(txt).length){history.replaceState(null,"",location.pathname);bajarVarios(txt)}
 try{ITEMS=JSON.parse(LS.get("fdm_cache")||"[]");pintar()}catch(e){}
 ver();setInterval(ver,2000);banda();setInterval(banda,12000);
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
