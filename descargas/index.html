@@ -75,8 +75,8 @@ function contar(a,c,k){const tb=n=>document.querySelector('#tabs [data-f="'+n+'"
 function pintar(){if(F=="archivos")return pintarArchivos();
   const L=s=>ITEMS.filter(d=>d.status==s),act=L("active"),col=L("waiting"),pau=L("paused"),err=L("error"),ok=L("complete");
   contar(act.length,col.length+pau.length,ok.length);
-  const sec=(t,l)=>l.length?`<div class="sh">${t}<b>${l.length}</b></div>`+l.map((d,i)=>tarjeta(d,i,l.length)).join(""):"";
-  const html=F=="listas"?sec("Completadas",ok):(sec("Bajando ahora",act)+sec("En cola",col)+sec("En pausa",pau)+sec("Con error",err)+(F=="todo"?sec("Completadas",ok):""));
+  const orden=F=="listas"?ok:[...act,...col,...pau,...err,...(F=="todo"?ok:[])];
+  const html=orden.map(d=>tarjeta(d,col.indexOf(d),col.length)).join("");
   $("lista").innerHTML=html;$("msg").textContent=html?"":"No hay descargas";
 }
 async function api2(ruta,cuerpo){const op={method:"POST",headers:{"X-Clave":CLAVE},body:JSON.stringify(cuerpo)};let r;try{r=await ftm(BASE+ruta,op)}catch(e){if(await tunel())r=await ftm(BASE+ruta,op);else throw e}if(!r.ok)throw new Error(r.status);return r.json()}
