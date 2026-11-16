@@ -357,6 +357,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
  .ficha .fil{grid-template-columns:140px minmax(0,1fr)}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.grp{font-size:12px;letter-spacing:.4px;color:#848e9c;margin:14px 2px 8px}.tag.ab{background:#2b6cff22;color:#6ea0ff}
 </style>
 </head>
 <body>
@@ -397,12 +398,12 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
       <div class="eqv num" id="k_cap">–</div>
       <span class="delta" id="k_tot">–</span>
       <div class="hst">
-        <div><small>Balance</small><b class="num" id="k_bal">–</b><em id="k_balp">closed trades</em></div>
-        <div><small>Open trades</small><b class="num" id="k_flo">–</b><em>not closed yet</em></div>
-        <div><small>Today</small><b class="num" id="k_hoy">–</b><em>since 18:00 Arg.</em></div>
+        <div><small>Saldo</small><b class="num" id="k_bal">–</b><em id="k_balp">operaciones terminadas</em></div>
+        <div><small>En curso</small><b class="num" id="k_flo">–</b><em>operaciones abiertas, aún sin cobrar</em></div>
+        <div><small>Hoy</small><b class="num" id="k_hoy">–</b><em>desde las 18:00 (Arg.)</em></div>
       </div>
     </div>
-    <div class="card" id="c_ops"><div class="sec"><h2>Open trades</h2><span id="t_ops" class="mut"></span></div><div id="abiertas"></div><div id="cerradas"></div><p class="toque" id="t_toque">Tap a trade to see it on its chart.</p></div>
+    <div class="card" id="c_ops"><div class="sec"><h2>Operaciones de hoy</h2><span id="t_ops" class="mut"></span></div><div class="grp" id="g_ab" hidden>ABIERTAS · todavía en juego, el resultado puede cambiar</div><div id="abiertas"></div><div class="grp" id="g_ce" hidden>TERMINADAS HOY · ya cerradas, el resultado es definitivo</div><div id="cerradas"></div><p class="toque" id="t_toque">Tocá una operación para verla en su gráfico.</p></div>
     <div class="card c-obj"><div class="sec"><h2>Challenge objectives</h2><span class="mut" id="t_fase"></span></div>
       <div class="obj"><span class="oi" id="o_meta"></span><span class="on-t">Profit target</span><span class="ov num" id="t_meta"></span><div class="pista meta"><i id="b_meta"></i></div></div>
       <div class="obj"><span class="oi" id="o_dia"></span><span class="on-t">Daily loss limit</span><span class="ov num" id="t_dia"></span><div class="pista"><i id="b_dia"></i><u id="f_dia"></u></div></div>
@@ -1057,7 +1058,7 @@ function pintar(d){
   $("k_fase").textContent=fase+" · "+usd0(d.capital);$("t_fase").textContent=fase;
   $("k_cap").textContent=usd(d.patrimonio);
   $("k_tot").className="delta"+(d.total_usd<0?" rojo":"");$("k_tot").innerHTML=(d.total_usd<0?TRI_DN:TRI_UP)+usdS(d.total_usd)+" ("+pct(d.total_pct)+") since the start";
-  $("k_bal").textContent=usd(d.saldo);$("k_balp").textContent=pct(100*(d.saldo-d.capital)/d.capital)+" closed";$("k_balp").className=cl(d.saldo-d.capital);   // % ya cerrado, sin flotante
+  $("k_bal").textContent=usd(d.saldo);$("k_balp").textContent=pct(100*(d.saldo-d.capital)/d.capital)+" ya cobrado";$("k_balp").className=cl(d.saldo-d.capital);   // % ya cerrado, sin flotante
   $("k_flo").textContent=usdS(d.flotante||0);$("k_flo").className="num "+cl(d.flotante||0);
   $("k_hoy").textContent=usdS(d.hoy_usd);$("k_hoy").className="num "+cl(d.hoy_usd);
   // objetivos del challenge
@@ -1082,18 +1083,18 @@ function pintar(d){
   // operaciones (arriba del todo)
   const nAb=d.posiciones.length,nCe=d.cerradas_hoy.length;
   if(nAb&&(!VELAS||Date.now()-ULTV>12000)){ULTV=Date.now();leerVelas().then(v=>{VELAS=v;pintar(d)}).catch(()=>{})}   // el "Now" sale de la última vela: se bajan acá también
-  $("t_ops").textContent=nAb+" open · "+nCe+" closed today";
-  const dia=t=>Math.floor(t/86400)===Math.floor((d.actualizado||0)/86400)?"today "+hhmm(t):fdm(t);
+  $("t_ops").textContent=nAb+(nAb==1?" abierta":" abiertas")+" · "+nCe+(nCe==1?" terminada":" terminadas");
+  const dia=t=>Math.floor(t/86400)===Math.floor((d.actualizado||0)/86400)?"hoy "+hhmm(t):fdm(t);
   $("abiertas").innerHTML=d.posiciones.map(p=>{const lock=p.sl>0?(p.lado==="compra"?p.sl-p.precio:p.precio-p.sl):-1;
     return `<div class="pos" data-sim="${p.sim}" data-bot="${p.bot}" role="button" tabindex="0">
-      <div class="pos-a"><span class="sym">${p.sim}</span>${ladoChip(p.lado)}</div>
+      <div class="pos-a"><span class="sym">${p.sim}</span>${ladoChip(p.lado)}<span class="tag ab">ABIERTA</span></div>
       <b class="pos-g num ${cl(p.gan)}">${usdS(p.gan)}</b>
-      <div class="pos-b">${nb(p.bot)} · ${p.riesgo_ini>0?"risk "+riesgoTxt(p.riesgo_ini):lote(p.lote)+" lots"} · since ${dia(p.desde||0)}</div>${lock>=0?`<span class="chip">${lock>0?"Profit locked":"No risk"}</span>`:`<span class="pos-v">Chart ›</span>`}
-      <div class="pos-c"><div>Entry<b>${p.precio}</b></div>${(()=>{const V=velasDe(p.sim,p.bot),n=p.actual||(V&&ultimo(V));return `<div class="ahora">Now<b>${n||"–"}</b></div>`})()}<div>Stop Loss<b>${p.sl>0?p.sl:"none"}</b></div></div></div>`}).join("");
+      <div class="pos-b">${nb(p.bot)} · ${p.riesgo_ini>0?"riesgo "+riesgoTxt(p.riesgo_ini):lote(p.lote)+" lotes"} · desde ${dia(p.desde||0)}</div>${lock>=0?`<span class="chip">${lock>0?"Ganancia asegurada":"Sin riesgo"}</span>`:`<span class="pos-v">Chart ›</span>`}
+      <div class="pos-c"><div>Entrada<b>${p.precio}</b></div>${(()=>{const V=velasDe(p.sim,p.bot),n=p.actual||(V&&ultimo(V));return `<div class="ahora">Ahora<b>${n||"–"}</b></div>`})()}<div>Stop Loss<b>${p.sl>0?p.sl:"ninguno"}</b></div></div></div>`}).join("");
   $("cerradas").innerHTML=d.cerradas_hoy.map(p=>`<div class="pos" data-sim="${p.sim}" data-bot="${p.bot}" role="button" tabindex="0">
-      <div class="pos-a"><span class="sym">${p.sim}</span><span class="tag">closed ${hhmm(p.t)}</span></div><b class="pos-g num ${cl(p.neto)}">${usdS(p.neto)}</b>
-      <div class="pos-b">${nb(p.bot)}</div><span class="pos-v">Chart ›</span></div>`).join("")||(nAb?"":'<div class="vacio">No open trades right now.</div>');
-  $("t_toque").style.display=nAb+nCe?"":"none";
+      <div class="pos-a"><span class="sym">${p.sim}</span><span class="tag">TERMINADA ${hhmm(p.t)}</span></div><b class="pos-g num ${cl(p.neto)}">${usdS(p.neto)}</b>
+      <div class="pos-b">${nb(p.bot)}</div><span class="pos-v">Chart ›</span></div>`).join("")||(nAb?"":'<div class="vacio">No hay operaciones abiertas ahora.</div>');
+  $("t_toque").style.display=nAb+nCe?"":"none";$("g_ab").hidden=!nAb;$("g_ce").hidden=!nCe;
   const av=avisos(d).filter(x=>x[0]&&x[1]!=="MIN. DAYS");
   $("c_avisos").style.display=av.length?"":"none";
   $("avisos").innerHTML=av.map(x=>`<div class="av ${x[0]}"><em>${x[1]}</em><div>${x[2]}${x[3]?`<small>${x[3]}</small>`:""}</div></div>`).join("");
