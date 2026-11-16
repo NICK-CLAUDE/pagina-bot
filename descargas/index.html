@@ -35,9 +35,10 @@ let BASE=LS.get("panel_base"),CLAVE=LS.get("panel_clave"),F="todo",ITEMS=[];
 {const m=location.hash.match(/k=([\w-]+)/);if(m){CLAVE=m[1];LS.set("panel_clave",CLAVE);history.replaceState(null,"",location.pathname+location.search)}}
 async function tunel(){try{const u=(await (await fetch("../panel/tunel.txt?x="+Date.now(),{cache:"no-store"})).text()).trim()+"/";
   if(/^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/$/.test(u)&&u!==BASE){BASE=u;LS.set("panel_base",u);return true}}catch(e){}return false}
+const ftm=(u,o)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),12000);return fetch(u,{...o,signal:c.signal}).finally(()=>clearTimeout(t))};
 async function rpc(method,params=[]){
   const op={method:"POST",headers:{"X-Clave":CLAVE},body:JSON.stringify({jsonrpc:"2.0",id:1,method,params:method=="system.multicall"?params:["token:"+CLAVE,...params]})};
-  let r;try{r=await fetch(BASE+"rpc",op)}catch(e){if(await tunel())r=await fetch(BASE+"rpc",op);else throw e}
+  let r;try{r=await ftm(BASE+"rpc",op)}catch(e){if(await tunel())r=await ftm(BASE+"rpc",op);else throw e}
   if(!r.ok)throw new Error(r.status);const j=await r.json();if(j.error)throw new Error(j.error.message);return j.result}
 const K=["gid","status","totalLength","completedLength","downloadSpeed","files","errorMessage"];
 const sz=b=>b>=1e9?(b/1e9).toFixed(2)+" GB":b>=1e6?(b/1e6).toFixed(1)+" MB":(b/1e3).toFixed(0)+" KB";
@@ -56,13 +57,16 @@ function pintar(){if(F=="archivos")return pintarArchivos();
     return `<div class="it ${cls}"><div class="top"><button class="ic" data-a="t" data-g="${d.gid}">${ic}</button><div class="nm">${nom(d).replace(/</g,"&lt;")}</div><button class="x" data-a="x" data-g="${d.gid}">${IC.x}</button></div><div class="bar"><i style="width:${p}%"></i></div><div class="in">${info}</div></div>`}).join("");
   $("msg").textContent=v.length?"":"No hay descargas";
 }
-async function api2(ruta,cuerpo){const op={method:"POST",headers:{"X-Clave":CLAVE},body:JSON.stringify(cuerpo)};let r;try{r=await fetch(BASE+ruta,op)}catch(e){if(await tunel())r=await fetch(BASE+ruta,op);else throw e}if(!r.ok)throw new Error(r.status);return r.json()}
-async function ver(){if(document.hidden)return;
-  if(F=="archivos"){try{const r=await fetch(BASE+"files",{headers:{"X-Clave":CLAVE},cache:"no-store"});FILES=await r.json();pintarArchivos()}catch(e){$("msg").textContent="No llega a la PC"}return}
+async function api2(ruta,cuerpo){const op={method:"POST",headers:{"X-Clave":CLAVE},body:JSON.stringify(cuerpo)};let r;try{r=await ftm(BASE+ruta,op)}catch(e){if(await tunel())r=await ftm(BASE+ruta,op);else throw e}if(!r.ok)throw new Error(r.status);return r.json()}
+let OCUP=0;
+async function ver(){if(document.hidden||OCUP)return;OCUP=1;try{await ver2()}finally{OCUP=0}}
+const caido=on=>{$("gs").textContent=on?"reconectando…":$("gs").textContent};
+async function ver2(){
+  if(F=="archivos"){try{const r=await ftm(BASE+"files",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!r.ok)throw 0;FILES=await r.json();pintarArchivos()}catch(e){caido(1)}return}
   if(!CLAVE){$("msg").textContent="Falta la clave: abrí el panel una vez con su link (el que tiene #k=...).";return}
   try{const r=await rpc("system.multicall",[[{methodName:"aria2.tellActive",params:["token:"+CLAVE,K]},{methodName:"aria2.tellWaiting",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.tellStopped",params:["token:"+CLAVE,0,100,K]},{methodName:"aria2.getGlobalStat",params:["token:"+CLAVE]}]]);const g=r[3][0];$("gs").textContent=+g.numActive?"↓ "+sz(+g.downloadSpeed)+"/s · "+g.numActive+" bajando":"";
-    ITEMS=[...r[0][0],...r[1][0],...r[2][0].reverse()];pintar()}
-  catch(e){$("msg").textContent="No llega a la PC (¿está prendida y aria2 abierto?)";ITEMS=[];$("lista").innerHTML=""}}
+    ITEMS=[...r[0][0],...r[1][0],...r[2][0].reverse()];LS.set("fdm_cache",JSON.stringify(ITEMS.slice(0,40)));pintar()}
+  catch(e){caido(1);if(!ITEMS.length)$("msg").textContent="No llega a la PC (¿está prendida?). Reintentando…"}}
 const bajar=async u=>{try{
   $("msg").textContent="Buscando el archivo...";u=(await api2("resolver",{url:u})).url;
   await rpc("aria2.addUri",[[u]]);ver()}catch(e){alert("No se pudo bajar: "+(String(e.message).startsWith("4")?"no pude sacar el archivo de esa página (puede pedir clave, captcha o publicidad)":e.message));ver()}};
@@ -78,6 +82,7 @@ $("ba").onclick=()=>{$("d").showModal();$("u").focus()};
 $("go").onclick=()=>{const m=$("u").value.match(/https?:\/\/\S+/);if(m){bajar(m[0]);$("u").value="";$("d").close()}};
 const q=new URLSearchParams(location.search),m=((q.get("url")||"")+" "+(q.get("text")||"")).match(/https?:\/\/\S+/);
 if(m){history.replaceState(null,"",location.pathname);bajar(m[0])}
-ver();setInterval(ver,1500);
+try{ITEMS=JSON.parse(LS.get("fdm_cache")||"[]");pintar()}catch(e){}
+ver();setInterval(ver,2000);
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
 </script>
