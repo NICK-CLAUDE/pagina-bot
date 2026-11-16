@@ -83,12 +83,13 @@ $("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;F=b.datase
 $("bi").onclick=()=>rpc("aria2.unpauseAll").then(ver);$("bp").onclick=()=>rpc("aria2.pauseAll").then(ver);$("bl").onclick=()=>rpc("aria2.purgeDownloadResult").then(ver);
 $("ba").onclick=()=>{$("d").showModal();$("u").focus()};
 $("go").onclick=()=>{const m=$("u").value.match(/https?:\/\/\S+/);if(m){bajar(m[0]);$("u").value="";$("d").close()}};
+let SW=0;
 async function wifi(){try{const r=await ftm(BASE+"wifi",{headers:{"X-Clave":CLAVE},cache:"no-store"});if(!r.ok)throw 0;const j=await r.json(),a=j.actual||{};
   $("wi").textContent=a.ssid?"Conectada a: "+a.ssid+" · "+(a.banda||"?")+" · señal "+(a.senal||"?"):"Sin WiFi";
-  $("wl").innerHTML=j.redes.map(n=>`<div class="rd ${n==a.ssid?"on":""}"><div><b>${n.replace(/</g,"&lt;")}</b>${/5\s*g/i.test(n)?"<small>5 GHz · más rápida, menos alcance</small>":""}</div>${n==a.ssid?"<small>actual</small>":`<button data-n="${n.replace(/"/g,"&quot;")}">Conectar</button>`}</div>`).join("")}catch(e){$("wi").textContent="No llega a la PC"}}
+  $("wl").innerHTML=j.redes.map(n=>`<div class="rd ${n==a.ssid?"on":""}"><div><b>${n.replace(/</g,"&lt;")}</b>${/5\s*g/i.test(n)?"<small>5 GHz · más rápida, menos alcance</small>":""}</div>${n==a.ssid?"<small>actual</small>":`<button data-n="${n.replace(/"/g,"&quot;")}">Conectar</button>`}</div>`).join("")}catch(e){$("wi").textContent=SW?"Cambiando… reconectando con la PC":"No llega a la PC"}}
 $("wf").onclick=()=>{$("w").showModal();wifi()};$("wc").onclick=()=>$("w").close();
 $("wl").onclick=async e=>{const b=e.target.closest("button");if(!b)return;if(!confirm("¿Cambiar la PC a "+b.dataset.n+"? Se corta unos segundos."))return;
-  try{await api2("wifi/conectar",{name:b.dataset.n});$("wi").textContent="Cambiando… la conexión se corta unos segundos";$("wl").innerHTML="";setTimeout(wifi,15000);setTimeout(wifi,30000)}catch(e){alert("No se pudo: "+e.message)}};
+  try{await api2("wifi/conectar",{name:b.dataset.n});SW=1;setTimeout(()=>SW=0,70000);$("wi").textContent="Cambiando… la conexión se corta unos segundos";$("wl").innerHTML="";let n=0;const iv=setInterval(async()=>{n++;await wifi();if(!/No llega|Cambiando/.test($("wi").textContent)||n>15)clearInterval(iv)},4000)}catch(e){alert("No se pudo: "+e.message)}};
 const q=new URLSearchParams(location.search),m=((q.get("url")||"")+" "+(q.get("text")||"")).match(/https?:\/\/\S+/);
 if(m){history.replaceState(null,"",location.pathname);bajar(m[0])}
 try{ITEMS=JSON.parse(LS.get("fdm_cache")||"[]");pintar()}catch(e){}
