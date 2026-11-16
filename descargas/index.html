@@ -1,0 +1,25 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bajar en la PC</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#090e16">
+<body style="font:18px sans-serif;background:#090e16;color:#eee;max-width:480px;margin:auto;padding:16px">
+<h3>Bajar en la PC</h3>
+<input id="u" placeholder="Pegá un link" style="width:100%;padding:12px;box-sizing:border-box">
+<button id="b" style="width:100%;padding:14px;margin:8px 0">Bajar en la PC</button>
+<p id="s"></p>
+<script>
+const $=id=>document.getElementById(id),LS={get:k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+let BASE=LS.get("panel_base"),CLAVE=LS.get("panel_clave");
+{const m=location.hash.match(/k=([\w-]+)/);if(m){CLAVE=m[1];LS.set("panel_clave",CLAVE);history.replaceState(null,"",location.pathname+location.search)}}
+async function tunel(){try{const u=(await (await fetch("../panel/tunel.txt?x="+Date.now(),{cache:"no-store"})).text()).trim()+"/";
+  if(/^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/$/.test(u)&&u!==BASE){BASE=u;LS.set("panel_base",u);return true}}catch(e){}return false}
+async function enviar(url){
+  if(!CLAVE){$("s").textContent="Falta la clave: abrí el panel una vez con su link (el que tiene #k=...).";return}
+  $("s").textContent="Enviando...";
+  const op={method:"POST",headers:{"X-Clave":CLAVE},body:JSON.stringify({url})};
+  let r;try{r=await fetch(BASE+"bajar",op)}catch(e){if(await tunel()){try{r=await fetch(BASE+"bajar",op)}catch(e2){}}}
+  $("s").textContent=r&&r.ok?"✔ Enviado: FDM lo baja en la PC":r?"Error "+r.status+(r.status==401?" (clave mala)":""):"No llega a la PC (¿está prendida?)";
+}
+$("b").onclick=()=>{const m=$("u").value.match(/https?:\/\/\S+/);if(m){enviar(m[0]);$("u").value=""}};
+const q=new URLSearchParams(location.search),m=((q.get("url")||"")+" "+(q.get("text")||"")).match(/https?:\/\/\S+/);
+if(m){history.replaceState(null,"",location.pathname);enviar(m[0])}
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
+</script>
