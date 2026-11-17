@@ -117,6 +117,15 @@ dialog textarea::placeholder{color:#7d8592}
 <dialog id="d">
   <h2>Agregar descargas</h2>
   <textarea id="u" placeholder="Pegá uno o varios links. Puede haber texto en el medio." autocomplete="off"></textarea>
+  <select id="ds" style="width:100%;margin:8px 0;padding:12px;border-radius:12px;background:#1a2330;color:inherit;border:1px solid #2a3646;font:inherit">
+    <option value="">Descargas (Downloads)</option>
+    <option value="C:\Users\NICO\Desktop">Escritorio</option>
+    <option value="C:\Users\NICO\Desktop\DESCARGAS">Escritorio\DESCARGAS</option>
+    <option value="C:\Users\NICO\Desktop\JUEGOS">Escritorio\JUEGOS</option>
+    <option value="C:\Users\NICO\Desktop\JUEGOS\Roms y Updates">JUEGOS\Roms y Updates</option>
+    <option value="C:\Users\NICO\Documents">Documentos</option>
+    <option value="C:\Users\NICO\Videos">Videos</option>
+  </select>
   <button class="bt" id="go">Bajar en la PC</button>
   <button class="bt s" id="gc">Cancelar</button>
 </dialog>
@@ -203,7 +212,7 @@ function pintar(){
     $("lista").innerHTML=vivos.map(d=>filaDescarga(d,cola.indexOf(d),cola.length)).join("")+hechos.map(d=>filaDescarga(d,0,0)).join("");
     $("vacio").innerHTML="<b>No hay descargas</b>Pegá o compartí un link de Mediafire, Drive, Dropbox o uno directo con el botón +. La PC lo baja a su carpeta Descargas.";
     $("vacio").hidden=!!(vivos.length||hechos.length)||!CONECTADO;
-    $("sum").innerHTML=!CLAVE?"Falta la clave: abrí el link completo una vez.":act||cola.length||pau?`<b>${act?sz(v)+"/s":"Pausado"}</b>${act} bajando${cola.length?" · "+cola.length+" en cola":""}${pau?" · "+pau+" en pausa":""}`:`<b>Sin descargas activas</b>${hechos.length} completada${hechos.length==1?"":"s"}`;
+    $("sum").innerHTML=!CLAVE?"Falta la clave: abrí el link completo una vez.":act||cola.length||pau?`<b>${act?sz(v)+"/s":"Pausado"}</b>${act} bajando${cola.length?" · "+cola.length+" en cola":""}${pau?" · "+pau+" en pausa":""}${act&&v>0?" · faltan "+dur(vivos.filter(d=>d.status=="active"||d.status=="waiting").reduce((a,d)=>a+Math.max(0,(+d.totalLength||0)-(+d.completedLength||0)),0)/v)+" en total":""}`:`<b>Sin descargas activas</b>${hechos.length} completada${hechos.length==1?"":"s"}`;
     if(act+cola.length){b.hidden=false;b.dataset.a="pausatodo";b.innerHTML=I.pause+"Pausar todo"}else if(pau){b.hidden=false;b.dataset.a="seguirtodo";b.innerHTML=I.play+"Reanudar todo"}else if(hechos.length){b.hidden=false;b.dataset.a="limpiar";b.innerHTML=I.x+"Limpiar lista"}else b.hidden=true}
   else{
     $("lista").innerHTML=arch.map(filaArchivo).join("");
@@ -247,14 +256,16 @@ async function bajarVarios(texto){const L=links(texto);if(!L.length){aviso("No e
   for(let i=0;i<L.length;i++){aviso("Agregando "+(i+1)+" de "+L.length+"…",0);
     try{const r=await api2("resolver",{url:L[i]});const nm=decodeURIComponent(r.url.split("?")[0].split("/").pop().replace(/\+/g," "));
       if(ITEMS.some(d=>d.status!="error"&&d.status!="complete"&&nom(d)==nm)||FILES.some(f=>f.n==nm)){rep++;continue}
-      await rpc("aria2.addUri",[[r.url]]);ok++}
+      await rpc("aria2.addUri",[[r.url],DIR?{dir:DIR}:{}]);ok++}
     catch(e){mal.push((L[i].match(/part\d+/i)||[L[i].slice(0,40)])[0]+" ("+(String(e.message).startsWith("4")?"no pude sacar el archivo":e.message)+")")}
     await new Promise(r=>setTimeout(r,1500))}
   LARGO=0;OCUPADO=0;ver();
   aviso((ok?ok+(ok==1?" descarga agregada":" descargas agregadas"):"No se agregó ninguna")+(rep?" · "+rep+" ya estaban":"")+(mal.length?". Fallaron: "+mal.join(", "):""),9000)}
+let DIR="";
+$("ds").value=LS.get("fdm_dir");if($("ds").selectedIndex<0)$("ds").value="";
 $("ba").onclick=()=>{$("d").showModal();$("u").focus()};
 $("gc").onclick=()=>$("d").close();
-$("go").onclick=()=>{const t=$("u").value;$("u").value="";$("d").close();bajarVarios(t)};
+$("go").onclick=()=>{DIR=$("ds").value;LS.set("fdm_dir",DIR);const t=$("u").value;$("u").value="";$("d").close();bajarVarios(t)};
 
 /* ---------- WiFi de la PC ---------- */
 let SW=0;
