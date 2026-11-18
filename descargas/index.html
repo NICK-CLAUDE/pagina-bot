@@ -215,7 +215,7 @@ function filaDescarga(d,pos,n){
     acc=B("pausa",k,"pause","Pausar")+B("quitar",k,"x","Cancelar","d")}
   else if(d.status=="waiting"){box=IS.clk;meta=t?sz(t):"";bar=0;acc=B("quitar",k,"x","Quitar","d")}
   else if(d.status=="paused"){box=IS.pau;meta=num(p,0)+" % de "+sz(t);acc=B("seguir",k,"play","Reanudar","p")+B("quitar",k,"x","Cancelar","d")}
-  else if(d.status=="complete"){box=IS.ok;meta=sz(t);const real=d.ini&&d.fin?d.fin-d.ini:0;if(real>=3)chips=[["k",dur2(real)],["",sz(t/real)+"/s"],["",fecha(d.fin)]];else if(+d.actS>=5)chips=[["",dur2(d.actS)+"*"],["",sz(t/d.actS)+"/s"]];bar=0;acc=B("descartar",k,"x","Quitar")}
+  else if(d.status=="complete"){box=IS.ok;meta=sz(t);const real=d.ini&&d.fin?d.fin-d.ini:0;if(real>=3)chips=[["k",dur2(real)],["",sz(t/real)+"/s"],["",fecha(d.fin)]];else if(+d.actS>=5)chips=[["",dur2(d.actS)+"*"],["",sz(t/d.actS)+"/s"]].concat(d.fin?[["",fecha(d.fin)]]:[]);else if(d.fin)chips=[["",fecha(d.fin)]];bar=0;acc=B("descartar",k,"x","Quitar")}
   else{box=IS.err;meta=/space|alloc|disk|write/i.test(d.errorMessage||"")?"Sin espacio en el disco":esc(d.errorMessage||"Error");bar=0;acc=B("reintentar",k,"retry","Reintentar","p")+B("descartar",k,"x","Descartar","d")}
   return fila(d.status,k,box,nm,meta,acc,bar,extra,chips)}
 function filaArchivo(f){const k="f:"+f.n,sure=SURE==k;
