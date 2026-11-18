@@ -286,13 +286,13 @@ $("lista").onclick=async e=>{const row=e.target.closest(".row");if(!row)return;c
   try{
     if(a=="pausa")await rpc("aria2.pause",[gid]);
     else if(a=="seguir")await rpc("aria2.unpause",[gid]);
-    else if(a=="quitar"||a=="descartar"){if(d&&["active","waiting","paused"].includes(d.status))await rpc("aria2.forceRemove",[gid]);try{await rpc("aria2.removeDownloadResult",[gid])}catch(x){}SEL=""}
+    else if(a=="quitar"||a=="descartar"){if(d&&["active","waiting","paused"].includes(d.status))await rpc("aria2.forceRemove",[gid]);try{await rpc("aria2.removeDownloadResult",[gid])}catch(x){}try{await api2("olvidar",{gid})}catch(x){}SEL=""}
     else if(a=="reintentar"){const u=d&&d.files[0].uris[0]&&d.files[0].uris[0].uri;if(u){await rpc("aria2.removeDownloadResult",[gid]);await rpc("aria2.addUri",[[u]])}}
     else if(a=="bajar"){const j=await api2("files/link",{n:nombre});location.href=BASE+j.u}
     else if(a=="borrar"){if(SURE!=k){SURE=k;pintar();return}await api2("files/delete",{n:nombre});SURE="";SEL="";FILES=FILES.filter(f=>f.n!=nombre);pintar();aviso("Borrado",3000)}
   }catch(x){aviso("No se pudo: "+x.message)}
   ver()};
-$("todo").onclick=async()=>{try{const a=$("todo").dataset.a;await rpc(a=="pausatodo"?"aria2.pauseAll":a=="seguirtodo"?"aria2.unpauseAll":"aria2.purgeDownloadResult");ver()}catch(e){aviso("No se pudo: "+e.message)}};
+$("todo").onclick=async()=>{try{const a=$("todo").dataset.a;await rpc(a=="pausatodo"?"aria2.pauseAll":a=="seguirtodo"?"aria2.unpauseAll":"aria2.purgeDownloadResult");if(a=="limpiar")await api2("olvidar",{todo:true});ver()}catch(e){aviso("No se pudo: "+e.message)}};
 
 /* ---------- agregar varios links ---------- */
 const links=t=>[...new Set((String(t).match(/https?:\/\/[^\s"'<>]+/g)||[]).map(u=>u.replace(/[.,;:)\]]+$/,"")))];
