@@ -39,7 +39,7 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em;margin-right:au
 .sw{width:46px;height:28px;border-radius:99px;background:#39404b;position:relative;flex:none;transition:background .2s}
 .sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s cubic-bezier(.2,.8,.2,1)}
 #a24[aria-checked=true] .sw{background:var(--ac)}#a24[aria-checked=true] .sw::after{transform:translateX(18px)}
-#disco{padding:0 0 12px;display:grid;gap:8px}
+#disco{display:grid;gap:8px;margin:12px 16px 0}
 .dk{background:var(--s1);border:1px solid var(--ln);border-radius:14px;padding:10px 12px}
 .dk .dt{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--mu)}
 .dk .dt b{color:var(--tx);font-size:20px;line-height:1.3}.dk .dt em{font-style:normal;text-align:right}
@@ -52,7 +52,7 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em;margin-right:au
 .mt3 span{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:8px;background:var(--s2);color:#c4c9d2;font-size:12.5px;font-weight:600}
 .mt3 span.k{background:#52c48f1c;color:var(--ok)}
 #esp{margin:6px 2px 0}#esp.low{color:var(--am)}
-.sum button{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:99px;background:var(--s2);font-size:14px;font-weight:600;color:var(--ac)}
+.sum button{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:var(--s2);font-size:14px;font-weight:600;color:var(--ac)}
 .sum button svg{width:18px;height:18px}
 #off{display:none;padding:10px 16px;background:#f2b35b1a;color:var(--am);font-size:14px}
 #off.on{display:block}
@@ -122,10 +122,10 @@ dialog textarea::placeholder{color:#7d8592}
     <button class="ib" id="wf" aria-label="WiFi de la PC"><svg viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20v.01"/></svg></button>
   </div>
   <div class="sum"><p id="sum">Conectando…</p><button id="todo" hidden></button></div>
-  <button id="a24" role="switch" aria-checked="false"><span>Al terminar, pasar a WiFi 2,4 GHz<small id="a24t">Apagado: sigue en 5 GHz</small></span><i class="sw"></i></button>
-  <div id="disco"></div>
+  
 </header>
 <nav id="tabs"><button data-t="d" class="on">Bajando<b id="nd"></b></button><button data-t="f">Archivos<b id="nf"></b></button></nav>
+<div id="disco" hidden></div>
 <div id="off">Sin conexión. Reintentando…</div>
 <ul id="lista"></ul>
 <div id="vacio" hidden><b>Sin descargas</b>Tocá + y pegá los links.</div>
@@ -150,7 +150,8 @@ dialog textarea::placeholder{color:#7d8592}
 </dialog>
 <dialog id="w">
   <h2>WiFi de la PC</h2>
-  <div id="wi" class="nota" style="margin:0 0 4px">Cargando…</div>
+  <div id="wi" class="nota" style="margin:0 0 10px">Cargando…</div>
+  <button id="a24" role="switch" aria-checked="false"><span>Al terminar, pasar a 2,4 GHz<small id="a24t">Apagado: sigue en 5 GHz</small></span><i class="sw"></i></button>
   <div id="wl"></div>
   <p class="nota">Al cambiar se corta unos segundos.</p>
   <button class="bt s" id="wc">Cerrar</button>
@@ -209,11 +210,11 @@ function filaDescarga(d,pos,n){
   const t=+d.totalLength,c=+d.completedLength,s=+d.downloadSpeed,p=t?c/t*100:0,k="g:"+d.gid,nm=nom(d);
   let box,meta,acc,extra="",bar=p,chips=null;
   if(d.status=="active"){const eta=s>0&&t&&s>2e5?Math.round((t-c)/s):0;
-    box=IS.dl;meta=c?num(p,0)+" % · "+sz(c)+" de "+sz(t):"Iniciando…";
+    box=IS.dl;meta=c?num(p,0)+" % de "+sz(t):"Iniciando…";
     extra=sz(s)+"/s"+(eta?" · "+dur(eta):"");
     acc=B("pausa",k,"pause","Pausar")+B("quitar",k,"x","Cancelar","d")}
-  else if(d.status=="waiting"){box=IS.clk;meta="Turno "+(pos+1)+" de "+n;bar=0;acc=B("quitar",k,"x","Quitar","d")}
-  else if(d.status=="paused"){box=IS.pau;meta=num(p,0)+" % · "+sz(c)+(t?" de "+sz(t):"");acc=B("seguir",k,"play","Reanudar","p")+B("quitar",k,"x","Cancelar","d")}
+  else if(d.status=="waiting"){box=IS.clk;meta=t?sz(t):"";bar=0;acc=B("quitar",k,"x","Quitar","d")}
+  else if(d.status=="paused"){box=IS.pau;meta=num(p,0)+" % de "+sz(t);acc=B("seguir",k,"play","Reanudar","p")+B("quitar",k,"x","Cancelar","d")}
   else if(d.status=="complete"){box=IS.ok;meta=sz(t);const real=d.ini&&d.fin?d.fin-d.ini:0;if(real>=3)chips=[["k",dur2(real)],["",sz(t/real)+"/s"],["",fecha(d.fin)]];else if(+d.actS>=5)chips=[["",dur2(d.actS)+"*"],["",sz(t/d.actS)+"/s"]];bar=0;acc=B("descartar",k,"x","Quitar")}
   else{box=IS.err;meta=/space|alloc|disk|write/i.test(d.errorMessage||"")?"Sin espacio en el disco":esc(d.errorMessage||"Error");bar=0;acc=B("reintentar",k,"retry","Reintentar","p")+B("descartar",k,"x","Descartar","d")}
   return fila(d.status,k,box,nm,meta,acc,bar,extra,chips)}
@@ -239,8 +240,8 @@ function pintar(){
       +gh("En pausa",ST("paused").length)+ST("paused").map(d=>filaDescarga(d,0,0)).join("")+gh("Con error",ST("error").length)+ST("error").map(d=>filaDescarga(d,0,0)).join("")+gh("Completadas",hechos.length)+hechos.map(d=>filaDescarga(d,0,0)).join("");
     $("vacio").innerHTML="<b>Sin descargas</b>Tocá + y pegá los links.";
     $("vacio").hidden=!!(vivos.length||hechos.length)||!CONECTADO;
-    $("sum").innerHTML=!CLAVE?"Falta la clave: abrí el link completo":act||cola.length||pau?`<b>${act?sz(v)+"/s":"Pausado"}</b>${act} bajando${cola.length?" · "+cola.length+" en cola":""}${pau?" · "+pau+" en pausa":""}${act&&v>0?" · faltan "+dur(vivos.filter(d=>d.status=="active"||d.status=="waiting").reduce((a,d)=>a+Math.max(0,(+d.totalLength||0)-(+d.completedLength||0)),0)/v)+" en total":""}`:`<b>Sin descargas activas</b>${hechos.length} completada${hechos.length==1?"":"s"}`;
-    if(act+cola.length){b.hidden=false;b.dataset.a="pausatodo";b.innerHTML=I.pause+"Pausar todo"}else if(pau){b.hidden=false;b.dataset.a="seguirtodo";b.innerHTML=I.play+"Reanudar todo"}else if(hechos.length){b.hidden=false;b.dataset.a="limpiar";b.innerHTML=I.x+"Limpiar lista"}else b.hidden=true}
+    $("sum").innerHTML=!CLAVE?"Falta la clave: abrí el link completo":act||cola.length||pau?`<b>${act?sz(v)+"/s":"Pausado"}</b>${act} bajando${cola.length?" · "+cola.length+" en cola":""}${pau?" · "+pau+" en pausa":""}`:`<b>Sin descargas activas</b>${hechos.length} completada${hechos.length==1?"":"s"}`;
+    if(act+cola.length){b.hidden=false;b.dataset.a="pausatodo";b.setAttribute("aria-label","Pausar todo");b.innerHTML=I.pause}else if(pau){b.hidden=false;b.dataset.a="seguirtodo";b.setAttribute("aria-label","Reanudar todo");b.innerHTML=I.play}else if(hechos.length){b.hidden=false;b.dataset.a="limpiar";b.setAttribute("aria-label","Limpiar lista");b.innerHTML=I.x}else b.hidden=true}
   else{
     $("lista").innerHTML=arch.map(filaArchivo).join("");
     $("vacio").innerHTML="<b>Carpeta vacía</b>";
@@ -251,14 +252,14 @@ function pintar(){
 }
 $("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;TAB=b.dataset.t;SEL="";SURE="";pintar();window.scrollTo(0,0);if(TAB=="f")ver(1)};
 
-function disco(){const L=window.LIBRES||{},ks=Object.keys(L);if(!ks.length){$("disco").hidden=true;return}
+function disco(){const completo=TAB=="f",L=window.LIBRES||{},ks=Object.keys(L);if(!ks.length){$("disco").hidden=true;return}
   const tam=ITEMS.filter(d=>+d.totalLength>0).map(d=>+d.totalLength),avg=tam.length?tam.reduce((a,b)=>a+b,0)/tam.length:0;let h="";
   for(const k of ks){const libre=L[k],esp=ITEMS.filter(d=>d.status=="waiting"&&((d.dir||"").slice(0,2).toUpperCase()||ks[0])==k);
     const conoc=esp.filter(d=>+d.totalLength>0),need=conoc.reduce((a,d)=>a+ +d.totalLength,0)+(esp.length-conoc.length)*avg,quedan=libre-need;
     const cls=!need?(libre<5e9?"er":libre<2e10?"am":""):quedan<0?"er":quedan<5e9?"am":"";
-    let msg=!need?(libre<5e9?"Casi sin espacio":""):quedan<0?"No alcanza. Entran unos "+Math.max(0,Math.floor(libre/(need/esp.length)))+" de "+esp.length+" de la cola":"Al terminar sobran ≈ "+sz(quedan);
-    h+=`<div class="dk ${cls}"><div class="dt"><span>Espacio libre<br><b>${sz(libre)}</b></span>${need?`<span style="text-align:right">Falta bajar ≈<br><b>${sz(need)}</b></span>`:""}</div>${msg?`<div class="dw">${msg}</div>`:""}</div>`}
-  $("disco").hidden=false;$("disco").innerHTML=h}
+    let msg=!need?(libre<5e9?"Casi sin espacio":""):quedan<0?"No alcanza: entran ~"+Math.max(0,Math.floor(libre/(need/esp.length)))+" de "+esp.length:"Sobran ≈ "+sz(quedan);
+    if(!completo&&!cls)continue;h+=`<div class="dk ${cls}"><div class="dt"><span>Libre<br><b>${sz(libre)}</b></span>${need?`<span style="text-align:right">Falta ≈<br><b>${sz(need)}</b></span>`:""}</div>${msg?`<div class="dw">${msg}</div>`:""}</div>`}
+  $("disco").hidden=!h;$("disco").innerHTML=h}
 let ESPT=0;async function espacio(){if(!CLAVE)return;const t=++ESPT;try{const r=await (await pedir("espacio?dir="+encodeURIComponent($("ds").value),{headers:H(),cache:"no-store"})).json();if(t!=ESPT)return;
   $("esp").textContent="Libre ahí: "+sz(r.libre)+(r.libre<2e10?" · poco":"");$("esp").classList.toggle("low",r.libre<2e10)}catch(e){$("esp").textContent=""}}
 /* ---------- carga de datos ---------- */
@@ -309,9 +310,9 @@ $("go").onclick=()=>{DIR=$("ds").value;LS.set("fdm_dir",DIR);const t=$("u").valu
 /* ---------- WiFi de la PC ---------- */
 let SW=0;
 function chipBanda(a,viejo){const b=$("wb");if(!a||!a.ssid){b.className="chip"+(viejo?" old":"");b.lastChild.textContent="Sin WiFi";b.hidden=false;return}
-  const g5=/^[56]/.test(a.banda||"");b.className="chip "+(g5?"g5":"g2")+(viejo?" old":"");b.lastChild.textContent=(g5?"5 GHz":a.banda||"?")+" · "+a.ssid;b.hidden=false}
+  const g5=/^[56]/.test(a.banda||"");b.className="chip "+(g5?"g5":"g2")+(viejo?" old":"");b.lastChild.textContent=(g5?"5 GHz":a.banda||"?")+(LS.get("fdm_a24")=="1"?" → 2,4":"");b.hidden=false}
 let A24=LS.get("fdm_a24")=="1";const pa24=()=>{$("a24").setAttribute("aria-checked",A24);$("a24t").textContent=A24?"Prendido: cuando no quede nada por bajar":"Apagado: sigue en 5 GHz"};pa24();
-$("a24").onclick=async()=>{A24=!A24;pa24();LS.set("fdm_a24",A24?"1":"0");try{await api2("wifi/auto",{on:A24})}catch(e){A24=!A24;pa24();aviso("No se pudo cambiar")}};
+$("a24").onclick=async()=>{A24=!A24;pa24();LS.set("fdm_a24",A24?"1":"0");try{chipBanda(JSON.parse(LS.get("fdm_banda")),false)}catch(e){}try{await api2("wifi/auto",{on:A24})}catch(e){A24=!A24;pa24();aviso("No se pudo cambiar")}};
 async function banda(){if(document.hidden||!CLAVE)return;try{const j=await (await pedir("wifi",{headers:H(),cache:"no-store"})).json(),a=j.actual||{};if(typeof j.auto24=="boolean"){A24=j.auto24;LS.set("fdm_a24",A24?"1":"0");pa24()}LS.set("fdm_banda",JSON.stringify(a));chipBanda(a,false)}catch(e){try{const a=JSON.parse(LS.get("fdm_banda"));if(a)chipBanda(a,true)}catch(x){}}}
 try{const a=JSON.parse(LS.get("fdm_banda"));if(a)chipBanda(a,true)}catch(e){}
 async function wifi(){try{const j=await (await pedir("wifi",{headers:H(),cache:"no-store"})).json(),a=j.actual||{};
