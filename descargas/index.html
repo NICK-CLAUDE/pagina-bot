@@ -34,7 +34,19 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em;margin-right:au
 .sum{display:flex;align-items:center;gap:12px;min-height:52px}
 .sum p{margin:0;flex:1;font-size:14px;color:var(--mu)}
 .sum b{display:block;color:var(--tx);font-weight:700;font-size:26px;line-height:1.15;margin:0 0 2px}
-#libre{margin:0;padding:0 0 12px;font-size:13px;color:var(--mu)}#libre.low{color:var(--am)}
+#disco{padding:0 0 12px;display:grid;gap:8px}
+.dk{background:var(--s1);border:1px solid var(--ln);border-radius:14px;padding:10px 12px}
+.dk .dt{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--mu)}
+.dk .dt b{color:var(--tx);font-size:15px}.dk .dt em{font-style:normal;text-align:right}
+.dk .bar{height:6px;margin-top:8px;background:var(--s2)}.dk .bar i{background:var(--ok)}
+.dk.am .bar i{background:var(--am)}.dk.er .bar i{background:var(--er)}
+.dk .dw{margin-top:8px;font-size:13px;line-height:1.35}.dk.am .dw{color:var(--am)}.dk.er .dw{color:var(--er)}
+.dk.er{border-color:#f06a6355}.dk.am{border-color:#f2b35b44}
+.gh{list-style:none;position:sticky;top:48px;z-index:3;display:flex;justify-content:space-between;padding:9px 16px;background:var(--bg);border-bottom:1px solid var(--ln);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
+.mt3{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.mt3 span{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:8px;background:var(--s2);color:#c4c9d2;font-size:12.5px;font-weight:600}
+.mt3 span.k{background:#52c48f1c;color:var(--ok)}
+#esp{margin:6px 2px 0}#esp.low{color:var(--am)}
 .sum button{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:99px;background:var(--s2);font-size:14px;font-weight:600;color:var(--ac)}
 .sum button svg{width:18px;height:18px}
 #off{display:none;padding:10px 16px;background:#f2b35b1a;color:var(--am);font-size:14px}
@@ -105,7 +117,7 @@ dialog textarea::placeholder{color:#7d8592}
     <button class="ib" id="wf" aria-label="WiFi de la PC"><svg viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20v.01"/></svg></button>
   </div>
   <div class="sum"><p id="sum">Conectando con la PC…</p><button id="todo" hidden></button></div>
-  <p id="libre"></p>
+  <div id="disco"></div>
 </header>
 <nav id="tabs"><button data-t="d" class="on">Bajando<b id="nd"></b></button><button data-t="f">Archivos<b id="nf"></b></button></nav>
 <div id="off">Sin conexión con la PC. Reintentando…</div>
@@ -126,6 +138,7 @@ dialog textarea::placeholder{color:#7d8592}
     <option value="C:\Users\NICO\Documents">Documentos</option>
     <option value="C:\Users\NICO\Videos">Videos</option>
   </select>
+  <p class="nota" id="esp"></p>
   <button class="bt" id="go">Bajar en la PC</button>
   <button class="bt s" id="gc">Cancelar</button>
 </dialog>
@@ -188,20 +201,20 @@ clk:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V
 const pill=(c,t)=>`<span class="pl ${c}">${t}</span>`;
 function filaDescarga(d,pos,n){
   const t=+d.totalLength,c=+d.completedLength,s=+d.downloadSpeed,p=t?c/t*100:0,k="g:"+d.gid,nm=nom(d);
-  let box,meta,acc,extra="",bar=p;
+  let box,meta,acc,extra="",bar=p,chips=null;
   if(d.status=="active"){const eta=s>0&&t&&s>2e5?Math.round((t-c)/s):0;
     box=IS.dl;meta=pill("a","Bajando")+(c?num(p,0)+" % · "+num(c/1e9,2)+" de "+sz(t):"Iniciando…");
     extra=sz(s)+"/s"+(eta?" · faltan "+dur(eta):"");
     acc=B("pausa",k,"pause","Pausar")+B("quitar",k,"x","Cancelar","d")}
   else if(d.status=="waiting"){box=IS.clk;meta=pill("q","En cola "+(pos+1)+"/"+n)+"Espera su turno";bar=0;acc=B("quitar",k,"x","Quitar de la cola","d")}
   else if(d.status=="paused"){box=IS.pau;meta=pill("","En pausa")+num(p,0)+" % · "+sz(c)+(t?" de "+sz(t):"");acc=B("seguir",k,"play","Reanudar","p")+B("quitar",k,"x","Cancelar","d")}
-  else if(d.status=="complete"){box=IS.ok;meta=pill("ok","Completada")+sz(t);if(+d.actS>=5)extra="Promedio "+sz(t/d.actS)+"/s · tardó "+dur2(d.actS);bar=0;acc=B("descartar",k,"x","Quitar de la lista")}
-  else{box=IS.err;meta=pill("e","Falló")+esc(d.errorMessage||"error");bar=0;acc=B("reintentar",k,"retry","Reintentar","p")+B("descartar",k,"x","Descartar","d")}
-  return fila(d.status,k,box,nm,meta,acc,bar,extra)}
+  else if(d.status=="complete"){box=IS.ok;meta=pill("ok","Completada")+sz(t);const real=d.ini&&d.fin?d.fin-d.ini:0;if(real>=3)chips=[["k","Tardó "+dur2(real)],["","Promedio "+sz(t/real)+"/s"],["","Terminó "+fecha(d.fin)]];else if(+d.actS>=5)chips=[["","Tiempo bajando "+dur2(d.actS)+" (sin hora real)"],["","Promedio "+sz(t/d.actS)+"/s"]];bar=0;acc=B("descartar",k,"x","Quitar de la lista")}
+  else{box=IS.err;meta=pill("e","Falló")+(/space|alloc|disk|write/i.test(d.errorMessage||"")?"Sin espacio en el disco o no se pudo escribir":esc(d.errorMessage||"error"));bar=0;acc=B("reintentar",k,"retry","Reintentar","p")+B("descartar",k,"x","Descartar","d")}
+  return fila(d.status,k,box,nm,meta,acc,bar,extra,chips)}
 function filaArchivo(f){const k="f:"+f.n,sure=SURE==k;
   return fila("file",k,esc(ext(f.n)),f.n,esc(sz(f.s)+" · "+fecha(f.t)),
     B("bajar",k,"dl","Bajar al celu","p")+`<button class="d${sure?" sure":""}" data-a="borrar" data-k="${esc(k)}">${I.trash}${sure?"Tocá de nuevo para borrar":"Borrar"}</button>`,0,"")}
-function fila(st,k,box,nm,meta,acc,p,extra){return `<li class="row st-${st}${SEL==k?" open":""}" data-k="${esc(k)}"><div class="ft">${box}</div><div class="bd"><div class="nm">${esc(nm)}</div><div class="mt">${meta}</div>${p?`<div class="bar"><i style="--p:${p}%"></i></div>`:""}${extra?`<div class="mt2">${esc(extra)}</div>`:""}</div>${I.chev}<div class="ac">${acc}</div></li>`}
+function fila(st,k,box,nm,meta,acc,p,extra,chips){return `<li class="row st-${st}${SEL==k?" open":""}" data-k="${esc(k)}"><div class="ft">${box}</div><div class="bd"><div class="nm">${esc(nm)}</div><div class="mt">${meta}</div>${p?`<div class="bar"><i style="--p:${p}%"></i></div>`:""}${extra?`<div class="mt2">${esc(extra)}</div>`:""}${chips?`<div class="mt3">${chips.map(c=>`<span class="${c[0]}">${esc(c[1])}</span>`).join("")}</div>`:""}</div>${I.chev}<div class="ac">${acc}</div></li>`}
 
 let TAB="d";
 function pintar(){
@@ -213,9 +226,11 @@ function pintar(){
   $("nd").textContent=act||"";$("nf").textContent=arch.length||"";
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t==TAB));
   const b=$("todo");
-  if(window.LIBRE){const falta=ITEMS.filter(d=>d.status!="complete"&&d.status!="error").reduce((a,d)=>a+Math.max(0,(+d.totalLength||0)-(+d.completedLength||0)),0);$("libre").textContent="Libre en el disco: "+sz(window.LIBRE)+(falta?" · faltan bajar "+sz(falta):"");$("libre").classList.toggle("low",falta>window.LIBRE*.8||window.LIBRE<2e10)}
+  disco();
   if(TAB=="d"){
-    $("lista").innerHTML=vivos.map(d=>filaDescarga(d,cola.indexOf(d),cola.length)).join("")+hechos.map(d=>filaDescarga(d,0,0)).join("");
+    const gh=(t,n)=>n?`<li class="gh"><span>${t}</span><span>${n}</span></li>`:"",ST=x=>vivos.filter(d=>d.status==x);
+    $("lista").innerHTML=gh("Bajando ahora",ST("active").length)+ST("active").map(d=>filaDescarga(d,0,0)).join("")+gh("En cola",cola.length)+cola.map(d=>filaDescarga(d,cola.indexOf(d),cola.length)).join("")
+      +gh("En pausa",ST("paused").length)+ST("paused").map(d=>filaDescarga(d,0,0)).join("")+gh("Con error",ST("error").length)+ST("error").map(d=>filaDescarga(d,0,0)).join("")+gh("Completadas",hechos.length)+hechos.map(d=>filaDescarga(d,0,0)).join("");
     $("vacio").innerHTML="<b>No hay descargas</b>Pegá o compartí un link de Mediafire, Drive, Dropbox o uno directo con el botón +. La PC lo baja a su carpeta Descargas.";
     $("vacio").hidden=!!(vivos.length||hechos.length)||!CONECTADO;
     $("sum").innerHTML=!CLAVE?"Falta la clave: abrí el link completo una vez.":act||cola.length||pau?`<b>${act?sz(v)+"/s":"Pausado"}</b>${act} bajando${cola.length?" · "+cola.length+" en cola":""}${pau?" · "+pau+" en pausa":""}${act&&v>0?" · faltan "+dur(vivos.filter(d=>d.status=="active"||d.status=="waiting").reduce((a,d)=>a+Math.max(0,(+d.totalLength||0)-(+d.completedLength||0)),0)/v)+" en total":""}`:`<b>Sin descargas activas</b>${hechos.length} completada${hechos.length==1?"":"s"}`;
@@ -230,10 +245,22 @@ function pintar(){
 }
 $("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;TAB=b.dataset.t;SEL="";SURE="";pintar();window.scrollTo(0,0);if(TAB=="f")ver(1)};
 
+function disco(){const L=window.LIBRES||{},ks=Object.keys(L);if(!ks.length){$("disco").hidden=true;return}
+  const tam=ITEMS.filter(d=>+d.totalLength>0).map(d=>+d.totalLength),avg=tam.length?tam.reduce((a,b)=>a+b,0)/tam.length:0;let h="";
+  for(const k of ks){const libre=L[k],esp=ITEMS.filter(d=>d.status=="waiting"&&((d.dir||"").slice(0,2).toUpperCase()||ks[0])==k);
+    const conoc=esp.filter(d=>+d.totalLength>0),desc=esp.length-conoc.length,need=conoc.reduce((a,d)=>a+ +d.totalLength,0)+desc*avg,r=libre?need/libre:0;
+    const cls=(need&&r>1)||libre<5e9?"er":(need&&r>.7)||libre<2e10?"am":"";let msg="";
+    if(need&&r>1)msg="No alcanza para toda la cola: entran unos "+Math.max(0,Math.floor(libre/(need/esp.length)))+" de "+esp.length+". Liberá espacio o cancelá archivos.";
+    else if(libre<5e9)msg="Casi sin espacio: las descargas pueden fallar.";
+    else if(need&&r>.7)msg="La cola va a dejar poco espacio libre.";
+    h+=`<div class="dk ${cls}"><div class="dt"><span><b>${sz(libre)}</b> libres en ${esc(k)}</span>${esp.length?`<em>${esp.length} en cola · ${desc&&avg?"≈ ":""}${need?sz(need):"tamaño sin conocer"}</em>`:""}</div>${need?`<div class="bar"><i style="--p:${Math.min(100,r*100)}%"></i></div>`:""}${msg?`<div class="dw">${msg}</div>`:""}</div>`}
+  $("disco").hidden=false;$("disco").innerHTML=h}
+let ESPT=0;async function espacio(){if(!CLAVE)return;const t=++ESPT;try{const r=await (await pedir("espacio?dir="+encodeURIComponent($("ds").value),{headers:H(),cache:"no-store"})).json();if(t!=ESPT)return;
+  $("esp").textContent="Libre en esa carpeta: "+sz(r.libre)+(r.libre<2e10?" · poco espacio":"");$("esp").classList.toggle("low",r.libre<2e10)}catch(e){$("esp").textContent=""}}
 /* ---------- carga de datos ---------- */
 async function ver(forzar){if(document.hidden||!CLAVE)return;
   try{const r=await pedir("downloads",{headers:H(),cache:"no-store"}),J=await r.json();if(!J.d)throw 0;
-    GS=J.d[3][0];window.LIBRE=J.libre;ITEMS=[...J.d[0][0],...J.d[1][0],...J.d[2][0]];LS.set("fdm_items",JSON.stringify(ITEMS.slice(0,60)));
+    GS=J.d[3][0];window.LIBRES=J.libres||{};ITEMS=[...J.d[0][0],...J.d[1][0],...J.d[2][0]];LS.set("fdm_items",JSON.stringify(ITEMS.slice(0,60)));
     if(forzar||TAB=="f"||CICLO++%3==0){FILES=await (await pedir("files",{headers:H(),cache:"no-store"})).json();LS.set("fdm_files",JSON.stringify(FILES.slice(0,80)))}
     CONECTADO=true;const ed=J.now-J.t;$("off").textContent=ed>30?"Datos de hace "+Math.round(ed)+" s: la PC está ocupada descargando":"";$("off").classList.toggle("on",ed>30);pintar()}
   catch(e){$("off").textContent="Sin conexión con la PC. Reintentando…";$("off").classList.add("on");CONECTADO=true;pintar()}}
@@ -269,7 +296,7 @@ async function bajarVarios(texto){const L=links(texto);if(!L.length){aviso("No e
   aviso((ok?ok+(ok==1?" descarga agregada":" descargas agregadas"):"No se agregó ninguna")+(rep?" · "+rep+" ya estaban":"")+(mal.length?". Fallaron: "+mal.join(", "):""),9000)}
 let DIR="";
 $("ds").value=LS.get("fdm_dir");if($("ds").selectedIndex<0)$("ds").value="";
-$("ba").onclick=()=>{$("d").showModal();$("u").focus()};
+$("ba").onclick=()=>{$("d").showModal();$("u").focus();espacio()};$("ds").onchange=espacio;
 $("gc").onclick=()=>$("d").close();
 $("go").onclick=()=>{DIR=$("ds").value;LS.set("fdm_dir",DIR);const t=$("u").value;$("u").value="";$("d").close();bajarVarios(t)};
 
