@@ -206,16 +206,22 @@ try{ITEMS=JSON.parse(LS.get("fdm_items")||"[]");FILES=JSON.parse(LS.get("fdm_fil
 const IS={dl:'<svg viewBox="0 0 24 24"><path d="M12 5v12M7 12l5 5 5-5"/></svg>',ok:'<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>',
 clk:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',pau:'<svg viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></svg>',err:'<svg viewBox="0 0 24 24"><path d="M12 6v8M12 18v.01"/></svg>'};
 const pill=(c,t)=>`<span class="pl ${c}">${t}</span>`;
+let STAMP=Date.now();   // hora en que llegó la última foto de la PC: entre fotos, el avance se estima con la velocidad (el contador no se frena)
+function vivoC(d){const c=+d.completedLength,t=+d.totalLength;if(d.status!="active")return c;const dt=Math.min(60,(Date.now()-STAMP)/1000);return Math.min(t?t*.999:c+1e12,c+(+(d.vel||d.downloadSpeed||0))*dt)}
+function tick(){if(TAB!="d")return;let v=0;for(const d of ITEMS){if(d.status!="active")continue;const el=document.querySelector('.row[data-k="g:'+d.gid+'"]');if(!el)continue;const c=vivoC(d),t=+d.totalLength,p=t?c/t*100:0;
+  const mt=el.querySelector(".mt"),br=el.querySelector(".bar i");if(mt&&c)mt.textContent=sz(c)+" de "+sz(t)+" · "+num(p,0)+" %";if(br)br.style.setProperty("--p",p+"%");v+=+(d.vel||d.downloadSpeed||0)}
+  const b=document.querySelector("#sum b");if(b&&v)b.textContent=sz(v)+"/s"}
+setInterval(tick,500);
 function filaDescarga(d,pos,n){
-  const t=+d.totalLength,c=+d.completedLength,s=+d.downloadSpeed,p=t?c/t*100:0,k="g:"+d.gid,nm=nom(d);
+  const t=+d.totalLength,c=vivoC(d),s=+(d.vel||d.downloadSpeed||0),p=t?c/t*100:0,k="g:"+d.gid,nm=nom(d);
   let box,meta,acc,extra="",bar=p,chips=null;
   if(d.status=="active"){const eta=s>0&&t&&s>2e5?Math.round((t-c)/s):0;
-    box=IS.dl;meta=c?num(p,0)+" % de "+sz(t):"Iniciando…";
+    box=IS.dl;meta=c?sz(c)+" de "+sz(t)+" · "+num(p,0)+" %":"Iniciando…";
     extra=sz(s)+"/s"+(eta?" · "+dur(eta):"");
     acc=B("pausa",k,"pause","Pausar")+B("quitar",k,"x","Cancelar","d")}
   else if(d.status=="waiting"){box=IS.clk;meta=t?sz(t):"";bar=0;acc=B("quitar",k,"x","Quitar","d")}
   else if(d.status=="paused"){box=IS.pau;meta=num(p,0)+" % de "+sz(t);acc=B("seguir",k,"play","Reanudar","p")+B("quitar",k,"x","Cancelar","d")}
-  else if(d.status=="complete"){box=IS.ok;meta=sz(t);const real=d.ini&&d.fin?d.fin-d.ini:0;if(real>=3)chips=[["k",dur2(real)],["",sz(t/real)+"/s"],["",fecha(d.fin)]];else if(+d.actS>=5)chips=[["",dur2(d.actS)+"*"],["",sz(t/d.actS)+"/s"]].concat(d.fin?[["",fecha(d.fin)]]:[]);else if(d.fin)chips=[["",fecha(d.fin)]];bar=0;acc=B("descartar",k,"x","Quitar")}
+  else if(d.status=="complete"){box=IS.ok;meta=sz(t);if(d.trk&&+d.actS>=3)chips=[["k",dur2(d.actS)],["",sz(t/d.actS)+"/s"]].concat(d.fin?[["",fecha(d.fin)]]:[]);else if(d.fin)chips=[["",fecha(d.fin)]];bar=0;acc=B("descartar",k,"x","Quitar")}
   else{box=IS.err;meta=/space|alloc|disk|write/i.test(d.errorMessage||"")?"Sin espacio en el disco":esc(d.errorMessage||"Error");bar=0;acc=B("reintentar",k,"retry","Reintentar","p")+B("descartar",k,"x","Descartar","d")}
   return fila(d.status,k,box,nm,meta,acc,bar,extra,chips)}
 function filaArchivo(f){const k="f:"+f.n,sure=SURE==k;
@@ -267,9 +273,9 @@ let VOCUP=0,FALLOS=0;
 async function ver(forzar){if(document.hidden||!CLAVE||(VOCUP&&Date.now()-VOCUP<20000))return;VOCUP=Date.now();try{await ver2(forzar)}finally{VOCUP=0}}
 async function ver2(forzar){
   try{const r=await pedir("downloads",{headers:H(),cache:"no-store"}),J=await r.json();if(!J.d)throw 0;
-    GS=J.d[3][0];window.LIBRES=J.libres||{};ITEMS=[...J.d[0][0],...J.d[1][0],...J.d[2][0]];LS.set("fdm_items",JSON.stringify(ITEMS.slice(0,60)));
+    GS=J.d[3][0];STAMP=Date.now()-(J.now-J.t)*1000;window.LIBRES=J.libres||{};ITEMS=[...J.d[0][0],...J.d[1][0],...J.d[2][0]];LS.set("fdm_items",JSON.stringify(ITEMS.slice(0,60)));
     if(forzar||TAB=="f"||CICLO++%3==0){try{FILES=await (await pedir("files",{headers:H(),cache:"no-store"})).json();LS.set("fdm_files",JSON.stringify(FILES.slice(0,80)))}catch(e){}}
-    FALLOS=0;CONECTADO=true;const ed=J.now-J.t;$("off").textContent=ed>30?"Datos de hace "+Math.round(ed)+" s":"";$("off").classList.toggle("on",ed>30);pintar()}
+    FALLOS=0;CONECTADO=true;$("off").classList.remove("on");pintar()}
   catch(e){if(++FALLOS>=4){$("off").textContent="Sin conexión. Reintentando…";$("off").classList.add("on")}CONECTADO=true;pintar()}}
 
 /* ---------- acciones ---------- */
