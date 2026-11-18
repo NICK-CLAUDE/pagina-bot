@@ -42,7 +42,7 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em;margin-right:au
 #disco{padding:0 0 12px;display:grid;gap:8px}
 .dk{background:var(--s1);border:1px solid var(--ln);border-radius:14px;padding:10px 12px}
 .dk .dt{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--mu)}
-.dk .dt b{color:var(--tx);font-size:15px}.dk .dt em{font-style:normal;text-align:right}
+.dk .dt b{color:var(--tx);font-size:20px;line-height:1.3}.dk .dt em{font-style:normal;text-align:right}
 .dk .bar{height:6px;margin-top:8px;background:var(--s2)}.dk .bar i{background:var(--ok)}
 .dk.am .bar i{background:var(--am)}.dk.er .bar i{background:var(--er)}
 .dk .dw{margin-top:8px;font-size:13px;line-height:1.35}.dk.am .dw{color:var(--am)}.dk.er .dw{color:var(--er)}
@@ -122,7 +122,7 @@ dialog textarea::placeholder{color:#7d8592}
     <button class="ib" id="wf" aria-label="WiFi de la PC"><svg viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20v.01"/></svg></button>
   </div>
   <div class="sum"><p id="sum">Conectando…</p><button id="todo" hidden></button></div>
-  <button id="a24" role="switch" aria-checked="false"><span>Al terminar, pasar a WiFi 2,4 GHz<small>Apagado: sigue en 5 GHz</small></span><i class="sw"></i></button>
+  <button id="a24" role="switch" aria-checked="false"><span>Al terminar, pasar a WiFi 2,4 GHz<small id="a24t">Apagado: sigue en 5 GHz</small></span><i class="sw"></i></button>
   <div id="disco"></div>
 </header>
 <nav id="tabs"><button data-t="d" class="on">Bajando<b id="nd"></b></button><button data-t="f">Archivos<b id="nf"></b></button></nav>
@@ -172,7 +172,7 @@ let LARGO=0;
 const ftm=(u,o,ms)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms||(LARGO?90000:12000));return fetch(u,{...o,signal:c.signal}).finally(()=>clearTimeout(t))};
 const FIJA=location.hostname.endsWith("github.io"),TS="https://pc-trading.tail44059b.ts.net/";let TSMAL=0,CF=BASE;   // dirección fija por Tailscale primero; si no responde, el túnel de Cloudflare
 async function pedir(ruta,op){let r=null;
-  if(FIJA&&Date.now()>TSMAL){try{r=await ftm(TS+ruta,op,3500);if(r.status>=500||r.status===404)throw 0;BASE=TS}catch(e){r=null;TSMAL=Date.now()+20000;if(BASE===TS)BASE=CF}}
+  if(FIJA&&Date.now()>TSMAL){try{r=await ftm(TS+ruta,op,BASE===TS?8000:3500);if(r.status>=500||r.status===404)throw 0;BASE=TS}catch(e){r=null;TSMAL=Date.now()+20000;if(BASE===TS)BASE=CF}}
   if(!r){try{r=await ftm(BASE+ruta,op)}catch(e){if(await tunel()){CF=BASE;r=await ftm(BASE+ruta,op)}else throw e}}
   if(!r.ok)throw new Error(r.status);return r}
 const H=()=>({"X-Clave":CLAVE});
@@ -254,22 +254,22 @@ $("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;TAB=b.data
 function disco(){const L=window.LIBRES||{},ks=Object.keys(L);if(!ks.length){$("disco").hidden=true;return}
   const tam=ITEMS.filter(d=>+d.totalLength>0).map(d=>+d.totalLength),avg=tam.length?tam.reduce((a,b)=>a+b,0)/tam.length:0;let h="";
   for(const k of ks){const libre=L[k],esp=ITEMS.filter(d=>d.status=="waiting"&&((d.dir||"").slice(0,2).toUpperCase()||ks[0])==k);
-    const conoc=esp.filter(d=>+d.totalLength>0),desc=esp.length-conoc.length,need=conoc.reduce((a,d)=>a+ +d.totalLength,0)+desc*avg,r=libre?need/libre:0;
-    const cls=(need&&r>1)||libre<5e9?"er":(need&&r>.7)||libre<2e10?"am":"";let msg="";
-    if(need&&r>1)msg="No alcanza: entran unos "+Math.max(0,Math.floor(libre/(need/esp.length)))+" de "+esp.length;
-    else if(libre<5e9)msg="Casi sin espacio";
-    else if(need&&r>.7)msg="Va a quedar poco espacio";
-    h+=`<div class="dk ${cls}"><div class="dt"><span><b>${sz(libre)}</b> libres</span>${esp.length?`<em>Cola ${desc&&avg?"≈ ":""}${need?sz(need):"?"}</em>`:""}</div>${need?`<div class="bar"><i style="--p:${Math.min(100,r*100)}%"></i></div>`:""}${msg?`<div class="dw">${msg}</div>`:""}</div>`}
+    const conoc=esp.filter(d=>+d.totalLength>0),need=conoc.reduce((a,d)=>a+ +d.totalLength,0)+(esp.length-conoc.length)*avg,quedan=libre-need;
+    const cls=!need?(libre<5e9?"er":libre<2e10?"am":""):quedan<0?"er":quedan<5e9?"am":"";
+    let msg=!need?(libre<5e9?"Casi sin espacio":""):quedan<0?"No alcanza. Entran unos "+Math.max(0,Math.floor(libre/(need/esp.length)))+" de "+esp.length+" de la cola":"Al terminar sobran ≈ "+sz(quedan);
+    h+=`<div class="dk ${cls}"><div class="dt"><span>Espacio libre<br><b>${sz(libre)}</b></span>${need?`<span style="text-align:right">Falta bajar ≈<br><b>${sz(need)}</b></span>`:""}</div>${msg?`<div class="dw">${msg}</div>`:""}</div>`}
   $("disco").hidden=false;$("disco").innerHTML=h}
 let ESPT=0;async function espacio(){if(!CLAVE)return;const t=++ESPT;try{const r=await (await pedir("espacio?dir="+encodeURIComponent($("ds").value),{headers:H(),cache:"no-store"})).json();if(t!=ESPT)return;
   $("esp").textContent="Libre ahí: "+sz(r.libre)+(r.libre<2e10?" · poco":"");$("esp").classList.toggle("low",r.libre<2e10)}catch(e){$("esp").textContent=""}}
 /* ---------- carga de datos ---------- */
-async function ver(forzar){if(document.hidden||!CLAVE)return;
+let VOCUP=0,FALLOS=0;
+async function ver(forzar){if(document.hidden||!CLAVE||(VOCUP&&Date.now()-VOCUP<20000))return;VOCUP=Date.now();try{await ver2(forzar)}finally{VOCUP=0}}
+async function ver2(forzar){
   try{const r=await pedir("downloads",{headers:H(),cache:"no-store"}),J=await r.json();if(!J.d)throw 0;
     GS=J.d[3][0];window.LIBRES=J.libres||{};ITEMS=[...J.d[0][0],...J.d[1][0],...J.d[2][0]];LS.set("fdm_items",JSON.stringify(ITEMS.slice(0,60)));
-    if(forzar||TAB=="f"||CICLO++%3==0){FILES=await (await pedir("files",{headers:H(),cache:"no-store"})).json();LS.set("fdm_files",JSON.stringify(FILES.slice(0,80)))}
-    CONECTADO=true;const ed=J.now-J.t;$("off").textContent=ed>30?"Datos de hace "+Math.round(ed)+" s":"";$("off").classList.toggle("on",ed>30);pintar()}
-  catch(e){$("off").textContent="Sin conexión. Reintentando…";$("off").classList.add("on");CONECTADO=true;pintar()}}
+    if(forzar||TAB=="f"||CICLO++%3==0){try{FILES=await (await pedir("files",{headers:H(),cache:"no-store"})).json();LS.set("fdm_files",JSON.stringify(FILES.slice(0,80)))}catch(e){}}
+    FALLOS=0;CONECTADO=true;const ed=J.now-J.t;$("off").textContent=ed>30?"Datos de hace "+Math.round(ed)+" s":"";$("off").classList.toggle("on",ed>30);pintar()}
+  catch(e){if(++FALLOS>=4){$("off").textContent="Sin conexión. Reintentando…";$("off").classList.add("on")}CONECTADO=true;pintar()}}
 
 /* ---------- acciones ---------- */
 function aviso(t,ms=5000){const e=$("toast");e.textContent=t;e.classList.add("on");clearTimeout(aviso.t);if(ms)aviso.t=setTimeout(()=>e.classList.remove("on"),ms)}
@@ -310,7 +310,7 @@ $("go").onclick=()=>{DIR=$("ds").value;LS.set("fdm_dir",DIR);const t=$("u").valu
 let SW=0;
 function chipBanda(a,viejo){const b=$("wb");if(!a||!a.ssid){b.className="chip"+(viejo?" old":"");b.lastChild.textContent="Sin WiFi";b.hidden=false;return}
   const g5=/^[56]/.test(a.banda||"");b.className="chip "+(g5?"g5":"g2")+(viejo?" old":"");b.lastChild.textContent=(g5?"5 GHz":a.banda||"?")+" · "+a.ssid;b.hidden=false}
-let A24=LS.get("fdm_a24")=="1";const pa24=()=>$("a24").setAttribute("aria-checked",A24);pa24();
+let A24=LS.get("fdm_a24")=="1";const pa24=()=>{$("a24").setAttribute("aria-checked",A24);$("a24t").textContent=A24?"Prendido: cuando no quede nada por bajar":"Apagado: sigue en 5 GHz"};pa24();
 $("a24").onclick=async()=>{A24=!A24;pa24();LS.set("fdm_a24",A24?"1":"0");try{await api2("wifi/auto",{on:A24})}catch(e){A24=!A24;pa24();aviso("No se pudo cambiar")}};
 async function banda(){if(document.hidden||!CLAVE)return;try{const j=await (await pedir("wifi",{headers:H(),cache:"no-store"})).json(),a=j.actual||{};if(typeof j.auto24=="boolean"){A24=j.auto24;LS.set("fdm_a24",A24?"1":"0");pa24()}LS.set("fdm_banda",JSON.stringify(a));chipBanda(a,false)}catch(e){try{const a=JSON.parse(LS.get("fdm_banda"));if(a)chipBanda(a,true)}catch(x){}}}
 try{const a=JSON.parse(LS.get("fdm_banda"));if(a)chipBanda(a,true)}catch(e){}
