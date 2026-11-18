@@ -27,13 +27,14 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em;margin-right:au
 .ib{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:var(--ac)}
 .ib:active{background:var(--s2)}
 #tabs{position:sticky;top:0;display:flex;background:var(--bg);border-bottom:1px solid var(--ln);z-index:4}
-#tabs button{flex:1;height:50px;font-size:15px;font-weight:600;color:var(--mu);border-bottom:3px solid transparent;display:flex;align-items:center;justify-content:center;gap:8px}
+#tabs button{flex:1;height:48px;font-size:15px;font-weight:600;color:var(--mu);border-bottom:3px solid transparent;display:flex;align-items:center;justify-content:center;gap:8px}
 #tabs button.on{color:var(--ac);border-color:var(--ac)}
 #tabs b{min-width:22px;padding:1px 7px;border-radius:99px;background:var(--s2);color:var(--tx);font-size:12px;font-weight:600}
 #tabs b:empty{display:none}#tabs button.on b{background:var(--acd);color:var(--ac)}
 .sum{display:flex;align-items:center;gap:12px;min-height:52px}
 .sum p{margin:0;flex:1;font-size:14px;color:var(--mu)}
-.sum b{color:var(--tx);font-weight:600;font-size:15px;margin-right:6px}
+.sum b{display:block;color:var(--tx);font-weight:700;font-size:26px;line-height:1.15;margin:0 0 2px}
+#libre{margin:0;padding:0 0 12px;font-size:13px;color:var(--mu)}#libre.low{color:var(--am)}
 .sum button{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:99px;background:var(--s2);font-size:14px;font-weight:600;color:var(--ac)}
 .sum button svg{width:18px;height:18px}
 #off{display:none;padding:10px 16px;background:#f2b35b1a;color:var(--am);font-size:14px}
@@ -47,14 +48,12 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em;margin-right:au
 .st-active .ft{background:var(--acd);color:var(--ac)}.ft svg{width:24px;height:24px}
 .st-error .ft{background:#f06a6322;color:var(--er)}
 .bd{min-width:0}
-.pl{display:inline-flex;align-items:center;height:22px;padding:0 9px;margin-right:8px;border-radius:99px;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;vertical-align:1px;background:var(--s2);color:var(--mu)}
+.pl{display:inline-flex;align-items:center;height:22px;padding:0 9px;margin-right:8px;border-radius:99px;font-size:12px;font-weight:600;vertical-align:1px;background:var(--s2);color:var(--mu)}
 .pl.a{background:var(--acd);color:var(--ac)}.pl.ok{background:#52c48f22;color:var(--ok)}.pl.q{background:#f2b35b1f;color:var(--am)}.pl.e{background:#f06a6322;color:var(--er)}
 .st-complete .ft{background:#52c48f22;color:var(--ok)}
 .st-waiting .ft{background:#f2b35b1f;color:var(--am)}
 .st-paused .ft{background:var(--s2);color:var(--mu)}
 .st-complete .nm{color:#b9c0cb;font-weight:500}
-.st-waiting{background:linear-gradient(90deg,#f2b35b0a,transparent 60%)}
-.st-active{background:linear-gradient(90deg,#55bff512,transparent 70%)}
 .mt2{margin-top:6px;font-size:13px;color:var(--ac);font-weight:600}
 .nm{font-size:15.5px;font-weight:500;line-height:1.35;word-break:break-word}
 .mt{margin-top:3px;font-size:13px;color:var(--mu)}
@@ -106,8 +105,9 @@ dialog textarea::placeholder{color:#7d8592}
     <button class="ib" id="wf" aria-label="WiFi de la PC"><svg viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20v.01"/></svg></button>
   </div>
   <div class="sum"><p id="sum">Conectando con la PC…</p><button id="todo" hidden></button></div>
+  <p id="libre"></p>
 </header>
-<nav id="tabs"><button data-t="d" class="on">TODO<b id="nd"></b></button><button data-t="f">DESCARGAS<b id="nf"></b></button></nav>
+<nav id="tabs"><button data-t="d" class="on">Bajando<b id="nd"></b></button><button data-t="f">Archivos<b id="nf"></b></button></nav>
 <div id="off">Sin conexión con la PC. Reintentando…</div>
 <ul id="lista"></ul>
 <div id="vacio" hidden><b>No hay descargas ni archivos</b>Pegá o compartí un link de Mediafire, Drive, Dropbox o uno directo. La PC lo baja a su carpeta Descargas.</div>
@@ -159,6 +159,7 @@ async function rpc(method,params=[]){const j=await (await pedir("rpc",{method:"P
 /* ---------- formato ---------- */
 const num=(n,d)=>n.toFixed(d).replace(".",",");
 const sz=b=>b>=1e9?num(b/1e9,2)+" GB":b>=1e6?num(b/1e6,1)+" MB":Math.max(1,Math.round(b/1e3))+" KB";
+const dur2=s=>s>=3600?Math.floor(s/3600)+" h "+Math.floor(s%3600/60)+" min":s>=60?Math.floor(s/60)+" min "+Math.round(s%60)+" s":Math.round(s)+" s";
 const dur=s=>s>=3600?Math.floor(s/3600)+" h "+Math.floor(s%3600/60)+" min":Math.max(1,Math.round(s/60))+" min";
 const hhmm=d=>String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
 function fecha(t){const d=new Date(t*1000),h=new Date(),a=new Date(h.getFullYear(),h.getMonth(),h.getDate());
@@ -190,7 +191,7 @@ function filaDescarga(d,pos,n){
     acc=B("pausa",k,"pause","Pausar")+B("quitar",k,"x","Cancelar","d")}
   else if(d.status=="waiting"){box=IS.clk;meta=pill("q","En cola "+(pos+1)+"/"+n)+"Espera su turno";bar=0;acc=B("quitar",k,"x","Quitar de la cola","d")}
   else if(d.status=="paused"){box=IS.pau;meta=pill("","En pausa")+num(p,0)+" % · "+sz(c)+(t?" de "+sz(t):"");acc=B("seguir",k,"play","Reanudar","p")+B("quitar",k,"x","Cancelar","d")}
-  else if(d.status=="complete"){box=IS.ok;meta=pill("ok","Completada")+sz(t);bar=0;acc=B("descartar",k,"x","Quitar de la lista")}
+  else if(d.status=="complete"){box=IS.ok;meta=pill("ok","Completada")+sz(t);if(+d.actS>=5)extra="Promedio "+sz(t/d.actS)+"/s · tardó "+dur2(d.actS);bar=0;acc=B("descartar",k,"x","Quitar de la lista")}
   else{box=IS.err;meta=pill("e","Falló")+esc(d.errorMessage||"error");bar=0;acc=B("reintentar",k,"retry","Reintentar","p")+B("descartar",k,"x","Descartar","d")}
   return fila(d.status,k,box,nm,meta,acc,bar,extra)}
 function filaArchivo(f){const k="f:"+f.n,sure=SURE==k;
@@ -208,6 +209,7 @@ function pintar(){
   $("nd").textContent=act||"";$("nf").textContent=arch.length||"";
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t==TAB));
   const b=$("todo");
+  if(window.LIBRE){const falta=ITEMS.filter(d=>d.status!="complete"&&d.status!="error").reduce((a,d)=>a+Math.max(0,(+d.totalLength||0)-(+d.completedLength||0)),0);$("libre").textContent="Libre en el disco: "+sz(window.LIBRE)+(falta?" · faltan bajar "+sz(falta):"");$("libre").classList.toggle("low",falta>window.LIBRE*.8||window.LIBRE<2e10)}
   if(TAB=="d"){
     $("lista").innerHTML=vivos.map(d=>filaDescarga(d,cola.indexOf(d),cola.length)).join("")+hechos.map(d=>filaDescarga(d,0,0)).join("");
     $("vacio").innerHTML="<b>No hay descargas</b>Pegá o compartí un link de Mediafire, Drive, Dropbox o uno directo con el botón +. La PC lo baja a su carpeta Descargas.";
@@ -227,7 +229,7 @@ $("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;TAB=b.data
 /* ---------- carga de datos ---------- */
 async function ver(forzar){if(document.hidden||!CLAVE)return;
   try{const r=await pedir("downloads",{headers:H(),cache:"no-store"}),J=await r.json();if(!J.d)throw 0;
-    GS=J.d[3][0];ITEMS=[...J.d[0][0],...J.d[1][0],...J.d[2][0]];LS.set("fdm_items",JSON.stringify(ITEMS.slice(0,60)));
+    GS=J.d[3][0];window.LIBRE=J.libre;ITEMS=[...J.d[0][0],...J.d[1][0],...J.d[2][0]];LS.set("fdm_items",JSON.stringify(ITEMS.slice(0,60)));
     if(forzar||TAB=="f"||CICLO++%3==0){FILES=await (await pedir("files",{headers:H(),cache:"no-store"})).json();LS.set("fdm_files",JSON.stringify(FILES.slice(0,80)))}
     CONECTADO=true;const ed=J.now-J.t;$("off").textContent=ed>30?"Datos de hace "+Math.round(ed)+" s: la PC está ocupada descargando":"";$("off").classList.toggle("on",ed>30);pintar()}
   catch(e){$("off").textContent="Sin conexión con la PC. Reintentando…";$("off").classList.add("on");CONECTADO=true;pintar()}}

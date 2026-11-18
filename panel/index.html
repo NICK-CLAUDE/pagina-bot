@@ -555,11 +555,16 @@ async function buscarTunel(){   // como mucho una vez cada 90 s (GitHub deja 60 
   return false;
 }
 class SinClave extends Error{}
+const TS="https://pc-trading.tail44059b.ts.net/";let TSMAL=0;   // dirección fija por Tailscale (directa a la PC, no se cae); si no responde, se usa el túnel de Cloudflare
+function conTope(base,ruta,op,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(base+ruta,Object.assign({},op,{signal:c.signal})).finally(()=>clearTimeout(t))}
 async function api(ruta,op){
   op=Object.assign({cache:"no-store"},op);op.headers=Object.assign({"X-Clave":CLAVE},op.headers||{});
-  if(FIJA&&!BASE)await buscarTunel();
-  let r;
-  try{r=await fetch(BASE+ruta,op)}catch(e){if(await buscarTunel())r=await fetch(BASE+ruta,op);else throw e}
+  let r=null;
+  if(FIJA&&Date.now()>TSMAL){try{r=await conTope(TS,ruta,op,3500);if(r.status>=500||r.status===404)throw 0}catch(e){r=null;TSMAL=Date.now()+20000}}
+  if(!r){
+    if(FIJA&&!BASE)await buscarTunel();
+    try{r=await conTope(BASE,ruta,op,9000)}catch(e){if(await buscarTunel())r=await conTope(BASE,ruta,op,9000);else throw e}
+  }
   if(r.status===401){pedirClave();throw new SinClave()}
   return r;
 }
@@ -1176,7 +1181,9 @@ function relojVela(){const V=VELAS&&VELAS[MERC]?getV():null,el=$("g_cd");if(!V||
   const tf=TF_SEG[V.tf]||14400,ahora=Math.floor(Date.now()/1000)+offSrv(),r=tf-ahora%tf,h=Math.floor(r/3600),m=Math.floor(r%3600/60),s=r%60,z=x=>String(x).padStart(2,"0");
   el.textContent=(h?h+":"+z(m):z(m))+":"+z(s)}
 setInterval(relojVela,1000);
-cargar();setInterval(()=>{cargar().then(refrescarGraficos).then(cargarPC)},4000);
+let OCUP=false;async function ciclo(){if(OCUP)return;OCUP=true;try{await cargar();await refrescarGraficos();await cargarPC()}catch(e){}OCUP=false}   // sin pedidos apilados si la conexión se atasca
+ciclo();setInterval(ciclo,3000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){TSMAL=0;BUSCADO=0;ciclo()}});addEventListener("online",()=>{TSMAL=0;BUSCADO=0;ciclo()});
 </script>
 </body>
 </html>
