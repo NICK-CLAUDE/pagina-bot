@@ -12,8 +12,8 @@
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bots"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<script async src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js" onload="window.refrescarGraficos&&refrescarGraficos()"></script>
 <style>
 /* Diseño v3 (2026-10-16): tema oscuro de app de trading, primero para el celular; desde 900 px, menú lateral */
 :root{--bg:#0b0e11;--card:#14181f;--card2:#1a1f27;--raise:#202631;--ln:#252c37;--ln2:#1c222b;
@@ -577,12 +577,14 @@ async function buscarTunel(){   // como mucho una vez cada 90 s (GitHub deja 60 
   return false;
 }
 class SinClave extends Error{}
-const TS="https://pc-trading.tail44059b.ts.net/";let TSMAL=0;   // dirección fija por Tailscale (directa a la PC, no se cae); si no responde, se usa el túnel de Cloudflare
+const TS="https://pc-trading.tail44059b.ts.net/";let TSOK=false;   // dirección fija por Tailscale (directa a la PC, ~0,1 s); se usa solo si la prueba de fondo anduvo, así un Tailscale caído nunca demora la página (va el túnel)
+function probarTS(){if(FIJA)conTope(TS,"manifest.json",{cache:"no-store"},3000).then(r=>{TSOK=r.ok}).catch(()=>{TSOK=false})}
+probarTS();setInterval(probarTS,60000);
 function conTope(base,ruta,op,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(base+ruta,Object.assign({},op,{signal:c.signal})).finally(()=>clearTimeout(t))}
 async function api(ruta,op){
   ruta=conCuenta(ruta);op=Object.assign({cache:"no-store"},op);op.headers=Object.assign({"X-Clave":CLAVE},op.headers||{});
   let r=null;
-  if(FIJA&&Date.now()>TSMAL){try{r=await conTope(TS,ruta,op,3500);if(r.status>=500||r.status===404)throw 0}catch(e){r=null;TSMAL=Date.now()+20000}}
+  if(FIJA&&TSOK){try{r=await conTope(TS,ruta,op,2500);if(r.status>=500||r.status===404)throw 0}catch(e){r=null;TSOK=false}}
   if(!r){
     if(FIJA&&!BASE)await buscarTunel();
     try{r=await conTope(BASE,ruta,op,9000)}catch(e){if(await buscarTunel())r=await conTope(BASE,ruta,op,9000);else throw e}
@@ -1124,7 +1126,7 @@ function pintar(d){
     return `<div class="brow">${avatar(b.nombre)}<div class="bm"><div class="bn"><b>${nb(b.nombre)}</b><span class="est ${est[0]}"><i></i>${est[1]}</span></div><small>${inf[0]} · ${inf[1]} risk per trade</small>${pos?`<small class="bp">Open now: ${pos.sim} ${pos.lado==="compra"?"buy":"sell"}<em class="${cl(pos.gan)}">${usdS(pos.gan)}</em></small>`:""}</div><div class="tot"><b class="num ${cl(tot)}">${usdS(tot)}</b><small>total so far</small></div></div>`}).join("");
   // operaciones (arriba del todo)
   const nAb=d.posiciones.length,nCe=d.cerradas_hoy.length;
-  if(nAb&&(!VELAS||Date.now()-ULTV>12000)){ULTV=Date.now();leerVelas().then(v=>{VELAS=v;pintar(d)}).catch(()=>{})}   // el "Now" sale de la última vela: se bajan acá también
+  if(d.posiciones.some(p=>!p.actual)&&(!VELAS||Date.now()-ULTV>12000)){ULTV=Date.now();leerVelas().then(v=>{VELAS=v;pintar(d)}).catch(()=>{})}   // el "Now" sale de la última vela: se bajan acá también
   $("t_ops").innerHTML=`<span class="pill lv"><i></i>${nAb} open</span><span class="pill dn">${nCe} closed</span>`;
   const dia=t=>Math.floor(t/86400)===Math.floor((d.actualizado||0)/86400)?hhmm(t):fdm(t);
   $("abiertas").innerHTML=d.posiciones.map(p=>{const lock=p.sl>0?(p.lado==="compra"?p.sl-p.precio:p.precio-p.sl):-1;
@@ -1224,7 +1226,7 @@ function relojVela(){const V=VELAS&&VELAS[MERC]?getV():null,el=$("g_cd");if(!V||
 setInterval(relojVela,1000);
 let OCUP=false;async function ciclo(){if(OCUP)return;OCUP=true;try{await cargar();await refrescarGraficos();await cargarPC()}catch(e){}OCUP=false}   // sin pedidos apilados si la conexión se atasca
 ciclo();setInterval(ciclo,3000);
-document.addEventListener("visibilitychange",()=>{if(!document.hidden){TSMAL=0;BUSCADO=0;ciclo()}});addEventListener("online",()=>{TSMAL=0;BUSCADO=0;ciclo()});
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){probarTS();BUSCADO=0;ciclo()}});addEventListener("online",()=>{probarTS();BUSCADO=0;ciclo()});
 </script>
 </body>
 </html>
