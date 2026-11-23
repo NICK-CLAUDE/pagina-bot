@@ -145,6 +145,8 @@ dialog textarea::placeholder{color:#7d8592}
     <option value="C:\Users\NICO\Videos">Videos</option>
   </select>
   <p class="nota" id="esp"></p>
+  <button class="bt s" id="ex">Examinar archivo .torrent del celu</button>
+  <input type="file" id="tf" accept=".torrent,application/x-bittorrent" hidden>
   <button class="bt" id="go">Bajar</button>
   <button class="bt s" id="gc">Cancelar</button>
 </dialog>
@@ -295,14 +297,14 @@ $("lista").onclick=async e=>{const row=e.target.closest(".row");if(!row)return;c
 $("todo").onclick=async()=>{try{const a=$("todo").dataset.a;await rpc(a=="pausatodo"?"aria2.pauseAll":a=="seguirtodo"?"aria2.unpauseAll":"aria2.purgeDownloadResult");if(a=="limpiar")await api2("olvidar",{todo:true});ver()}catch(e){aviso("No se pudo: "+e.message)}};
 
 /* ---------- agregar varios links ---------- */
-const links=t=>[...new Set((String(t).match(/https?:\/\/[^\s"'<>]+/g)||[]).map(u=>u.replace(/[.,;:)\]]+$/,"")))];
+const links=t=>[...new Set((String(t).match(/https?:\/\/[^\s"'<>]+|magnet:\?[^\s"'<>]+/g)||[]).map(u=>u.replace(/[.,;:)\]]+$/,"")))];
 let OCUPADO=0;
 async function bajarVarios(texto){const L=links(texto);if(!L.length){aviso("No hay links");return}
   if(OCUPADO){aviso("Agregando los anteriores…");return}OCUPADO=1;LARGO=1;let ok=0,rep=0;const mal=[];
   for(let i=0;i<L.length;i++){aviso("Agregando "+(i+1)+" de "+L.length+"…",0);
-    try{const r=await api2("resolver",{url:L[i]});const nm=decodeURIComponent(r.url.split("?")[0].split("/").pop().replace(/\+/g," "));
+    try{const esM=L[i].startsWith("magnet:"),esT=/\.torrent([?#]|$)/i.test(L[i]);const r=esM||esT?{url:L[i]}:await api2("resolver",{url:L[i]});const nm=esM?decodeURIComponent(((L[i].match(/[?&]dn=([^&]+)/)||[])[1]||"torrent").replace(/\+/g," ")):decodeURIComponent(r.url.split("?")[0].split("/").pop().replace(/\+/g," "));
       if(ITEMS.some(d=>d.status!="error"&&d.status!="complete"&&nom(d)==nm)||FILES.some(f=>f.n==nm)){rep++;continue}
-      await rpc("aria2.addUri",[[r.url],DIR?{dir:DIR}:{}]);ok++}
+      if(esT)await api2("torrent",{url:L[i],dir:DIR});else await rpc("aria2.addUri",[[r.url],DIR?{dir:DIR}:{}]);ok++}
     catch(e){mal.push((L[i].match(/part\d+/i)||[L[i].slice(0,40)])[0]+" ("+(String(e.message).startsWith("4")?"no pude sacar el archivo":e.message)+")")}
     await new Promise(r=>setTimeout(r,1500))}
   LARGO=0;OCUPADO=0;ver();
@@ -312,6 +314,12 @@ $("ds").value=LS.get("fdm_dir");if($("ds").selectedIndex<0)$("ds").value="";
 $("ba").onclick=()=>{$("d").showModal();$("u").focus();espacio()};$("ds").onchange=espacio;
 $("gc").onclick=()=>$("d").close();
 $("go").onclick=()=>{DIR=$("ds").value;LS.set("fdm_dir",DIR);const t=$("u").value;$("u").value="";$("d").close();bajarVarios(t)};
+$("ex").onclick=()=>$("tf").click();
+$("tf").onchange=()=>{const f=$("tf").files[0];$("tf").value="";if(!f)return;DIR=$("ds").value;LS.set("fdm_dir",DIR);$("d").close();subirTorrent(f,DIR)};
+async function subirTorrent(f,dir){aviso("Agregando "+f.name+"…",0);
+  try{const b64=await new Promise((ok,no)=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.onerror=no;fr.readAsDataURL(f)});
+    await api2("torrent",{data:b64,dir});ver();aviso("Torrent agregado: "+f.name,9000)}
+  catch(e){aviso("No se pudo agregar el torrent ("+e.message+")",9000)}}
 
 /* ---------- WiFi de la PC ---------- */
 let SW=0;
