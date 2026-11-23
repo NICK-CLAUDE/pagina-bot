@@ -50,6 +50,7 @@ svg{flex:none}
 .vm em{font-style:normal;color:var(--verde)}
 .vm.mal i{background:var(--rojo);animation:none}.vm.mal em{color:var(--rojo)}
 @keyframes latido{0%{box-shadow:0 0 0 0 rgba(46,189,133,.45)}70%{box-shadow:0 0 0 6px rgba(46,189,133,0)}100%{box-shadow:0 0 0 0 rgba(46,189,133,0)}}
+body.cargando .vista{opacity:.3;transition:opacity .15s}
 .selc{display:flex;gap:6px;margin:0 0 12px}
 .selc button{flex:1;min-width:0;background:var(--card);border:1px solid var(--ln);color:var(--mut);border-radius:10px;padding:9px 6px;font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap}
 .selc button.on{background:var(--raise);color:var(--tx);border-color:var(--mut2)}
@@ -551,6 +552,7 @@ const LS={get:k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}},se
 let BASE=FIJA?LS.get("panel_base"):"",CLAVE=LS.get("panel_clave"),BUSCADO=0;
 // cuenta que se mira: "fp" = fondeada de 5k (MT5 principal), "10k" = challenge de 10k (segunda MT5); el servidor lee el estado.json de cada una
 let CUENTA=LS.get("panel_cuenta")==="10k"?"10k":"fp";const CNOM={fp:"Funded $5k",["10k"]:"Challenge $10k"};
+let GEN=0;   // sube en cada cambio de cuenta: una respuesta pedida antes del cambio se descarta (si no, se vería la otra cuenta bajo el botón nuevo)
 const conCuenta=r=>CUENTA==="10k"&&/^(estado\.json|velas|control)/.test(r)?r+(r.includes("?")?"&":"?")+"cuenta=10k":r;
 {const m=location.hash.match(/k=([\w-]+)/);if(m){CLAVE=m[1];LS.set("panel_clave",CLAVE);history.replaceState(null,"",location.pathname+location.hash.replace(/k=[\w-]+&?/,""))}}
 async function buscarTunel(){   // como mucho una vez cada 90 s (GitHub deja 60 consultas por hora)
@@ -906,7 +908,7 @@ const simDe=k=>k.split(":")[0];
 const TFS=[["M5","5m"],["M15","15m"],["H1","1h"],["H4","4h"],["D1","1D"]];
 // velas del mercado elegido: las de su temporalidad normal, o las de la que se elige arriba del gráfico (el MT5 las manda cada 30 s)
 function getV(){const base=VELAS[MERC];if(!base||!TFSEL||TFSEL===base.tf)return base;const t=TFDATA[TFSEL]&&TFDATA[TFSEL][simDe(MERC)];return t||base}
-async function bajarTF(tf,fuerza){if(!tf||(!fuerza&&Date.now()-(TFHORA[tf]||0)<25000))return;TFHORA[tf]=Date.now();try{TFDATA[tf]=await (await api("velas_"+tf+".json")).json()}catch(e){TFHORA[tf]=0}}
+async function bajarTF(tf,fuerza){if(!tf||(!fuerza&&Date.now()-(TFHORA[tf]||0)<25000))return;TFHORA[tf]=Date.now();const g=GEN;try{const v=await (await api("velas_"+tf+".json")).json();if(g===GEN)TFDATA[tf]=v}catch(e){TFHORA[tf]=0}}
 function pintarTFs(){const V=VELAS&&VELAS[MERC];if(!V)return;const act=TFSEL||V.tf;$("tfs").innerHTML=TFS.map(([k,n])=>`<button data-tf="${k}" class="${k===act?"on":""}">${n}</button>`).join("")}
 // tocar una operación de la lista abre su información; al cerrarla (X) se ve el gráfico centrado en esa operación y marcada
 let PEND=null;
@@ -1011,7 +1013,8 @@ function pintarGrafico(){
 async function refrescarGraficos(){
   if(VISTA!=="graficos")return;
   if(VELAS&&G&&Date.now()-ULTV<12000){pintarGrafico();return}   // las velas pesan (~150 KB): se bajan cada 12 s
-  try{VELAS=await leerVelas();ULTV=Date.now()}catch(e){return}
+  const g=GEN;let vv;try{vv=await leerVelas()}catch(e){return}
+  if(g!==GEN)return;VELAS=vv;ULTV=Date.now();
   if(!VELAS||!Object.keys(VELAS).length){$("mercados").innerHTML='<div class="card vacio" style="grid-column:1/-1">No price data (Panel_Estado not running).</div>';return}
   if(TFSEL&&VELAS[MERC]&&TFSEL!==VELAS[MERC].tf)await bajarTF(TFSEL);
   armarGraficos();pintarMercados();pintarTFs();pintarGrafico();
@@ -1164,8 +1167,9 @@ $("panico").onclick=()=>pedirCambio("todos","pausar");
 function pintarCuentas(){document.querySelectorAll("#selc button").forEach(b=>{const on=b.dataset.c===CUENTA;b.classList.toggle("on",on);b.setAttribute("aria-selected",on)})}
 document.querySelectorAll("#selc button").forEach(b=>b.onclick=()=>{if(b.dataset.c===CUENTA)return;
   CUENTA=b.dataset.c;LS.set("panel_cuenta",CUENTA);pintarCuentas();
-  VELAS=null;TFDATA={};TFHORA={};ULTV=0;   // las velas se piden de nuevo a la otra cuenta
-  $("subt").textContent="";ciclo()});
+  GEN++;VELAS=null;TFDATA={};TFHORA={};ULTV=0;   // las velas se piden de nuevo a la otra cuenta
+  document.body.classList.add("cargando");$("subt").textContent="Loading "+CNOM[CUENTA]+"…";
+  OCUP=false;ciclo()});   // sin esperar al ciclo anterior
 pintarCuentas();
 async function leerEstado(){return await (await api("estado.json")).json()}
 const NOMBRE_VIEJO=/^Williams Nasdaq$/;
@@ -1176,14 +1180,15 @@ function normalizar(d){ // el Bot 2 se llamaba "Williams Nasdaq" cuando operaba 
   return d;
 }
 async function cargar(){
-  let d,err=null;try{d=await leerEstado()}catch(e){d=null;err=e}
+  const g=GEN;let d,err=null;try{d=await leerEstado()}catch(e){d=null;err=e}
+  if(g!==GEN||(d&&d.cuenta&&d.cuenta!==CUENTA))return;   // llegó tarde: es de la otra cuenta
   if(err instanceof SinClave)return;
   if(d&&!d.sin_datos)normalizar(d);
   if(!d||d.sin_datos){const t=err?"Offline":"No data";
     $("vivo").className="vivo mal";$("vivo_t").textContent=t;$("vivo_m").className="vm mal";$("vivo_m").querySelector("em").textContent=t;
     if(err)banner("estado","rojo","Can't reach the computer","Off, asleep or without internet. Retrying…");else banner("estado","rojo","No data","Panel_Estado isn't running in MT5.");
     $("subt").textContent=ULT?"last data "+hhmm(ULT.actualizado||0)+" Argentina time":"";return}
-  pintar(d);
+  document.body.classList.remove("cargando");pintar(d);
 }
 {const h=location.hash.slice(1)||LS.get("panel_vista");if(TITULOS[h])irA(h)}   // al recargar vuelve a la última pestaña
 if(FIJA&&!CLAVE)pedirClave();
