@@ -481,6 +481,10 @@ body.fd .solo-ch,body:not(.fd) .solo-fd{display:none!important}
 <section class="vista" id="v_pc">
   <div class="estado" id="pc_estado"><i></i><div><b>Loading…</b></div></div>
   <div class="pcg" id="pc_top"></div>
+  <div class="card" id="c_nitro"><div class="sec"><h2>NitroSense</h2><span class="mut" id="nt_t"></span></div>
+    <div class="acc"><button class="btn" id="nt_auto">Auto</button><button class="btn" id="nt_boost">Cool boost 3 min</button></div>
+    <svg class="gr" id="nt_g" style="height:150px;margin-top:12px"></svg>
+    <p class="nota"><b class="amb">Amber</b> = board temperature (dashed line: 65 °C, where Acer raises the fans) · <b style="color:var(--pri)">blue</b> = fan rpm (dashed line: 2,500 rpm goal) · last 6 hours. This laptop ignores manual speeds: only Auto and Max work.</p></div>
   <div class="card"><div class="sec"><h2>Details</h2><span class="mut" id="pc_t"></span></div><div id="pc_det"></div></div>
   <p class="nota">Updated every 30 s. The graphics card (NVIDIA) should sleep when no monitor is plugged in by HDMI.</p>
 </section>
@@ -830,7 +834,8 @@ function pedirCambio(bot,accion){
 $("dlg_no").onclick=()=>$("dlg").close();
 $("dlg_si").onclick=async()=>{
   $("dlg_si").disabled=true;
-  try{const c=await enviarControl(PEDIDO.bot,PEDIDO.accion,$("dlg_c").checked,$("dlg_pin").value);if(ULT){ULT.control=c;pintar(ULT)}$("dlg").close()}
+  try{if(PEDIDO.fan){await enviarFan(PEDIDO.fan,$("dlg_pin").value);$("dlg").close();pintarNitro()}
+    else{const c=await enviarControl(PEDIDO.bot,PEDIDO.accion,$("dlg_c").checked,$("dlg_pin").value);if(ULT){ULT.control=c;pintar(ULT)}$("dlg").close()}}
   catch(e){$("dlg_e").textContent=e.message}
   $("dlg_si").disabled=false;
 };
@@ -1185,6 +1190,34 @@ async function cargarPC(){
     +f("Internet",si(p.internet,"OK","down"))+f("MT5 (bots)",si(p.mt5,"open","closed"))
     +f("ThrottleStop",si(p.throttlestop,"on","closed"))+f("WiFi watchdog",si(p.vigia,"on","off"));
   $("pc_t").textContent=p.t?"at "+new Date(p.t*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})+" your time":"";
+  if(Date.now()-NTULT>25000)pintarNitro();   // el historial se actualiza cada 30 s
+}
+// ---------- NitroSense: historial de ventiladores y de la placa; Auto / Cool boost (el servidor pone el modo de Acer y vuelve solo a Auto)
+let NTULT=0;
+async function pintarNitro(){
+  NTULT=Date.now();let r;try{r=await (await api("pchist.json")).json()}catch(e){return}
+  const h=r.h||[],W=400,H=140,t1=h.length?h[h.length-1][0]:0,t0=Math.max(h.length?h[0][0]:0,t1-6*3600);
+  const X=t=>(t-t0)/Math.max(1,t1-t0)*W,Yr=v=>H-6-(Math.min(v,6200)/6200)*(H-12),Yt=v=>H-6-((Math.min(Math.max(v,50),70)-50)/20)*(H-12);
+  const lin=(i,f,c)=>`<polyline fill="none" stroke="${c}" stroke-width="1.6" vector-effect="non-scaling-stroke" points="${h.map(x=>X(x[0]).toFixed(1)+","+f(x[i]).toFixed(1)).join(" ")}"/>`;
+  const g=$("nt_g");g.setAttribute("viewBox","0 0 "+W+" "+H);g.setAttribute("preserveAspectRatio","none");
+  g.innerHTML=h.length<2?"":`<line x1="0" x2="${W}" y1="${Yr(2500)}" y2="${Yr(2500)}" stroke="var(--mut2)" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"/><line x1="0" x2="${W}" y1="${Yt(65)}" y2="${Yt(65)}" stroke="var(--amb)" stroke-dasharray="3 4" opacity=".6" vector-effect="non-scaling-stroke"/>`+lin(3,Yt,"var(--amb)")+lin(1,Yr,"var(--pri)");
+  const ult=h[h.length-1],bo=r.boost>Date.now()/1000;
+  $("nt_t").textContent=bo?"Max until "+new Date(r.boost*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):ult?ult[1].toLocaleString("en-US")+" rpm · board "+ult[3]+" °C":"no data yet";
+  $("nt_boost").classList.toggle("verde",bo);$("nt_auto").classList.toggle("verde",!bo);
+}
+function pedirFan(modo){
+  const d=ULT||{};PEDIDO={fan:modo};
+  $("dlg_t").textContent=modo==="boost"?"Cool boost for 3 minutes?":"Back to automatic fans?";
+  $("dlg_p").textContent=modo==="boost"?"Fans go to maximum (loud) for 3 minutes, then return to Auto by themselves.":"The laptop controls the fans by itself.";
+  $("dlg_cl").hidden=true;$("dlg_c").checked=false;
+  $("dlg_pin").hidden=!d.pin_requerido;$("dlg_pin").value="";$("dlg_e").textContent="";
+  $("dlg_si").textContent=modo==="boost"?"Boost":"Auto";$("dlg_si").className="btn verde";$("dlg").showModal();
+}
+$("nt_auto").onclick=()=>pedirFan("auto");$("nt_boost").onclick=()=>pedirFan("boost");
+async function enviarFan(modo,pin){
+  let r;try{r=await api("fan",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({modo,pin})})}
+  catch(e){throw new Error("Can't reach the computer.")}
+  if(!r.ok)throw new Error(r.status===403?"Wrong PIN.":r.status===429?"Too many wrong tries. Wait 15 minutes.":"Request failed (servidor.py).");
 }
 $("panico").onclick=()=>pedirCambio("todos","pausar");
 // selector de cuenta: cambia a qué MT5 le pide todo la página (datos, velas y pausa) y borra lo bajado de la otra
