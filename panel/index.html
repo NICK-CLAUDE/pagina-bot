@@ -480,14 +480,20 @@ body.fd .solo-ch,body:not(.fd) .solo-fd{display:none!important}
 <!-- PC -->
 <section class="vista" id="v_pc">
   <div class="estado" id="pc_estado"><i></i><div><b>Loading…</b></div></div>
+  <div class="card" id="c_modo"><div class="sec"><h2>Mode</h2><span class="chip gris" id="pc_modo">–</span></div><div id="pc_chk"></div></div>
   <div class="pcg" id="pc_top"></div>
+  <div class="card"><div class="sec"><h2>Using the processor</h2><span class="mut">average of the last 30 s</span></div><div id="pc_apps"></div></div>
   <div class="card" id="c_nitro"><div class="sec"><h2>NitroSense</h2><span class="mut" id="nt_t"></span></div>
     <div class="acc"><button class="btn" id="nt_auto">Auto</button><button class="btn" id="nt_boost">Cool boost 3 min</button></div>
     <svg class="gr" id="nt_g" style="height:150px;margin-top:12px"></svg>
     <div class="mut" id="nt_x" style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px"></div>
     <p class="nota">The fans follow the <b class="amb">board temperature</b> (amber), not the processor: Acer speeds them up when the board touches 65 °C (upper dashed line) and only slows them down once it drops under 57 °C (lower dashed line). <b style="color:var(--pri)">Blue</b> = fan rpm (gray dashed line: 2,500 rpm goal) · last 6 hours. This laptop ignores manual speeds: only Auto and Max work.</p></div>
+  <div class="card"><div class="sec"><h2>Power use</h2><span class="mut" id="pw_t"></span></div>
+    <svg class="gr" id="pw_g" style="height:120px;margin-top:12px"></svg>
+    <div class="mut" id="pw_x" style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px"></div>
+    <p class="nota"><b style="color:var(--pri)">Blue</b> = processor · <b style="color:#b07cff">purple</b> = graphics card (NVIDIA), in watts, last 6 hours (gray dashed line: 10 W). In bots mode both stay low: processor 3–10 W, graphics card 2–5 W. Gaming: processor up to 35 W, graphics card up to 50 W.</p></div>
   <div class="card"><div class="sec"><h2>Details</h2><span class="mut" id="pc_t"></span></div><div id="pc_det"></div></div>
-  <p class="nota">Updated every 30 s. The graphics card (NVIDIA) should sleep when no monitor is plugged in by HDMI.</p>
+  <p class="nota">Updated every 30 s with real readings: watts from ThrottleStop (processor) and the NVIDIA driver (graphics card), temperatures and fans from the Acer sensors.</p>
 </section>
 
 <!-- RESULTADOS -->
@@ -1160,34 +1166,63 @@ function pintar(d){
   const ae=d.avisos_enviados||[];
   $("avisos_env").innerHTML=ae.length?ae.map(a=>`<div class="alerta"><span class="h">${a.hora}</span><span>${a.texto}</span></div>`).join(""):'<div class="vacio">No alerts.</div>';
 }
-// ---------- pestaña PC (datos de tools/pc_estado.ps1)
+// ---------- pestaña PC (datos de tools/pc_estado.ps1): cada número con su rango normal, para entenderlo sin saber de PCs (pedido del usuario 27/11)
+// rangos medidos: bots = procesador ~5 W y NVIDIA en reposo 2,6-4 W (27/11); juegos = procesador hasta 35 W (PL2), NVIDIA hasta 50 W
+const PCREF={bots:{n:"BOTS",c:"",cpu:10,gpu:5},normal:{n:"NORMAL",c:"azul",cpu:15,gpu:5},juegos:{n:"GAMES",c:"amb",cpu:35,gpu:50},otro:{n:"OTHER",c:"gris",cpu:15,gpu:5}};
+const PCNOM={terminal64:"MetaTrader 5 (bots)",Code:"VS Code (Claude)",claude:"Claude",python:"Python (Fábrica / scripts)",pythonw:"Panel and monitors",powershell:"PC monitors",chrome:"Chrome",Antigravity:"Antigravity",System:"Windows",dwm:"Windows (screen)",explorer:"Windows Explorer",svchost:"Windows services",WmiPrvSE:"Windows (sensors)",MSIAfterburner:"MSI Afterburner (games)",RTSS:"RivaTuner (games)",EncoderServer:"RivaTuner recorder (games)",ThrottleStop:"ThrottleStop",remoting_host:"Chrome Remote Desktop",node:"Node (scripts)"};
+function gpuEstado(p){   // [palabra, color, explicación]. P8 = reposo; P0 sin uso = trabada (pasó del 25 al 27/11: 15 W)
+  if(p.nvidia===3)return["Asleep","verde","no HDMI monitor: uses 0 W"];
+  if(p.gpu_pstate==null)return["Awake","","no reading without an HDMI monitor"];
+  if(p.gpu_pstate==="P8"||p.gpu_mhz<=600)return["Resting","verde","normal: 2–5 W at 300 MHz"];
+  if(p.gpu_uso>=10)return["Working","","a game or video is using it"];
+  return["Stuck at full power","amb","doing nothing: should rest at 2–5 W"];
+}
 async function cargarPC(){
   if(VISTA!=="pc")return;
   let p;try{p=await (await api("pc.json")).json()}catch(e){return}
   const viejo=!p.t||Date.now()/1000-p.t>120,si=(ok,a,b)=>`<b class="${ok?"verde":"rojo"}">${ok?a:b}</b>`;
+  const f=(a,b)=>`<div class="pcf"><span>${a}</span>${b}</div>`,nom=n=>PCNOM[n]||n;
+  const R=PCREF[p.modo]||PCREF.otro,ahorro=p.modo==="bots"||p.modo==="normal",ge=gpuEstado(p),juego=p.apps_juego||[],top=p.top||[];
+  const pesado=top.find(a=>a.n!=="terminal64"&&a.p>=15);
   const malo=[];
   if(viejo)malo.push(["rojo","No PC data","the PC monitor isn't running (task \"PC Estado\")."]);
   if(!p.internet)malo.push(["rojo","No internet",""]);
   if(!p.mt5)malo.push(["rojo","MT5 closed","the bots aren't running."]);
+  if(ahorro&&ge[1]==="amb")malo.push(["amb","Graphics card stuck at full power",p.gpu_w+" W doing nothing (normal: 2–5 W). Ask Claude to restart its driver."]);
+  if(ahorro&&juego.length)malo.push(["amb","Game apps open",juego.map(nom).join(", ")+" aren't needed for the bots: close them or press MODO BOTS again."]);
+  if(ahorro&&pesado)malo.push(["amb","Something heavy is running",nom(pesado.n)+" is using "+pesado.p+"% of the processor."]);
   // en reposo el procesador anda en 48-52 °C con 5 W (medido 26-27/11): el aviso viejo (más de 50) quedaba prendido siempre
   const tmax=Math.max(p.cpu_temp,p.sensores?p.gpu_temp:0);if(tmax>=80)malo.push(["rojo","Very hot",tmax+" °C (normal: under 60)."]);else if(tmax>=60)malo.push(["amb","Warm",tmax+" °C (normal: under 60)."]);
   if(!p.enchufada)malo.push(["amb","On battery",p.bateria+"% left."]);
   if(p.sensores&&Math.max(p.fan_cpu,p.fan_gpu)>=2500)malo.push(["amb","Fans loud",Math.max(p.fan_cpu,p.fan_gpu).toLocaleString("en-US")+" rpm: board at "+p.placa_temp+" °C, Acer slows them under 57 °C."]);
   if(!p.throttlestop)malo.push(["amb","ThrottleStop closed","the power profile isn't applied."]);
   if(p.ram>=92)malo.push(["amb","Memory almost full",p.ram+"% in use: MT5 could slow down."]);
-  const e=malo[0]||["verde","All good","Cool, quiet and online."];
+  const e=malo[0]||["verde","All good",p.modo==="bots"?"Bots mode: quiet, low power and online.":"Cool, quiet and online."];
   banner("pc_estado",e[0],e[1],e[2]+(malo.length>1?" (+"+(malo.length-1)+" more)":""));
-  const tc=t=>t>=80?"rojo":t>=60?"amb":"";
-  const ven=p.sensores?Math.max(p.fan_cpu,p.fan_gpu):null;
-  $("pc_top").innerHTML=`<div><small>Processor</small><b class="${tc(p.cpu_temp)}">${p.cpu_temp} °C</b><span>${p.cpu_uso}% in use</span></div>
-    <div><small>Fans</small><b class="${ven>=2500?"amb":""}">${ven==null?"–":ven.toLocaleString("en-US")}</b><span>${ven==null?"sensors off":"rpm · "+(ven<2500?"quiet":ven<4000?"audible":"loud")}</span></div>
-    <div><small>Power</small><b>${p.cpu_w==null?"–":p.cpu_w+" W"}</b><span>processor, last min</span></div>
-    <div><small>NVIDIA</small><b class="${p.nvidia===0?"":"verde"}">${p.nvidia===0?"Awake":"Asleep"}</b><span>${p.sensores?"<em style=\"font-style:normal\" class=\""+tc(p.gpu_temp)+"\">"+p.gpu_temp+" °C</em> · ":""}${p.nvidia===0?(p.hdmi?"runs the HDMI monitor":"a program is using it"):"saving power"}</span></div>`;
-  const f=(a,b)=>`<div class="pcf"><span>${a}</span>${b}</div>`;
-  $("pc_det").innerHTML=f("Board temperature",`<b>${p.sensores?p.placa_temp+" °C":"–"}</b>`)
+  // modo y lista de lo que el modo bots tiene que dejar listo
+  const chip=$("pc_modo");chip.textContent=R.n;chip.className="chip "+R.c;
+  const ok=(b,t,d)=>f(t,`<b class="${b?"verde":"amb"}">${b?"✓":"✗"} ${d}</b>`),nvOk=/^Consumo/.test(p.nv_modo||"");
+  $("pc_chk").innerHTML=p.modo==="juegos"?`<p class="nota" style="margin-top:0">Games mode: processor and graphics card at full power, the fans will be loud. Press MODO BOTS when you finish playing.</p>`:
+    ok(ahorro,"Windows power plan",{bots:"Bots (low power)",normal:"Balanced"}[p.modo]||"other")
+    +ok(p.throttlestop&&p.ts_perfil===(p.modo==="bots"?2:1),"Processor limits (ThrottleStop)",p.throttlestop?(["GAMES","NORMAL","BOTS"][p.ts_perfil]||"?")+" profile":"closed")
+    +ok(!juego.length,"MSI Afterburner / RivaTuner",juego.length?"open":"closed")
+    +ok(ge[1]==="verde","Graphics card",ge[0]+(p.gpu_w!=null?" · "+p.gpu_w.toFixed(1)+" W":""))
+    +ok(nvOk,"NVIDIA power setting",nvOk?"Optimal power":(p.nv_modo||"unknown"))
+    +ok(!pesado,"Heavy programs",pesado?nom(pesado.n)+" "+pesado.p+"%":"none")
+    +(p.modo==="normal"?`<p class="nota">For the quietest PC with only the bots running: press MODO BOTS.</p>`:"");
+  const tc=t=>t>=80?"rojo":t>=60?"amb":"",w=x=>x==null?"–":(+x).toFixed(1)+" W";
+  const ven=p.sensores?Math.max(p.fan_cpu,p.fan_gpu):null,gw=p.nvidia===3?0:p.gpu_w,tot=p.cpu_w==null?null:p.cpu_w+(gw||0),tmx=R.cpu+R.gpu;
+  $("pc_top").innerHTML=`<div><small>Power now</small><b class="${tot>tmx?"amb":""}">${w(tot)}</b><span>processor ${w(p.cpu_w)} + graphics ${w(gw)}<br>normal in ${R.n.toLowerCase()} mode: under ${tmx} W</span></div>
+    <div><small>Processor</small><b class="${tc(p.cpu_temp)}">${p.cpu_temp} °C</b><span>${p.cpu_uso}% in use · ${w(p.cpu_w)}<br>normal: under 60 °C and ${R.cpu} W</span></div>
+    <div><small>Graphics card (NVIDIA)</small><b class="${ge[1]}" style="font-size:20px">${ge[0]}</b><span>${p.gpu_w!=null?w(p.gpu_w)+" · "+p.gpu_mhz+" MHz · ":""}${p.sensores?p.gpu_temp+" °C":""}<br>${ge[2]}</span></div>
+    <div><small>Fans</small><b class="${ven>=2500?"amb":""}">${ven==null?"–":ven.toLocaleString("en-US")}</b><span>rpm · ${ven==null?"sensors off":ven<2500?"quiet":ven<4000?"you can hear them":"loud"}<br>quiet: under 2,500 rpm</span></div>`;
+  $("pc_apps").innerHTML=(top.length?top.map(a=>f(nom(a.n),`<b class="${a.n!=="terminal64"&&a.p>=15?"amb":""}">${a.p}%</b>`)).join(""):`<div class="vacio">Almost nothing running.</div>`)
+    +f("Total in use",`<b>${p.cpu_uso}%</b>`);
+  $("pc_det").innerHTML=f("Board temperature (the fans follow it)",`<b class="${p.placa_temp>=65?"amb":""}">${p.sensores?p.placa_temp+" °C":"–"}</b>`)
     +f("Graphics card temperature",`<b>${p.gpu_temp?p.gpu_temp+" °C":"off"}</b>`)
     +f("Fans CPU / GPU",`<b>${p.sensores?p.fan_cpu.toLocaleString("en-US")+" / "+p.fan_gpu.toLocaleString("en-US")+" rpm":"–"}</b>`)
-    +f("Memory in use",`<b>${p.ram}%</b>`)+f("Free disk",`<b>${p.disco_gb} GB</b>`)
+    +f("Monitor on HDMI",`<b>${p.hdmi?"yes (keeps the graphics card on)":"no"}</b>`)
+    +f("Memory in use",`<b class="${p.ram>=92?"amb":""}">${p.ram}%</b>`)+f("Free disk",`<b>${p.disco_gb} GB</b>`)
     +f("Power",`<b class="${p.enchufada?"":"amb"}">${p.enchufada?"plugged in":"battery"} · ${p.bateria}%</b>`)
     +f("On for",`<b>${p.prendida_h<48?p.prendida_h+" h":Math.round(p.prendida_h/24)+" days"}</b>`)
     +f("Internet",si(p.internet,"OK","down"))+f("MT5 (bots)",si(p.mt5,"open","closed"))
@@ -1207,6 +1242,13 @@ async function pintarNitro(){
   g.innerHTML=h.length<2?"":raya(Yr(2500),"var(--mut2)",1)+raya(Yt(65),"var(--amb)",.6)+raya(Yt(57),"var(--amb)",.3)+lin(3,Yt,"var(--amb)")+lin(1,Yr,"var(--pri)");
   const hh=t=>new Date(t*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
   $("nt_x").innerHTML=h.length<2?"":`<span>${hh(t0)}</span><span>${hh((t0+t1)/2)}</span><span>${hh(t1)}</span>`;
+  // consumo: vatios del procesador [5] y de la NVIDIA [6] (las muestras viejas no los tienen)
+  const P=h.filter(x=>x[5]!=null),HP=110,tope=Math.max(20,...P.map(x=>Math.max(+x[5]||0,+x[6]||0))),Yw=v=>HP-4-(Math.min(v,tope)/tope)*(HP-8);
+  const linW=(i,c)=>`<polyline fill="none" stroke="${c}" stroke-width="1.6" vector-effect="non-scaling-stroke" points="${P.filter(x=>x[i]!=null).map(x=>X(x[0]).toFixed(1)+","+Yw(+x[i]).toFixed(1)).join(" ")}"/>`;
+  const pg=$("pw_g");pg.setAttribute("viewBox","0 0 "+W+" "+HP);pg.setAttribute("preserveAspectRatio","none");
+  pg.innerHTML=P.length<2?"":`<line x1="0" x2="${W}" y1="${Yw(10)}" y2="${Yw(10)}" stroke="var(--mut2)" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"/>`+linW(5,"var(--pri)")+linW(6,"#b07cff");
+  $("pw_x").innerHTML=$("nt_x").innerHTML;
+  const uw=P[P.length-1];$("pw_t").textContent=uw?"now "+(+uw[5]||0).toFixed(1)+" + "+(+uw[6]||0).toFixed(1)+" W · scale 0–"+Math.round(tope)+" W":"collecting data…";
   const ult=h[h.length-1],bo=r.boost>Date.now()/1000;
   $("nt_t").textContent=bo?"Max until "+new Date(r.boost*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):ult?ult[1].toLocaleString("en-US")+" rpm · board "+ult[3]+" °C":"no data yet";
   $("nt_boost").classList.toggle("verde",bo);$("nt_auto").classList.toggle("verde",!bo);
