@@ -834,8 +834,7 @@ function pedirCambio(bot,accion){
 $("dlg_no").onclick=()=>$("dlg").close();
 $("dlg_si").onclick=async()=>{
   $("dlg_si").disabled=true;
-  try{if(PEDIDO.fan){await enviarFan(PEDIDO.fan,$("dlg_pin").value);$("dlg").close();pintarNitro()}
-    else{const c=await enviarControl(PEDIDO.bot,PEDIDO.accion,$("dlg_c").checked,$("dlg_pin").value);if(ULT){ULT.control=c;pintar(ULT)}$("dlg").close()}}
+  try{const c=await enviarControl(PEDIDO.bot,PEDIDO.accion,$("dlg_c").checked,$("dlg_pin").value);if(ULT){ULT.control=c;pintar(ULT)}$("dlg").close()}
   catch(e){$("dlg_e").textContent=e.message}
   $("dlg_si").disabled=false;
 };
@@ -1205,20 +1204,14 @@ async function pintarNitro(){
   $("nt_t").textContent=bo?"Max until "+new Date(r.boost*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):ult?ult[1].toLocaleString("en-US")+" rpm · board "+ult[3]+" °C":"no data yet";
   $("nt_boost").classList.toggle("verde",bo);$("nt_auto").classList.toggle("verde",!bo);
 }
-function pedirFan(modo){
-  const d=ULT||{};PEDIDO={fan:modo};
-  $("dlg_t").textContent=modo==="boost"?"Cool boost for 3 minutes?":"Back to automatic fans?";
-  $("dlg_p").textContent=modo==="boost"?"Fans go to maximum (loud) for 3 minutes, then return to Auto by themselves.":"The laptop controls the fans by itself.";
-  $("dlg_cl").hidden=true;$("dlg_c").checked=false;
-  $("dlg_pin").hidden=!d.pin_requerido;$("dlg_pin").value="";$("dlg_e").textContent="";
-  $("dlg_si").textContent=modo==="boost"?"Boost":"Auto";$("dlg_si").className="btn verde";$("dlg").showModal();
+async function ponerFan(modo){   // a pedido del usuario: un toque y listo, sin confirmación
+  const bo=modo==="boost";
+  $("nt_boost").classList.toggle("verde",bo);$("nt_auto").classList.toggle("verde",!bo);$("nt_t").textContent="Sending…";
+  try{const r=await api("fan",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({modo})});
+    if(!r.ok)throw 0;await pintarNitro()}
+  catch(e){NTULT=0;$("nt_t").textContent="Didn't work, try again."}
 }
-$("nt_auto").onclick=()=>pedirFan("auto");$("nt_boost").onclick=()=>pedirFan("boost");
-async function enviarFan(modo,pin){
-  let r;try{r=await api("fan",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({modo,pin})})}
-  catch(e){throw new Error("Can't reach the computer.")}
-  if(!r.ok)throw new Error(r.status===403?"Wrong PIN.":r.status===429?"Too many wrong tries. Wait 15 minutes.":"Request failed (servidor.py).");
-}
+$("nt_auto").onclick=()=>ponerFan("auto");$("nt_boost").onclick=()=>ponerFan("boost");
 $("panico").onclick=()=>pedirCambio("todos","pausar");
 // selector de cuenta: cambia a qué MT5 le pide todo la página (datos, velas y pausa) y borra lo bajado de la otra
 function pintarCuentas(){document.querySelectorAll("#selc button").forEach(b=>{const on=b.dataset.c===CUENTA;b.classList.toggle("on",on);b.setAttribute("aria-selected",on)})}
