@@ -483,11 +483,14 @@ body.fd .solo-ch,body:not(.fd) .solo-fd{display:none!important}
   <div class="card" id="c_modo"><div class="sec"><h2>Mode</h2><span class="chip gris" id="pc_modo">–</span></div><div id="pc_chk"></div></div>
   <div class="pcg" id="pc_top"></div>
   <div class="card"><div class="sec"><h2>Using the processor</h2><span class="mut">average of the last 30 s</span></div><div id="pc_apps"></div></div>
-  <div class="card" id="c_nitro"><div class="sec"><h2>NitroSense</h2><span class="mut" id="nt_t"></span></div>
-    <div class="acc"><button class="btn" id="nt_auto">Auto</button><button class="btn" id="nt_boost">Cool boost 3 min</button></div>
-    <svg class="gr" id="nt_g" style="height:150px;margin-top:12px"></svg>
+  <div class="card" id="c_nitro"><div class="sec"><h2>Fans (NitroSense)</h2><span class="mut" id="nt_t"></span></div>
+    <div class="pcg" id="nt_now" style="margin-bottom:10px"></div>
+    <div class="sec"><b id="nt_res" style="font-size:14px"></b></div>
+    <svg class="gr" id="nt_g" style="height:22px;margin-top:6px;border-radius:6px"></svg>
     <div class="mut" id="nt_x" style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px"></div>
-    <p class="nota">The fans follow the <b class="amb">board temperature</b> (amber), not the processor: Acer speeds them up when the board touches 65 °C (upper dashed line) and only slows them down once it drops under 57 °C (lower dashed line). <b style="color:var(--pri)">Blue</b> = fan rpm (gray dashed line: 2,500 rpm goal) · last 6 hours. This laptop ignores manual speeds: only Auto and Max work.</p></div>
+    <div id="nt_ep" style="margin-top:8px"></div>
+    <div class="acc" style="margin-top:12px"><button class="btn" id="nt_auto">Auto</button><button class="btn" id="nt_boost">Cool boost 3 min</button></div>
+    <p class="nota"><b class="verde">Green</b> = quiet, <b class="rojo">red</b> = loud (over 3,000 rpm), last 6 hours. Acer speeds the fans up when the board reaches 65 °C and slows them down only at 57 °C. Manual speeds don't work on this laptop.</p></div>
   <div class="card"><div class="sec"><h2>Power use</h2><span class="mut" id="pw_t"></span></div>
     <svg class="gr" id="pw_g" style="height:120px;margin-top:12px"></svg>
     <div class="mut" id="pw_x" style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px"></div>
@@ -1194,7 +1197,7 @@ async function cargarPC(){
   // en reposo el procesador anda en 48-52 °C con 5 W (medido 26-27/11): el aviso viejo (más de 50) quedaba prendido siempre
   const tmax=Math.max(p.cpu_temp,p.sensores?p.gpu_temp:0);if(tmax>=80)malo.push(["rojo","Very hot",tmax+" °C (normal: under 60)."]);else if(tmax>=60)malo.push(["amb","Warm",tmax+" °C (normal: under 60)."]);
   if(!p.enchufada)malo.push(["amb","On battery",p.bateria+"% left."]);
-  if(p.sensores&&Math.max(p.fan_cpu,p.fan_gpu)>=2500)malo.push(["amb","Fans loud",Math.max(p.fan_cpu,p.fan_gpu).toLocaleString("en-US")+" rpm: board at "+p.placa_temp+" °C, Acer slows them under 57 °C."]);
+  if(p.sensores&&Math.max(p.fan_cpu,p.fan_gpu)>=3000)malo.push(["amb","Fans loud",Math.max(p.fan_cpu,p.fan_gpu).toLocaleString("en-US")+" rpm: board at "+p.placa_temp+" °C, Acer slows them under 57 °C."]);
   if(!p.throttlestop)malo.push(["amb","ThrottleStop closed","the power profile isn't applied."]);
   if(p.ram>=92)malo.push(["amb","Memory almost full",p.ram+"% in use: MT5 could slow down."]);
   const e=malo[0]||["verde","All good",p.modo==="bots"?"Bots mode: quiet, low power and online.":"Cool, quiet and online."];
@@ -1235,13 +1238,17 @@ let NTULT=0;
 async function pintarNitro(){
   NTULT=Date.now();let r;try{r=await (await api("pchist.json")).json()}catch(e){return}
   const h=r.h||[],W=400,H=140,t1=h.length?h[h.length-1][0]:0,t0=Math.max(h.length?h[0][0]:0,t1-6*3600);
-  const X=t=>(t-t0)/Math.max(1,t1-t0)*W,Yr=v=>H-6-(Math.min(v,6200)/6200)*(H-12),Yt=v=>H-6-((Math.min(Math.max(v,50),70)-50)/20)*(H-12);
-  const lin=(i,f,c)=>`<polyline fill="none" stroke="${c}" stroke-width="1.6" vector-effect="non-scaling-stroke" points="${h.map(x=>X(x[0]).toFixed(1)+","+f(x[i]).toFixed(1)).join(" ")}"/>`;
-  const g=$("nt_g");g.setAttribute("viewBox","0 0 "+W+" "+H);g.setAttribute("preserveAspectRatio","none");
-  const raya=(y,c,o)=>`<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="${c}" stroke-dasharray="3 4" opacity="${o}" vector-effect="non-scaling-stroke"/>`;
-  g.innerHTML=h.length<2?"":raya(Yr(2500),"var(--mut2)",1)+raya(Yt(65),"var(--amb)",.6)+raya(Yt(57),"var(--amb)",.3)+lin(3,Yt,"var(--amb)")+lin(1,Yr,"var(--pri)");
-  const hh=t=>new Date(t*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+  const X=t=>(t-t0)/Math.max(1,t1-t0)*W,hh=t=>new Date(t*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+  // pedido del usuario 27/11: sin curvas; franja verde/roja, veces que sonaron fuerte y cuánto duró cada una
+  const ruido=x=>Math.max(x[1]||0,x[2]||0)>=3000,ep=[];let ini=null;
+  h.forEach((x,i)=>{if(x[0]<t0)return;const l=ruido(x);if(l&&ini==null)ini=x[0];if(ini!=null&&(!l||i===h.length-1)){ep.push([ini,l?null:x[0]]);ini=null}});
+  const mins=([a,b])=>Math.max(1,Math.round(((b??t1)-a)/60)),dur=m=>m<60?m+" min":Math.floor(m/60)+" h"+(m%60?" "+m%60+" min":"");
+  const tot=ep.reduce((s,e)=>s+mins(e),0),cada=ep.length>2?Math.round((ep[ep.length-1][0]-ep[0][0])/(ep.length-1)/60):0;
+  const g=$("nt_g");g.setAttribute("viewBox","0 0 "+W+" 20");g.setAttribute("preserveAspectRatio","none");
+  g.innerHTML=h.length<2?"":`<rect width="${W}" height="20" fill="var(--verde)" opacity=".35"/>`+ep.map(([a,b])=>`<rect x="${X(a).toFixed(1)}" width="${Math.max(2,X(b??t1)-X(a)).toFixed(1)}" height="20" fill="var(--rojo)"/>`).join("");
   $("nt_x").innerHTML=h.length<2?"":`<span>${hh(t0)}</span><span>${hh((t0+t1)/2)}</span><span>${hh(t1)}</span>`;
+  $("nt_res").innerHTML=h.length<2?"":ep.length?`Last ${dur(Math.round((t1-t0)/60))}: <span class="rojo">loud ${ep.length} time${ep.length>1?"s":""}</span>, ${dur(tot)} in total${cada?" · about every "+cada+" min":""}`:`<span class="verde">Quiet the whole time (last ${dur(Math.round((t1-t0)/60))})</span>`;
+  $("nt_ep").innerHTML=ep.slice(-6).reverse().map(e=>`<div class="pcf"><span>${hh(e[0])} → ${e[1]?hh(e[1]):"now"}</span><b class="rojo">${dur(mins(e))}</b></div>`).join("");
   // consumo: vatios del procesador [5] y de la NVIDIA [6] (las muestras viejas no los tienen)
   const P=h.filter(x=>x[5]!=null),HP=110,tope=Math.max(20,...P.map(x=>Math.max(+x[5]||0,+x[6]||0))),Yw=v=>HP-4-(Math.min(v,tope)/tope)*(HP-8);
   const linW=(i,c)=>`<polyline fill="none" stroke="${c}" stroke-width="1.6" vector-effect="non-scaling-stroke" points="${P.filter(x=>x[i]!=null).map(x=>X(x[0]).toFixed(1)+","+Yw(+x[i]).toFixed(1)).join(" ")}"/>`;
@@ -1250,7 +1257,10 @@ async function pintarNitro(){
   $("pw_x").innerHTML=$("nt_x").innerHTML;
   const uw=P[P.length-1];$("pw_t").textContent=uw?"now "+(+uw[5]||0).toFixed(1)+" + "+(+uw[6]||0).toFixed(1)+" W · scale 0–"+Math.round(tope)+" W":"collecting data…";
   const ult=h[h.length-1],bo=r.boost>Date.now()/1000;
-  $("nt_t").textContent=bo?"Max until "+new Date(r.boost*1000).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):ult?ult[1].toLocaleString("en-US")+" rpm · board "+ult[3]+" °C":"no data yet";
+  $("nt_t").textContent=bo?"Max until "+hh(r.boost):ult?"Auto":"no data yet";
+  if(ult){const rpm=Math.max(ult[1]||0,ult[2]||0),l=rpm>=3000,pl=ult[3];
+    $("nt_now").innerHTML=`<div><small>Fans now</small><b class="${l?"rojo":"verde"}">${l?"Loud":"Quiet"}</b><span>${rpm.toLocaleString("en-US")} rpm (quiet: about 2,100)</span></div>`
+      +`<div><small>Board temperature</small><b>${pl} °C</b><span>${l?(pl<=57?"slowing down now":"calm at 57 °C: "+(pl-57)+" °C to go"):(pl>=65?"speeding up now":"loud at 65 °C: "+(65-pl)+" °C away")}</span></div>`}
   $("nt_boost").classList.toggle("verde",bo);$("nt_auto").classList.toggle("verde",!bo);
 }
 async function ponerFan(modo){   // a pedido del usuario: un toque y listo, sin confirmación
