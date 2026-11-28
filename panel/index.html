@@ -1242,7 +1242,7 @@ const PCREF={bots:{n:"BOTS",c:"",cpu:10,gpu:5},normal:{n:"NORMAL",c:"azul",cpu:1
 const PCNOM={terminal64:"MetaTrader 5 (bots)",Code:"VS Code (Claude)",claude:"Claude",python:"Python (Fábrica / scripts)",pythonw:"Panel and monitors",powershell:"PC monitors",chrome:"Chrome",Antigravity:"Antigravity",System:"Windows",dwm:"Windows (screen)",explorer:"Windows Explorer",svchost:"Windows services",WmiPrvSE:"Windows (sensors)",MSIAfterburner:"MSI Afterburner (games)",RTSS:"RivaTuner (games)",EncoderServer:"RivaTuner recorder (games)",ThrottleStop:"ThrottleStop",remoting_host:"Chrome Remote Desktop",node:"Node (scripts)"};
 function gpuEstado(p){   // [palabra, color, explicación]. P8 = reposo; P0 sin uso = trabada (pasó del 25 al 27/11: 15 W)
   if(p.nvidia===3)return["Asleep","verde","no HDMI monitor: uses 0 W"];
-  if(p.gpu_pstate==null)return["Awake","","no reading without an HDMI monitor"];
+  if(p.gpu_pstate==null&&!(p.gpu_mhz>=1000))return["Awake","","no reading without an HDMI monitor"];
   if(p.gpu_pstate==="P8"||p.gpu_mhz<=600)return["Resting","verde","normal: 2–5 W at 300 MHz"];
   if(p.gpu_uso>=10)return["Working","","a game or video is using it"];
   return["Stuck at full power","amb","doing nothing: should rest at 2–5 W"];
