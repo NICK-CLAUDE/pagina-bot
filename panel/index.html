@@ -66,7 +66,7 @@ body.cargando .vista{opacity:.3;transition:opacity .15s}
 .side>button.on{color:var(--tx);font-weight:600}.side>button.on span.ic{background:var(--prib)}
 .side svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .side>button.on svg{stroke:var(--pri)}
-.side [data-v=resultados],.side [data-v=reglas],.side [data-v=alertas],.marca,.vivo{display:none}
+.side [data-v=resultados],.side [data-v=reglas],.side [data-v=alertas],.side [data-v=fabrica],.marca,.vivo{display:none}
 #masmenu{display:none}
 #masmenu.abierto{display:flex;flex-direction:column;gap:2px;position:fixed;left:10px;right:10px;bottom:calc(74px + var(--sb));z-index:11;padding:8px;
   background:var(--card2);border:1px solid var(--ln);border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.6);animation:sube .2s cubic-bezier(.2,.8,.2,1)}
@@ -282,6 +282,16 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
 .btn.azul{background:var(--pri);border-color:var(--pri);color:#06142e;width:100%}
 .err{color:var(--rojo);min-height:1.2em;margin:0 0 6px;font-size:13.5px}
 
+/* pestaña Factory */
+.fsel{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.fsel button{border:1px solid var(--ln);background:var(--card2);color:var(--tx2);border-radius:99px;padding:8px 13px;font-size:13.5px;font-weight:600;cursor:pointer}
+.fsel button.on{background:var(--prib);border-color:var(--pri);color:var(--pri)}
+.fbl{font-size:12.5px;color:var(--mut);margin-top:4px}
+.fblog{white-space:pre-wrap;word-break:break-all;font:12px/1.45 ui-monospace,Consolas,monospace;color:var(--tx2);max-height:220px;overflow:auto;margin:8px 0 0;background:var(--bg);padding:10px;border-radius:10px}
+.fbi{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--ln2);cursor:pointer}
+.fbx{padding:0 0 14px}
+.fbt{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:12px;font-size:13px}
+#fb_ir:disabled{opacity:.55;cursor:default}
 /* pestaña PC */
 .pcg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
 .pcg>div{background:var(--card);border:1px solid var(--ln2);border-radius:var(--r);padding:13px 14px;min-width:0}
@@ -328,7 +338,7 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
  .side>button span.ic{width:32px;height:32px;border-radius:9px}
  .side>button:hover{background:var(--card)}
  .side>button.on{background:var(--card);color:var(--tx)}.side>button.on span.ic{background:var(--prib)}
- .side [data-v=resultados],.side [data-v=reglas],.side [data-v=alertas]{display:flex}
+ .side [data-v=resultados],.side [data-v=reglas],.side [data-v=alertas],.side [data-v=fabrica]{display:flex}
  #mas,#masmenu,#masmenu.abierto{display:none}
  .marca{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;letter-spacing:.1em;padding:2px 6px 22px}
  .marca .logo{width:34px;height:34px}
@@ -382,6 +392,7 @@ body.fd .solo-ch,body:not(.fd) .solo-fd{display:none!important}
   <button data-v="resultados"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span>Results</button>
   <button data-v="reglas"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>Rules</button>
   <button data-v="alertas"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>Alerts</button>
+  <button data-v="fabrica"><span class="ic"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5.6 9.4A1.7 1.7 0 0 0 5.9 21h12.2a1.7 1.7 0 0 0 1.5-2.6L14 9V3"/><path d="M7.5 15h9"/></svg></span>Factory</button>
   <button id="mas" aria-haspopup="true"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></span>More</button>
   <div class="vivo" id="vivo"><i></i><span id="vivo_t">connecting…</span></div>
 </nav>
@@ -389,6 +400,7 @@ body.fd .solo-ch,body:not(.fd) .solo-fd{display:none!important}
   <button data-m="resultados"><span class="mi"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span><span><b>Results</b><small>Calendar, stats and live vs. tests</small></span></button>
   <button data-m="reglas"><span class="mi"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><span><b>Rules</b><small>Funding Pips limits and bot limits</small></span></button>
   <button data-m="alertas"><span class="mi"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span><span><b>Alerts</b><small>Latest warnings</small></span></button>
+  <button data-m="fabrica"><span class="mi"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5.6 9.4A1.7 1.7 0 0 0 5.9 21h12.2a1.7 1.7 0 0 0 1.5-2.6L14 9V3"/><path d="M7.5 15h9"/></svg></span><span><b>Factory</b><small>Build and test new strategies</small></span></button>
 </div>
 
 <main class="main">
@@ -478,6 +490,23 @@ body.fd .solo-ch,body:not(.fd) .solo-fd{display:none!important}
 </section>
 
 <!-- PC -->
+<!-- FACTORY: la Fábrica de estrategias (proyectos/fabrica) -->
+<section class="vista" id="v_fabrica">
+  <div class="estado" id="fb_estado"><i></i><div><b>Loading…</b></div></div>
+  <div class="card"><div class="sec"><h2>New search</h2><span class="mut">like StrategyQuant</span></div>
+    <div class="fbl">Type</div><div class="fsel" id="fb_perfil"></div>
+    <div class="fbl">Data</div><div class="fsel" id="fb_datos"></div>
+    <div class="fbl">Markets</div><div class="fsel" id="fb_merc"></div>
+    <div class="fbl">Timeframes</div><div class="fsel" id="fb_tf"></div>
+    <div class="fbl">Size</div><div class="fsel" id="fb_tam"></div>
+    <button class="btn azul" id="fb_ir">Start search</button>
+    <p class="nota" id="fb_txt"></p></div>
+  <div class="card" id="fb_corre" hidden><div class="sec"><h2>Running</h2><button class="btn" id="fb_parar" style="padding:6px 14px;font-size:13px">Stop</button></div><pre class="fblog" id="fb_log"></pre></div>
+  <div class="card" id="fb_det" hidden></div>
+  <div class="card"><div class="sec"><h2>Searches</h2><span class="mut" id="fb_n"></span></div><div id="fb_lista"></div></div>
+  <p class="nota">The builder mixes indicators and price rules at random, keeps the ones that won from 2013/2018 to 2021/2022, checks them on the next years it never used to choose, and runs 12 robustness tests (Monte Carlo of costs, prices and trade order, nearby settings, walk-forward, random entries…). It only researches: it never opens MT5 or touches an account. Strategy rules are written in Spanish by the Factory.</p>
+</section>
+
 <section class="vista" id="v_pc">
   <div class="estado" id="pc_estado"><i></i><div><b>Loading…</b></div></div>
   <div class="card" id="c_modo"><div class="sec"><h2>Mode</h2><span class="chip gris" id="pc_modo">–</span></div><div id="pc_chk"></div></div>
@@ -624,7 +653,7 @@ const NOM={"Tendencia 4H":"Trend 4H","Williams Ruptura":"Williams Breakout","Ran
 const nb=n=>NOM[n]||n;   // nombre del bot en inglés (los datos siguen usando el nombre original)
 const INI={"Tendencia 4H":["T4","a1"],"Williams Ruptura":["WB","a2"],"Rango Asiatico":["AR","a3"]};
 const avatar=n=>{const a=INI[n]||["B","a1"];return `<span class="av-b ${a[1]}">${a[0]}</span>`};
-const TITULOS={pc:"PC",resumen:"Overview",bots:"Bots",graficos:"Charts",historial:"History",resultados:"Results",reglas:"Rules",alertas:"Alerts"};
+const TITULOS={fabrica:"Factory",pc:"PC",resumen:"Overview",bots:"Bots",graficos:"Charts",historial:"History",resultados:"Results",reglas:"Rules",alertas:"Alerts"};
 const ICONO={verde:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-7"/></svg>',
   amb:'<svg viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18.2v.1"/></svg>',
   rojo:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7"/></svg>'};
@@ -646,12 +675,12 @@ function verGrafico(g){
 }
 function irA(v){
   document.querySelectorAll("#menu button[data-v]").forEach(x=>x.classList.toggle("on",x.dataset.v===v));
-  const enMas=["resultados","reglas","alertas"].includes(v);$("mas").classList.toggle("on",enMas);
+  const enMas=["resultados","reglas","alertas","fabrica"].includes(v);$("mas").classList.toggle("on",enMas);
   document.querySelectorAll("#masmenu button").forEach(x=>x.classList.toggle("on",x.dataset.m===v));
   document.querySelectorAll(".vista").forEach(x=>x.classList.toggle("on",x.id==="v_"+v));
   $("titulo").textContent=TITULOS[v]||v;
   window.scrollTo(0,0);document.querySelectorAll(".main,.app").forEach(e=>e.scrollTop=0);   // cada pestaña arranca desde arriba
-  VISTA=v;LS.set("panel_vista",v);if(v==="graficos")refrescarGraficos();if(v==="pc")cargarPC();
+  VISTA=v;LS.set("panel_vista",v);if(v==="graficos")refrescarGraficos();if(v==="pc")cargarPC();if(v==="fabrica")cargarFab();
   if(ULT)pintar(ULT);
 }
 let ULT=null;
@@ -1299,6 +1328,99 @@ async function cargar(){
     $("subt").textContent=ULT?"last data "+hhmm(ULT.actualizado||0)+" Argentina time":"";return}
   document.body.classList.remove("cargando");pintar(d);
 }
+// ---------- pestaña Factory (pedido del usuario 27/11: "una aplicación como StrategyQuant, también desde el celu"): la Fábrica de proyectos/fabrica
+// por el servidor del panel (/fabrica/api/..., con la clave). Solo investiga: no abre MT5 ni toca cuentas. Las reglas las escribe la Fábrica (castellano).
+const FBP={ruptura:["Breakout","m5",["XAUUSD"],["M5","M15","H1"],"Enters when price breaks out (stop order). 2–3 indicators + up to 2 price-action rules; buys and sells."],
+  reversion:["Mean reversion","m5",["USTEC","US30","XAUUSD"],["M5","M15","H1"],"Buys after drops and sells after rallies: at least one reversal indicator (RSI, Bollinger, CCI, Stochastic…). Buys and sells."],
+  trailing:["Forex trailing","ic",["GBPJPY","EURJPY","USDJPY","USDCHF"],["M30","H1","H4"],"Always exits with a trailing stop. Gino's forex pairs (USDCAD has no long history here). Buys and sells."],
+  libre:["Free","ic",["XAUUSD","USTEC","US30","US500","DE40"],["M30","H1","H4"],"Any building block, like the original Factory (it can also be buy-only or sell-only)."]};
+const FBD={m5:"5-min candles · 2013–2026",ic:"30-min candles · 2018–2026"};
+const FBT={mitades:"Wins in both halves of the unseen years","costos x2":"Costs x2",vecinos:"Nearby settings",params:"Random settings (Monte Carlo)",
+  spread:"Random spread & slippage",precios:"Random price data",orden:"Random trade order & skipped trades","sin mes":"Without its best day and month",
+  desfase:"Candles starting at another time",wf:"Walk-forward matrix",azar:"Beats 40 random-entry versions",parientes:"Works on similar markets/timeframes"};
+const fbEsc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+let FB={p:"ruptura",d:"m5",m:["XAUUSD"],tf:["M5","M15","H1"],g:false,op:null,est:null,t:0,ver:null,abierta:-1};
+function fbChips(id,items,on,click){
+  $(id).innerHTML=items.map(([v,t])=>`<button data-x="${fbEsc(v)}" class="${on(v)?"on":""}">${fbEsc(t)}</button>`).join("");
+  $(id).onclick=e=>{const b=e.target.closest("button");if(b&&!(FB.est&&FB.est.corriendo)){click(b.dataset.x);fbForm()}};
+}
+const fbTog=(a,v,max)=>a.includes(v)?(a.length>1?a.filter(x=>x!==v):a):(a.length<max?a.concat(v):a);
+function fbForm(){
+  const O=FB.op[FB.d];
+  fbChips("fb_perfil",Object.entries(FBP).map(([k,v])=>[k,v[0]]),v=>v===FB.p,v=>{FB.p=v;FB.d=FBP[v][1];FB.m=FBP[v][2].slice();FB.tf=FBP[v][3].slice()});
+  fbChips("fb_datos",Object.entries(FBD).map(([k,v])=>[k,v+" · "+FB.op[k].mercados.length+" markets"]),v=>v===FB.d,v=>{if(v===FB.d)return;FB.d=v;const o=FB.op[v];
+    FB.m=FB.m.filter(m=>o.mercados.includes(m));if(!FB.m.length)FB.m=[o.mercados.includes("XAUUSD")?"XAUUSD":o.mercados[0]];
+    FB.tf=FB.tf.filter(t=>o.tfs.includes(t));if(!FB.tf.length)FB.tf=o.tfs.slice(0,3)});
+  fbChips("fb_merc",O.mercados.map(m=>[m,m]),v=>FB.m.includes(v),v=>{FB.m=fbTog(FB.m,v,6)});
+  fbChips("fb_tf",O.tfs.map(t=>[t,t]),v=>FB.tf.includes(v),v=>{FB.tf=fbTog(FB.tf,v,4)});
+  fbChips("fb_tam",[["0","Quick"],["1","Big"]],v=>(v==="1")===FB.g,v=>{FB.g=v==="1"});
+  const porM=(FB.d==="m5"?(FB.g?7:4):(FB.g?3:2)),min=Math.ceil(FB.m.length/4)*porM*Math.max(1,FB.tf.length/3)+5;
+  $("fb_txt").textContent=FBP[FB.p][4]+` Up to 6 markets and 4 timeframes. About ${Math.round(min)} min.`;
+}
+function fbPintar(e){
+  const c=!!e.corriendo,B=e.busquedas||[];
+  banner("fb_estado",c?"amb":"verde",c?"Searching…":"Ready",c?"You can close the app: it keeps running on the PC.":(B.length?B.length+" searches so far.":"Choose what to search and press Start."));
+  $("fb_corre").hidden=!c;const lg=$("fb_log");lg.textContent=e.log||"";lg.scrollTop=lg.scrollHeight;
+  $("fb_ir").disabled=c;$("fb_ir").textContent=c?"A search is running…":"Start search";
+  $("fb_n").textContent=B.length||"";
+  $("fb_lista").innerHTML=B.length?B.map((b,i)=>{const P=FBP[b.perfil]||[b.perfil];
+    const ch=!b.fin?`<span class="chip ${c&&i===0?"azul":"gris"}">${c&&i===0?"running":"stopped"}</span>`:b.candidatos?`<span class="chip">${b.candidatos} passed all</span>`:`<span class="chip gris">none passed</span>`;
+    return `<div class="fbi" data-s="${b.semilla}"><div><b>${fbEsc(P[0])} · ${fbEsc(b.mercados.join(", "))}</b><div class="mut" style="font-size:12.5px">${fbEsc(b.tfs.join(" · "))} · ${fbEsc(b.inicio)}${b.fin?` · ${b.validacion} of ${b.probadas} won the unseen years`:""}</div></div>${ch}</div>`}).join(""):`<p class="nota" style="margin-top:0">No searches yet.</p>`;
+}
+async function cargarFab(){
+  clearTimeout(FB.t);if(VISTA!=="fabrica")return;
+  try{
+    if(!FB.op){const r=await api("fabrica/api/fab/opciones");
+      if(r.status===503){banner("fb_estado","amb","Starting the Factory on the PC…","It takes a few seconds.");FB.t=setTimeout(cargarFab,5000);return}
+      if(!r.ok)throw new Error("error "+r.status);FB.op=await r.json();fbForm()}
+    const r=await api("fabrica/api/fab/estado");if(!r.ok)throw new Error("error "+r.status);
+    FB.est=await r.json();fbPintar(FB.est);
+  }catch(e){if(e instanceof SinClave)return;banner("fb_estado","rojo","Can't reach the Factory",e.name==="AbortError"?"The PC is busy: trying again.":String(e.message||e))}
+  FB.t=setTimeout(cargarFab,FB.est&&FB.est.corriendo?5000:30000);
+}
+async function fbVer(s){
+  const d=$("fb_det");d.hidden=false;d.innerHTML=`<div class="sec"><h2>Loading…</h2></div>`;d.scrollIntoView({behavior:"smooth",block:"start"});
+  try{const r=await api("fabrica/api/fab/busqueda?s="+s);if(!r.ok)throw 0;FB.ver=await r.json()}catch(e){d.innerHTML=`<p class="nota">Couldn't load it.</p>`;return}
+  FB.abierta=-1;fbDet();
+}
+function fbUna(x,b){
+  const c=x.curva,n=c.r.length,mn=Math.min(0,...c.r),mx=Math.max(1,...c.r),X=i=>(300*i/Math.max(1,n-1)).toFixed(1),Y=v=>(96-92*(v-mn)/(mx-mn)).toFixed(1);
+  const k=c.t.findIndex(t=>t>=c.corte),f=(a,v)=>`<div class="pcf"><span>${a}</span><b>${v}</b></div>`;
+  return `<div class="fbx"><svg class="gr" viewBox="0 0 300 100" preserveAspectRatio="none" style="height:140px;margin-top:4px">`
+    +(k>0?`<line x1="${X(k)}" x2="${X(k)}" y1="0" y2="100" stroke="var(--mut2)" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>`:"")
+    +`<polyline fill="none" stroke="var(--pri)" stroke-width="2" vector-effect="non-scaling-stroke" points="${c.r.map((v,i)=>X(i)+","+Y(v)).join(" ")}"/></svg>`
+    +`<div class="mut" style="display:flex;justify-content:space-between;font-size:11px"><span>${fbEsc(c.t[0]||"")}</span><span>dashed line = unseen years start</span><span>${fbEsc(c.t[n-1]||"")}</span></div>`
+    +`<p style="font-size:13.5px;line-height:1.5;color:var(--tx2)">${fbEsc(x.reglas)}</p>`
+    +f("Profit (R = what each trade risks)",(x.suma>0?"+":"")+x.suma+" R")+f("Max Drawdown (worst drop)",x.dd+" R")
+    +f("Profit Factor (wins per 1 lost) · build / unseen",x.pf_d+" / "+x.pf_v)+f("Buys / sells",x.compras+" R / "+x.ventas+" R")
+    +`<div class="fbt">${b.pruebas.map(p=>`<span class="${x.ok[p]?"verde":"rojo"}">${x.ok[p]?"✓":"✗"} ${fbEsc(FBT[p]||p)}</span>`).join("")}</div>`
+    +`<div class="fbl" style="margin-top:14px">Rules for the Factory bot in MT5 ("Genoma" input)</div><pre class="fblog">${fbEsc(x.genoma)}</pre>`
+    +`<button class="btn" id="fb_copiar" style="margin-top:8px;padding:8px 14px;font-size:13px">Copy</button>`
+    +`<p class="nota">Not ready for a real account: it still needs the final test on years it never saw and 3 months in a demo.</p></div>`;
+}
+function fbDet(){
+  const b=FB.ver,P=FBP[b.perfil]||[b.perfil],E=(b.estrategias||[]).slice().sort((x,y)=>(y.pasa-x.pasa)||(y.puntaje-x.puntaje)),f=(a,v)=>`<div class="pcf"><span>${a}</span><b>${v}</b></div>`;
+  let h=`<div class="sec"><h2>${fbEsc(P[0])} · ${fbEsc(b.mercados.join(", "))}</h2><button class="btn" id="fb_cerrar" style="padding:6px 14px;font-size:13px">Close</button></div>`;
+  h+=b.fin?f("Kept by the builder",b.banco)+f("Tested (best 25 per market and timeframe)",b.probadas)+f("Also won the unseen years",b.validacion)
+    +`<div class="pcf"><span>Passed all 12 robustness tests</span><b class="${b.candidatos?"verde":""}">${b.candidatos}</b></div>`:`<p class="nota" style="margin-top:0">Not finished.</p>`;
+  h+=E.map((x,i)=>{const mal=(b.pruebas||[]).filter(p=>!x.ok[p]).length;
+    return `<div class="fbi" data-i="${i}"><div><b>${fbEsc(x.mercado)} ${fbEsc(x.tf)}</b><div class="mut" style="font-size:12.5px">${x.ops} trades · wins ${x.pf} per 1 lost · score ${Math.round(x.puntaje)}</div></div>`
+      +(x.pasa?`<span class="chip">passed all</span>`:`<span class="chip amb">${mal} failed</span>`)+`</div>`+(i===FB.abierta?fbUna(x,b):"")}).join("");
+  const d=$("fb_det");d.innerHTML=h;
+  $("fb_cerrar").onclick=()=>{d.hidden=true;FB.ver=null};
+  d.querySelectorAll(".fbi[data-i]").forEach(r=>r.onclick=()=>{FB.abierta=FB.abierta===+r.dataset.i?-1:+r.dataset.i;fbDet()});
+  const cp=$("fb_copiar");if(cp)cp.onclick=()=>{const g=E[FB.abierta].genoma;(navigator.clipboard?navigator.clipboard.writeText(g):Promise.reject()).then(()=>cp.textContent="Copied",()=>cp.textContent="Select the text above to copy")};
+}
+$("fb_ir").onclick=async()=>{
+  if(!FB.op)return;$("fb_ir").disabled=true;
+  const q=`que=buscar&perfil=${FB.p}&datos=${FB.d}&mercados=${FB.m.join(",")}&tfs=${FB.tf.join(",")}&grande=${FB.g?1:0}`;
+  try{const r=await api("fabrica/api/correr?"+q,{method:"POST"}),j=r.ok?await r.json():{ok:false,error:"The Factory refused it (error "+r.status+")."};
+    if(!j.ok){banner("fb_estado","rojo","Didn't start",j.error||"");$("fb_ir").disabled=false;return}}
+  catch(e){if(!(e instanceof SinClave))banner("fb_estado","rojo","Didn't start",String(e.message||e));$("fb_ir").disabled=false;return}
+  setTimeout(cargarFab,1500);
+};
+$("fb_parar").onclick=async()=>{if(!confirm("Stop the search? What it found so far is lost."))return;try{await api("fabrica/api/parar",{method:"POST"})}catch(e){}setTimeout(cargarFab,1000)};
+$("fb_lista").onclick=e=>{const r=e.target.closest("[data-s]");if(r)fbVer(r.dataset.s)};
 {const h=location.hash.slice(1)||LS.get("panel_vista");if(TITULOS[h])irA(h)}   // al recargar vuelve a la última pestaña
 if(FIJA&&!CLAVE)pedirClave();
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
