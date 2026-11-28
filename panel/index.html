@@ -291,7 +291,15 @@ dialog#fic{background:transparent;border:0;box-shadow:none;padding:0 0 var(--sb)
 .fbi{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--ln2);cursor:pointer}
 .fbx{padding:0 0 14px}
 .fbt{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:12px;font-size:13px}
-#fb_ir:disabled{opacity:.55;cursor:default}
+#sq_ir:disabled,#sq_ret:disabled{opacity:.55;cursor:default}
+.fbl a{color:var(--pri);text-decoration:none}
+.sqw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.sqt{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sqt th{position:sticky;top:0;background:var(--card);color:var(--mut);font-weight:600;text-align:right;padding:8px;border-bottom:1px solid var(--ln);cursor:pointer}
+.sqt td{text-align:right;padding:8px;border-bottom:1px solid var(--ln2)}.sqt th:nth-child(-n+4),.sqt td:nth-child(-n+4){text-align:left}
+.sqt th.on{color:var(--pri)}.sqt tbody tr{cursor:pointer}.sqt tbody tr:hover,.sqt tr.on{background:var(--raise)}
+.sqg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}.sqg label{font-size:12.5px;color:var(--mut);display:flex;flex-direction:column;gap:6px}
+.sqg input,.sqin,.sqsel{background:var(--card2);border:1px solid var(--ln);color:var(--tx);border-radius:10px;padding:9px 10px;font-size:14px}.sqin{width:80px}.sqsel{width:100%}
 /* pestaña PC */
 .pcg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
 .pcg>div{background:var(--card);border:1px solid var(--ln2);border-radius:var(--r);padding:13px 14px;min-width:0}
@@ -493,18 +501,49 @@ body.fd .solo-ch,body:not(.fd) .solo-fd{display:none!important}
 <!-- FACTORY: la Fábrica de estrategias (proyectos/fabrica) -->
 <section class="vista" id="v_fabrica">
   <div class="estado" id="fb_estado"><i></i><div><b>Loading…</b></div></div>
-  <div class="card"><div class="sec"><h2>New search</h2><span class="mut">like StrategyQuant</span></div>
-    <div class="fbl">Type</div><div class="fsel" id="fb_perfil"></div>
-    <div class="fbl">Data</div><div class="fsel" id="fb_datos"></div>
-    <div class="fbl">Markets</div><div class="fsel" id="fb_merc"></div>
-    <div class="fbl">Timeframes</div><div class="fsel" id="fb_tf"></div>
-    <div class="fbl">Size</div><div class="fsel" id="fb_tam"></div>
-    <button class="btn azul" id="fb_ir">Start search</button>
-    <p class="nota" id="fb_txt"></p></div>
+  <div class="fsel" id="sq_tabs" style="margin:4px 0 12px"><button data-x="builder" class="on">1 · Builder</button><button data-x="databank">2 · Databank</button><button data-x="retester">3 · Retester</button></div>
   <div class="card" id="fb_corre" hidden><div class="sec"><h2>Running</h2><button class="btn" id="fb_parar" style="padding:6px 14px;font-size:13px">Stop</button></div><pre class="fblog" id="fb_log"></pre></div>
-  <div class="card" id="fb_det" hidden></div>
-  <div class="card"><div class="sec"><h2>Searches</h2><span class="mut" id="fb_n"></span></div><div id="fb_lista"></div></div>
-  <p class="nota">The builder mixes indicators and price rules at random, keeps the ones that won from 2013/2018 to 2021/2022, checks them on the next years it never used to choose, and runs 12 robustness tests (Monte Carlo of costs, prices and trade order, nearby settings, walk-forward, random entries…). It only researches: it never opens MT5 or touches an account. Strategy rules are written in Spanish by the Factory.</p>
+  <div id="sq_builder">
+    <div class="card"><div class="sec"><h2>What to build</h2></div>
+      <div class="fbl">Start from a template</div><div class="fsel" id="sq_pl"></div>
+      <div class="fbl">Data</div><div class="fsel" id="sq_datos"></div>
+      <div class="fbl">Markets (up to 6)</div><div class="fsel" id="sq_merc"></div>
+      <div class="fbl">Timeframes (up to 4)</div><div class="fsel" id="sq_tf"></div>
+      <div class="fbl">Periods</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 14px" id="sq_per"></div>
+      <div class="fbl">Direction</div><div class="fsel" id="sq_lado"></div></div>
+    <div class="card"><div class="sec"><h2>Building blocks</h2><span class="mut">hold or hover for the description</span></div><div id="sq_bloq"></div>
+      <div class="fbl">Conditions per strategy (min–max)</div><div class="fsel" id="sq_nc"></div></div>
+    <div class="card"><div class="sec"><h2>Trading options</h2></div>
+      <div class="fbl">Entry type</div><div class="fsel" id="sq_ord"></div>
+      <div class="fbl">Stop Loss</div><div class="fsel" id="sq_sl"></div>
+      <div class="fbl">Profit target</div><div class="fsel" id="sq_tp"></div>
+      <div class="fbl">Trailing stop</div><div class="fsel" id="sq_tr"></div>
+      <div class="fbl">Exit after</div><div class="fsel" id="sq_ba"></div>
+      <div class="fbl">Move stop to breakeven</div><div class="fsel" id="sq_be"></div>
+      <div class="fbl">Partial close</div><div class="fsel" id="sq_pa"></div>
+      <div class="fbl">Exit on opposite signal</div><div class="fsel" id="sq_co"></div>
+      <div class="fbl">Close at end of New York day</div><div class="fsel" id="sq_ci"></div></div>
+    <div class="card"><div class="sec"><h2>Genetic options &amp; ranking</h2></div>
+      <div class="sqg"><label>Population<input type="number" id="sq_pob" min="20" max="300"></label><label>Generations<input type="number" id="sq_gens" min="2" max="20"></label>
+      <label>Min. trades (in-sample)<input type="number" id="sq_min_n" min="30" max="1000"></label><label>Min. Profit Factor<input type="number" step="0.05" id="sq_min_pf" min="1" max="3"></label>
+      <label>Min. Ret/DD<input type="number" step="0.5" id="sq_min_rdd" min="0" max="20"></label></div>
+      <p class="nota">Only strategies that pass these filters in-sample go to the Databank. The out-of-sample years are measured but never used to choose.</p>
+      <button class="btn azul" id="sq_ir" style="margin-top:12px">Start building</button><p class="nota" id="sq_txt"></p></div>
+  </div>
+  <div id="sq_databank" hidden>
+    <div class="card"><div class="sec"><h2>Databank</h2><span class="mut" id="sq_dbn"></span></div>
+      <select id="sq_pr" class="sqsel"></select><p class="nota" id="sq_vacio" hidden>No projects yet: build one first.</p>
+      <div style="display:flex;gap:10px;align-items:center;margin:10px 0;flex-wrap:wrap"><label class="mut" style="font-size:13px">Out-of-sample Profit Factor ≥ <input type="number" step="0.05" id="sq_fil" value="1" class="sqin"></label>
+        <button class="btn" id="sq_ret" style="padding:8px 14px;font-size:13px">Select strategies to retest</button></div>
+      <div class="sqw"><table class="sqt" id="sq_tab"></table></div>
+      <p class="nota">IS = in-sample (used to build) · OOS = out-of-sample (never used to choose). Profit in R = times the risk per trade. Tap a column to sort, a row to open it.</p></div>
+    <div class="card" id="sq_det" hidden></div>
+  </div>
+  <div id="sq_retester" hidden>
+    <div class="card"><div class="sec"><h2>Retester</h2><span class="mut" id="sq_rtn"></span></div>
+      <div class="sqw"><table class="sqt" id="sq_rtt"></table></div>
+      <p class="nota">12 robustness tests per strategy: Monte Carlo of settings, spread &amp; slippage, price data and trade order; costs x2; nearby settings; walk-forward matrix; without its best day and month; different candle start; beats random entries; other markets and timeframes. Tap a row to open it.</p></div>
+  </div>
 </section>
 
 <section class="vista" id="v_pc">
@@ -1328,99 +1367,160 @@ async function cargar(){
     $("subt").textContent=ULT?"last data "+hhmm(ULT.actualizado||0)+" Argentina time":"";return}
   document.body.classList.remove("cargando");pintar(d);
 }
-// ---------- pestaña Factory (pedido del usuario 27/11: "una aplicación como StrategyQuant, también desde el celu"): la Fábrica de proyectos/fabrica
-// por el servidor del panel (/fabrica/api/..., con la clave). Solo investiga: no abre MT5 ni toca cuentas. Las reglas las escribe la Fábrica (castellano).
-const FBP={ruptura:["Breakout","m5",["XAUUSD"],["M5","M15","H1"],"Enters when price breaks out (stop order). 2–3 indicators + up to 2 price-action rules; buys and sells."],
-  reversion:["Mean reversion","m5",["USTEC","US30","XAUUSD"],["M5","M15","H1"],"Buys after drops and sells after rallies: at least one reversal indicator (RSI, Bollinger, CCI, Stochastic…). Buys and sells."],
-  trailing:["Forex trailing","ic",["GBPJPY","EURJPY","USDJPY","USDCHF"],["M30","H1","H4"],"Always exits with a trailing stop. Gino's forex pairs (USDCAD has no long history here). Buys and sells."],
-  libre:["Free","ic",["XAUUSD","USTEC","US30","US500","DE40"],["M30","H1","H4"],"Any building block, like the original Factory (it can also be buy-only or sell-only)."]};
-const FBD={m5:"5-min candles · 2013–2026",ic:"30-min candles · 2018–2026"};
-const FBT={mitades:"Wins in both halves of the unseen years","costos x2":"Costs x2",vecinos:"Nearby settings",params:"Random settings (Monte Carlo)",
-  spread:"Random spread & slippage",precios:"Random price data",orden:"Random trade order & skipped trades","sin mes":"Without its best day and month",
-  desfase:"Candles starting at another time",wf:"Walk-forward matrix",azar:"Beats 40 random-entry versions",parientes:"Works on similar markets/timeframes"};
+// ---------- pestaña Factory = la Fábrica de proyectos/fabrica con la forma de StrategyQuant (pedido del usuario 28/11): Builder -> Databank -> Retester -> Export.
+// Por el servidor del panel (/fabrica/api/..., con la clave). Solo investiga: no abre MT5 ni toca cuentas. Las reglas las escribe la Fábrica (castellano).
 const fbEsc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
-let FB={p:"ruptura",d:"m5",m:["XAUUSD"],tf:["M5","M15","H1"],g:false,op:null,est:null,t:0,ver:null,abierta:-1};
-function fbChips(id,items,on,click){
-  $(id).innerHTML=items.map(([v,t])=>`<button data-x="${fbEsc(v)}" class="${on(v)?"on":""}">${fbEsc(t)}</button>`).join("");
-  $(id).onclick=e=>{const b=e.target.closest("button");if(b&&!(FB.est&&FB.est.corriendo)){click(b.dataset.x);fbForm()}};
+const FBT={mitades:"Both halves of out-of-sample","costos x2":"Costs x2",vecinos:"Nearby settings",params:"Monte Carlo: random settings",
+  spread:"Monte Carlo: spread & slippage",precios:"Monte Carlo: price data",orden:"Monte Carlo: trade order & skipped trades","sin mes":"Without best day / month",
+  desfase:"Different candle start",wf:"Walk-forward matrix",azar:"Beats random entries",parientes:"Other markets / timeframes"};
+const FBREV=["rsi_rev","bb_rev","cci_rev","stoch_rev","kelt_rev","estirado","sin_adx","vol_baja","rev_ayer","rev_sem","rev_ses","pos_dia_rev","martillo","barrida","racha","doji","sup_sma","sup_cruce","sup_adx","sup_macd","ema","sma"];
+let FB={op:null,est:null,t:0,tab:new URLSearchParams(location.search).get("tab")||LS.get("fab_tab")||"builder",c:null,pr:null,db:null,rt:{},sel:new Set(),orden:["oosPf",-1],filtro:1,ver:null};
+const FBN={sma:"SMA",cruce:"MA cross",rompe:"Channel breakout",rsi_rev:"RSI oversold",rsi_mom:"RSI strong",mom:"Momentum",bb_rev:"Bollinger reversal",bb_rompe:"Bollinger breakout",
+  adx:"ADX trend",sin_adx:"ADX no trend",vol_alta:"High volatility",vol_baja:"Low volatility",racha:"Down streak",macd:"MACD",cci_mom:"CCI strong",cci_rev:"CCI reversal",vela:"Strong close",
+  dia:"Day of week",ema:"EMA",pend:"MA slope",di:"+DI/-DI",macd_cruce:"MACD cross",stoch_rev:"Stochastic reversal",stoch_mom:"Stochastic strong",kelt_rompe:"Keltner breakout",
+  kelt_rev:"Keltner reversal",canal:"Channel half",bb_apretada:"Bollinger squeeze",estirado:"Stretched from MA",vol_tick:"Volume spike",racha_mom:"Up streak",envolvente:"Engulfing",
+  martillo:"Hammer",dentro:"Inside bar",fuera:"Outside bar",doji:"Doji",impulso:"Impulse candle",gap:"Gap",nr:"Narrow range",barrida:"Liquidity sweep",escalera:"Higher highs",
+  rompe_ayer:"Breaks yesterday",rev_ayer:"Rejects yesterday",cierre_ayer:"Vs yesterday close",rompe_sem:"Breaks last week",rev_sem:"Rejects last week",rompe_hoy:"Breaks today's range",
+  apertura_hoy:"Vs day open",apertura_sem:"Vs week open",pos_dia_rev:"Day low area",pos_dia_mom:"Day high area",pivote:"Pivot",rompe_ses:"Session breakout",rev_ses:"Session reversal",
+  dia_no:"Skip a day",mes:"Month start/end"};
+const fbLbl=k=>k.startsWith("sup_")?"HTF "+(FBN[k.slice(4)]||k.slice(4)):(FBN[k]||k.replace(/_/g," "));
+function fbDefecto(){const o=FB.op;return {datos:"ic",mercados:["XAUUSD"],tfs:["H1","H4"],bloques:o.bloques.filter(b=>b.grupo!=="Time filters").map(b=>b.k),
+  ordenes:["mercado","stop","limite"],lado:"ambos",cierre:"a veces",sl:[1,1.5,2,3,4],tp:[0,1,1.5,2,3],trail:[0,2,3,4,6],barras:[0,8,16,32,64],be:[0,1,1.5,2],parcial:[0,1,2],
+  contra:true,conds_min:1,conds_max:3,pob:80,gens:6,min_n:120,min_pf:1.25,min_rdd:4}}
+const FBPLANT={"Blank":c=>c,
+  "Gino · gold breakout":c=>Object.assign(c,{datos:"m5",mercados:["XAUUSD"],tfs:["M5","M15","H1"],ordenes:["stop"],conds_min:2,conds_max:5}),
+  "Gino · mean reversion":c=>Object.assign(c,{datos:"m5",mercados:["USTEC","US30","XAUUSD"],tfs:["M5","M15","H1"],bloques:FBREV.slice(),ordenes:["mercado","limite"],conds_min:2,conds_max:4}),
+  "Gino · forex trailing":c=>Object.assign(c,{datos:"ic",mercados:["GBPJPY","EURJPY","USDJPY","USDCHF"],tfs:["M30","H1","H4"],trail:[2,3,4,6],conds_min:2,conds_max:5})};
+function fbChips(el,items,on,click,multi){
+  el.innerHTML=items.map(([v,t,tt])=>`<button data-x="${fbEsc(v)}" class="${on(v)?"on":""}"${tt?` title="${fbEsc(tt)}"`:""}>${fbEsc(t)}</button>`).join("");
+  el.onclick=e=>{const b=e.target.closest("button");if(b){click(b.dataset.x);fbBuilder()}};
 }
-const fbTog=(a,v,max)=>a.includes(v)?(a.length>1?a.filter(x=>x!==v):a):(a.length<max?a.concat(v):a);
-function fbForm(){
-  const O=FB.op[FB.d];
-  fbChips("fb_perfil",Object.entries(FBP).map(([k,v])=>[k,v[0]]),v=>v===FB.p,v=>{FB.p=v;FB.d=FBP[v][1];FB.m=FBP[v][2].slice();FB.tf=FBP[v][3].slice()});
-  fbChips("fb_datos",Object.entries(FBD).map(([k,v])=>[k,v+" · "+FB.op[k].mercados.length+" markets"]),v=>v===FB.d,v=>{if(v===FB.d)return;FB.d=v;const o=FB.op[v];
-    FB.m=FB.m.filter(m=>o.mercados.includes(m));if(!FB.m.length)FB.m=[o.mercados.includes("XAUUSD")?"XAUUSD":o.mercados[0]];
-    FB.tf=FB.tf.filter(t=>o.tfs.includes(t));if(!FB.tf.length)FB.tf=o.tfs.slice(0,3)});
-  fbChips("fb_merc",O.mercados.map(m=>[m,m]),v=>FB.m.includes(v),v=>{FB.m=fbTog(FB.m,v,6)});
-  fbChips("fb_tf",O.tfs.map(t=>[t,t]),v=>FB.tf.includes(v),v=>{FB.tf=fbTog(FB.tf,v,4)});
-  fbChips("fb_tam",[["0","Quick"],["1","Big"]],v=>(v==="1")===FB.g,v=>{FB.g=v==="1"});
-  const porM=(FB.d==="m5"?(FB.g?7:4):(FB.g?3:2)),min=Math.ceil(FB.m.length/4)*porM*Math.max(1,FB.tf.length/3)+5;
-  $("fb_txt").textContent=FBP[FB.p][4]+` Up to 6 markets and 4 timeframes. About ${Math.round(min)} min.`;
+const fbTog=(a,v,max)=>a.includes(v)?(a.length>1?a.filter(x=>x!==v):a):(a.length<(max||99)?a.concat(v):a);
+const fbNum=v=>isNaN(+v)?v:+v;
+function fbFila(t,id){return `<div class="fbl">${t}</div><div class="fsel" id="${id}"></div>`}
+function fbBuilder(){
+  const c=FB.c,O=FB.op.datos[c.datos],V=FB.op.valores,q=s=>$(s);
+  fbChips(q("sq_pl"),Object.keys(FBPLANT).map(k=>[k,k]),()=>false,k=>{FB.c=FBPLANT[k](fbDefecto())});
+  fbChips(q("sq_datos"),[["m5","5-min candles · 2013–2026 · "+FB.op.datos.m5.mercados.length+" markets"],["ic","30-min candles · 2018–2026 · "+FB.op.datos.ic.mercados.length+" markets"]],v=>v===c.datos,v=>{
+    if(v===c.datos)return;c.datos=v;const o=FB.op.datos[v];c.mercados=c.mercados.filter(m=>o.mercados.includes(m));if(!c.mercados.length)c.mercados=["XAUUSD"];
+    c.tfs=c.tfs.filter(t=>o.tfs.includes(t));if(!c.tfs.length)c.tfs=o.tfs.slice(1,3)});
+  fbChips(q("sq_merc"),O.mercados.map(m=>[m,m]),v=>c.mercados.includes(v),v=>{c.mercados=fbTog(c.mercados,v,6)});
+  fbChips(q("sq_tf"),O.tfs.map(t=>[t,t]),v=>c.tfs.includes(v),v=>{c.tfs=fbTog(c.tfs,v,4)});
+  q("sq_per").innerHTML=`<span class="chip azul">In-sample ${O.cortes[0].slice(0,4)}–${+O.cortes[1].slice(0,4)-1}</span> <span class="chip amb">Out-of-sample ${O.cortes[1].slice(0,7)} → ${O.cortes[2].slice(0,7)}</span> <span class="chip gris">Vault ${O.cortes[2].slice(0,7)} → today · locked</span>`;
+  fbChips(q("sq_lado"),[["ambos","Long & short"],["compra","Long only"],["venta","Short only"],["cualquiera","Any"]],v=>v===c.lado,v=>{c.lado=v});
+  const G={};FB.op.bloques.forEach(b=>(G[b.grupo]=G[b.grupo]||[]).push(b));
+  q("sq_bloq").innerHTML=Object.entries(G).map(([g,bs])=>`<div class="fbl">${g} · <a href="#" data-g="${g}" data-on="1">all</a> · <a href="#" data-g="${g}" data-on="0">none</a></div><div class="fsel" data-grupo="${g}"></div>`).join("");
+  Object.entries(G).forEach(([g,bs])=>fbChips(q("sq_bloq").querySelector(`[data-grupo="${g}"]`),bs.map(b=>[b.k,fbLbl(b.k),b.texto]),v=>c.bloques.includes(v),v=>{c.bloques=fbTog(c.bloques,v)}));
+  q("sq_bloq").querySelectorAll("a[data-g]").forEach(a=>a.onclick=e=>{e.preventDefault();const ks=G[a.dataset.g].map(b=>b.k);
+    c.bloques=a.dataset.on==="1"?[...new Set(c.bloques.concat(ks))]:(c.bloques.filter(k=>!ks.includes(k)).length?c.bloques.filter(k=>!ks.includes(k)):c.bloques);fbBuilder()});
+  fbChips(q("sq_ord"),[["mercado","Market (next candle)"],["stop","Stop order (breakout)"],["limite","Limit order (pullback)"]],v=>c.ordenes.includes(v),v=>{c.ordenes=fbTog(c.ordenes,v)});
+  fbChips(q("sq_nc"),[1,2,3,4,5].map(n=>[n,n]),v=>+v>=c.conds_min&&+v<=c.conds_max,v=>{v=+v;if(v<c.conds_min)c.conds_min=v;else if(v>c.conds_max)c.conds_max=v;else if(v-c.conds_min<c.conds_max-v)c.conds_min=Math.min(v+1,c.conds_max);else c.conds_max=Math.max(v-1,c.conds_min)});
+  const ex=(id,k,f)=>fbChips(q(id),V[k].map(v=>[v,f(v)]),v=>c[k].includes(fbNum(v)),v=>{c[k]=fbTog(c[k],fbNum(v))});
+  ex("sq_sl","sl",v=>v+" ATR");ex("sq_tp","tp",v=>v?v+"× risk":"none");ex("sq_tr","trail",v=>v?v+" ATR":"none");ex("sq_ba","barras",v=>v?v+" candles":"none");
+  ex("sq_be","be",v=>v?"at "+v+"×":"none");ex("sq_pa","parcial",v=>v?"half at "+v+"×":"none");
+  fbChips(q("sq_co"),[["1","Yes"],["0","No"]],v=>(v==="1")===c.contra,v=>{c.contra=v==="1"});
+  fbChips(q("sq_ci"),[["a veces","Sometimes"],["siempre","Always"],["nunca","Never"]],v=>v===c.cierre,v=>{c.cierre=v});
+  ["pob","gens","min_n","min_pf","min_rdd"].forEach(k=>{const i=q("sq_"+k);i.value=c[k];i.onchange=()=>{c[k]=+i.value;fbBuilder()}});
+  const min=Math.ceil(c.mercados.length/4)*(c.datos==="m5"?4:1.2)*(c.pob*c.gens/480)*Math.max(1,c.tfs.length/3);
+  q("sq_txt").textContent=`${c.bloques.length} building blocks · ${c.mercados.length} market(s) × ${c.tfs.length} timeframe(s) · about ${Math.max(1,Math.round(min))} min.`;
+}
+function fbTabs(){
+  document.querySelectorAll("#sq_tabs button").forEach(b=>b.classList.toggle("on",b.dataset.x===FB.tab));
+  ["builder","databank","retester"].forEach(t=>$("sq_"+t).hidden=t!==FB.tab);
+  if(FB.tab!=="builder"&&FB.pr)fbCargarDb();
 }
 function fbPintar(e){
   const c=!!e.corriendo,B=e.busquedas||[];
-  banner("fb_estado",c?"amb":"verde",c?"Searching…":"Ready",c?"You can close the app: it keeps running on the PC.":(B.length?B.length+" searches so far.":"Choose what to search and press Start."));
+  banner("fb_estado",c?"amb":"verde",c?"Working…":"Ready",c?"You can close the app: it keeps running on the PC.":B.length?B.length+" projects.":"Set up the Builder and press Start.");
   $("fb_corre").hidden=!c;const lg=$("fb_log");lg.textContent=e.log||"";lg.scrollTop=lg.scrollHeight;
-  $("fb_ir").disabled=c;$("fb_ir").textContent=c?"A search is running…":"Start search";
-  $("fb_n").textContent=B.length||"";
-  $("fb_lista").innerHTML=B.length?B.map((b,i)=>{const P=FBP[b.perfil]||[b.perfil];
-    const ch=!b.fin?`<span class="chip ${c&&i===0?"azul":"gris"}">${c&&i===0?"running":"stopped"}</span>`:b.candidatos?`<span class="chip">${b.candidatos} passed all</span>`:`<span class="chip gris">none passed</span>`;
-    return `<div class="fbi" data-s="${b.semilla}"><div><b>${fbEsc(P[0])} · ${fbEsc(b.mercados.join(", "))}</b><div class="mut" style="font-size:12.5px">${fbEsc(b.tfs.join(" · "))} · ${fbEsc(b.inicio)}${b.fin?` · ${b.validacion} of ${b.probadas} won the unseen years`:""}</div></div>${ch}</div>`}).join(""):`<p class="nota" style="margin-top:0">No searches yet.</p>`;
+  $("sq_ir").disabled=c;$("sq_ret").disabled=c;
+  const sel=$("sq_pr"),ant=FB.pr;
+  sel.innerHTML=B.map(b=>`<option value="${b.semilla}">#${b.semilla} · ${fbEsc(b.mercados.join(", "))} · ${fbEsc(b.tfs.join(" "))} · ${b.fin?b.databank+" strategies":"running"}${b.probadas?" · "+b.pasan+"/"+b.probadas+" passed retest":""}</option>`).join("");
+  if(!FB.pr&&B.length)FB.pr=String(B[0].semilla);
+  sel.value=FB.pr||"";$("sq_vacio").hidden=!!B.length;
+  if(FB.pr&&(FB.pr!==ant||FB.tab!=="builder"))fbCargarDb();
 }
 async function cargarFab(){
   clearTimeout(FB.t);if(VISTA!=="fabrica")return;
   try{
     if(!FB.op){const r=await api("fabrica/api/fab/opciones");
       if(r.status===503){banner("fb_estado","amb","Starting the Factory on the PC…","It takes a few seconds.");FB.t=setTimeout(cargarFab,5000);return}
-      if(!r.ok)throw new Error("error "+r.status);FB.op=await r.json();fbForm()}
+      if(!r.ok)throw new Error("error "+r.status);FB.op=await r.json();FB.c=fbDefecto();fbBuilder();fbTabs()}
     const r=await api("fabrica/api/fab/estado");if(!r.ok)throw new Error("error "+r.status);
-    FB.est=await r.json();fbPintar(FB.est);
+    const antes=FB.est&&FB.est.corriendo;FB.est=await r.json();if(antes&&!FB.est.corriendo)FB.db=null;fbPintar(FB.est);
   }catch(e){if(e instanceof SinClave)return;banner("fb_estado","rojo","Can't reach the Factory",e.name==="AbortError"?"The PC is busy: trying again.":String(e.message||e))}
   FB.t=setTimeout(cargarFab,FB.est&&FB.est.corriendo?5000:30000);
 }
-async function fbVer(s){
-  const d=$("fb_det");d.hidden=false;d.innerHTML=`<div class="sec"><h2>Loading…</h2></div>`;d.scrollIntoView({behavior:"smooth",block:"start"});
-  try{const r=await api("fabrica/api/fab/busqueda?s="+s);if(!r.ok)throw 0;FB.ver=await r.json()}catch(e){d.innerHTML=`<p class="nota">Couldn't load it.</p>`;return}
-  FB.abierta=-1;fbDet();
+async function fbCargarDb(){
+  if(!FB.pr)return;
+  if(!FB.db||FB.db.meta.semilla!=FB.pr){
+    try{const [a,b]=await Promise.all([api("fabrica/api/fab/databank?s="+FB.pr),api("fabrica/api/fab/retest?s="+FB.pr)]);FB.db=await a.json();FB.rt=await b.json();FB.sel=new Set();FB.ver=null}catch(e){return}
+  }
+  fbTabla();fbRetester();
 }
-function fbUna(x,b){
-  const c=x.curva,n=c.r.length,mn=Math.min(0,...c.r),mx=Math.max(1,...c.r),X=i=>(300*i/Math.max(1,n-1)).toFixed(1),Y=v=>(96-92*(v-mn)/(mx-mn)).toFixed(1);
-  const k=c.t.findIndex(t=>t>=c.corte),f=(a,v)=>`<div class="pcf"><span>${a}</span><b>${v}</b></div>`;
-  return `<div class="fbx"><svg class="gr" viewBox="0 0 300 100" preserveAspectRatio="none" style="height:140px;margin-top:4px">`
-    +(k>0?`<line x1="${X(k)}" x2="${X(k)}" y1="0" y2="100" stroke="var(--mut2)" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>`:"")
+const FBCOL=[["i","#",x=>x.i],["mercado","Market",x=>x.mercado],["tf","TF",x=>x.tf],["lado","Dir",x=>x.lado],["n","Trades",x=>x.is_.n+x.oos.n],
+  ["isPf","PF IS",x=>x.is_.pf],["oosPf","PF OOS",x=>x.oos.pf],["isR","Profit IS",x=>x.is_.suma],["oosR","Profit OOS",x=>x.oos.suma],
+  ["dd","Max DD",x=>Math.max(x.is_.dd,x.oos.dd)],["rdd","Ret/DD OOS",x=>x.oos.rdd],["gana","Win % OOS",x=>x.oos.gana],["rt","Retest",x=>FB.rt[x.i]?(FB.rt[x.i].pasa?2:1):0]];
+function fbTabla(){
+  const db=FB.db;if(!db)return;const [k,s]=FB.orden,col=FBCOL.find(c=>c[0]===k);
+  const F=db.filas.filter(x=>x.oos.pf>=FB.filtro).sort((a,b)=>{const x=col[2](a),y=col[2](b);return (x>y?1:x<y?-1:0)*s});
+  const dir=l=>l===1?"Long":l===-1?"Short":"Both",rt=x=>{const r=FB.rt[x.i];return r?(r.pasa?`<b class="verde">12/12</b>`:`<b class="amb">${Object.values(r.ok).filter(Boolean).length}/12</b>`):"–"};
+  $("sq_dbn").textContent=`${F.length} of ${db.filas.length} strategies`;
+  $("sq_tab").innerHTML=`<thead><tr><th></th>${FBCOL.map(c=>`<th data-k="${c[0]}" class="${c[0]===k?"on":""}">${c[1]}${c[0]===k?(s<0?" ▾":" ▴"):""}</th>`).join("")}</tr></thead><tbody>`
+    +F.map(x=>`<tr data-i="${x.i}" class="${FB.ver===x.i?"on":""}"><td><input type="checkbox" data-c="${x.i}" ${FB.sel.has(x.i)?"checked":""}></td><td>${x.i}</td><td>${x.mercado}</td><td>${x.tf}</td><td>${dir(x.lado)}</td><td>${x.is_.n+x.oos.n}</td>`
+    +`<td>${x.is_.pf}</td><td class="${x.oos.pf>=1.2?"verde":x.oos.pf<1?"rojo":""}">${x.oos.pf}</td><td>${x.is_.suma}</td><td class="${x.oos.suma>0?"verde":"rojo"}">${x.oos.suma}</td>`
+    +`<td>${Math.max(x.is_.dd,x.oos.dd)}</td><td>${x.oos.rdd}</td><td>${x.oos.gana}</td><td>${rt(x)}</td></tr>`).join("")+"</tbody>";
+  $("sq_ret").textContent=FB.sel.size?`Retest ${FB.sel.size} selected`:"Select strategies to retest";
+}
+function fbCurvaSvg(c){
+  const n=c.r.length;if(!n)return"";const mn=Math.min(0,...c.r),mx=Math.max(1,...c.r),X=i=>(300*i/Math.max(1,n-1)).toFixed(1),Y=v=>(96-92*(v-mn)/(mx-mn)).toFixed(1);
+  const k=c.t.findIndex(t=>t>=c.corte);
+  return `<svg class="gr" viewBox="0 0 300 100" preserveAspectRatio="none" style="height:150px">`+(k>0?`<line x1="${X(k)}" x2="${X(k)}" y1="0" y2="100" stroke="var(--mut2)" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>`:"")
     +`<polyline fill="none" stroke="var(--pri)" stroke-width="2" vector-effect="non-scaling-stroke" points="${c.r.map((v,i)=>X(i)+","+Y(v)).join(" ")}"/></svg>`
-    +`<div class="mut" style="display:flex;justify-content:space-between;font-size:11px"><span>${fbEsc(c.t[0]||"")}</span><span>dashed line = unseen years start</span><span>${fbEsc(c.t[n-1]||"")}</span></div>`
+    +`<div class="mut" style="display:flex;justify-content:space-between;font-size:11px"><span>${c.t[0]||""}</span><span>left of dashed line = in-sample · right = out-of-sample</span><span>${c.t[n-1]||""}</span></div>`;
+}
+async function fbDetalle(i){
+  FB.ver=i;fbTabla();const x=FB.db.filas.find(f=>f.i===i),r=FB.rt[i],d=$("sq_det"),f=(a,v)=>`<div class="pcf"><span>${a}</span><b>${v}</b></div>`;
+  d.hidden=false;
+  d.innerHTML=`<div class="sec"><h2>#${i} · ${x.mercado} ${x.tf}</h2><button class="btn" id="sq_cer" style="padding:6px 14px;font-size:13px">Close</button></div><div id="sq_cv"><p class="nota">Loading equity curve…</p></div>`
     +`<p style="font-size:13.5px;line-height:1.5;color:var(--tx2)">${fbEsc(x.reglas)}</p>`
-    +f("Profit (R = what each trade risks)",(x.suma>0?"+":"")+x.suma+" R")+f("Max Drawdown (worst drop)",x.dd+" R")
-    +f("Profit Factor (wins per 1 lost) · build / unseen",x.pf_d+" / "+x.pf_v)+f("Buys / sells",x.compras+" R / "+x.ventas+" R")
-    +`<div class="fbt">${b.pruebas.map(p=>`<span class="${x.ok[p]?"verde":"rojo"}">${x.ok[p]?"✓":"✗"} ${fbEsc(FBT[p]||p)}</span>`).join("")}</div>`
-    +`<div class="fbl" style="margin-top:14px">Rules for the Factory bot in MT5 ("Genoma" input)</div><pre class="fblog">${fbEsc(x.genoma)}</pre>`
-    +`<button class="btn" id="fb_copiar" style="margin-top:8px;padding:8px 14px;font-size:13px">Copy</button>`
-    +`<p class="nota">Not ready for a real account: it still needs the final test on years it never saw and 3 months in a demo.</p></div>`;
+    +`<div class="sqw"><table class="sqt"><thead><tr><th></th><th>Trades</th><th>Profit (R)</th><th>Profit Factor</th><th>Max DD (R)</th><th>Ret/DD</th><th>Win %</th></tr></thead><tbody>`
+    +[["In-sample",x.is_],["Out-of-sample",x.oos]].map(([t,m])=>`<tr><td>${t}</td><td>${m.n}</td><td>${m.suma}</td><td>${m.pf}</td><td>${m.dd}</td><td>${m.rdd}</td><td>${m.gana}</td></tr>`).join("")+`</tbody></table></div>`
+    +(r?`<div class="fbl" style="margin-top:14px">Retester · ${r.pasa?'<b class="verde">passed all 12</b>':"failed "+Object.values(r.ok).filter(v=>!v).length}</div><div class="fbt">`
+      +Object.keys(FBT).map(p=>`<span class="${r.ok[p]?"verde":"rojo"}">${r.ok[p]?"✓":"✗"} ${FBT[p]}</span>`).join("")+`</div>`
+      +f("Monte Carlo: chance of ending in profit",Math.round(100*r.mc.prob)+"%")+f("Monte Carlo: worst drop (95%)",r.mc.dd95.toFixed(1)+" R")
+      +f("Buys / sells",r.compras+" R / "+r.ventas+" R")+f("Best of 40 random-entry versions",r.azar.mejor.toFixed(1)+" R vs "+r.suma+" R"):`<p class="nota">Not retested yet: tick it in the Databank and press Retest.</p>`)
+    +`<div class="fbl" style="margin-top:14px">Export · rules for the Factory bot in MT5 ("Genoma" input)</div><pre class="fblog" id="sq_gen">${fbEsc(r?r.genoma:fbGenoma(x.g))}</pre>`
+    +`<button class="btn" id="sq_cop" style="margin-top:8px;padding:8px 14px;font-size:13px">Copy</button><p class="nota">Not for a real account until it passes the vault test and 3 months in a demo.</p>`;
+  $("sq_cer").onclick=()=>{d.hidden=true;FB.ver=null;fbTabla()};
+  $("sq_cop").onclick=()=>{const t=$("sq_gen").textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>$("sq_cop").textContent="Copied",()=>$("sq_cop").textContent="Select the text to copy")};
+  d.scrollIntoView({behavior:"smooth",block:"start"});
+  try{const c=await (await api(`fabrica/api/fab/curva?s=${FB.pr}&i=${i}`)).json();if(FB.ver===i)$("sq_cv").innerHTML=fbCurvaSvg(c)}catch(e){$("sq_cv").innerHTML=`<p class="nota">Couldn't load the curve.</p>`}
 }
-function fbDet(){
-  const b=FB.ver,P=FBP[b.perfil]||[b.perfil],E=(b.estrategias||[]).slice().sort((x,y)=>(y.pasa-x.pasa)||(y.puntaje-x.puntaje)),f=(a,v)=>`<div class="pcf"><span>${a}</span><b>${v}</b></div>`;
-  let h=`<div class="sec"><h2>${fbEsc(P[0])} · ${fbEsc(b.mercados.join(", "))}</h2><button class="btn" id="fb_cerrar" style="padding:6px 14px;font-size:13px">Close</button></div>`;
-  h+=b.fin?f("Kept by the builder",b.banco)+f("Tested (best 25 per market and timeframe)",b.probadas)+f("Also won the unseen years",b.validacion)
-    +`<div class="pcf"><span>Passed all 12 robustness tests</span><b class="${b.candidatos?"verde":""}">${b.candidatos}</b></div>`:`<p class="nota" style="margin-top:0">Not finished.</p>`;
-  h+=E.map((x,i)=>{const mal=(b.pruebas||[]).filter(p=>!x.ok[p]).length;
-    return `<div class="fbi" data-i="${i}"><div><b>${fbEsc(x.mercado)} ${fbEsc(x.tf)}</b><div class="mut" style="font-size:12.5px">${x.ops} trades · wins ${x.pf} per 1 lost · score ${Math.round(x.puntaje)}</div></div>`
-      +(x.pasa?`<span class="chip">passed all</span>`:`<span class="chip amb">${mal} failed</span>`)+`</div>`+(i===FB.abierta?fbUna(x,b):"")}).join("");
-  const d=$("fb_det");d.innerHTML=h;
-  $("fb_cerrar").onclick=()=>{d.hidden=true;FB.ver=null};
-  d.querySelectorAll(".fbi[data-i]").forEach(r=>r.onclick=()=>{FB.abierta=FB.abierta===+r.dataset.i?-1:+r.dataset.i;fbDet()});
-  const cp=$("fb_copiar");if(cp)cp.onclick=()=>{const g=E[FB.abierta].genoma;(navigator.clipboard?navigator.clipboard.writeText(g):Promise.reject()).then(()=>cp.textContent="Copied",()=>cp.textContent="Select the text above to copy")};
+function fbGenoma(g){const n=v=>String(+v),l=cs=>(cs||[]).map(c=>[c[0]].concat(c.slice(1).map(n)).join(":")).join(",");
+  return `tf=${g.tf};lado=${g.lado};conds=${l(g.conds)};orden=${[g.orden[0]].concat(g.orden.slice(1).map(n)).join(":")};sl=${n(g.sl)};tp=${n(g.tp)};trail=${n(g.trail)};barras=${g.barras};cierre=${+g.cierre};horas=${g.horas?g.horas[0]+"-"+g.horas[1]:""};condsv=${l(g.conds_v)};be=${n(g.be||0)};parcial=${n(g.parcial||0)};contra=${+!!g.contra}`}
+function fbRetester(){
+  const ids=Object.keys(FB.rt).map(Number);
+  $("sq_rtn").textContent=ids.length?`${ids.filter(i=>FB.rt[i].pasa).length} of ${ids.length} passed all 12`:"";
+  $("sq_rtt").innerHTML=ids.length?`<thead><tr><th>#</th><th>Market</th><th>Score</th>${Object.keys(FBT).map(p=>`<th title="${FBT[p]}">${FBT[p].split(":").pop().trim().split(" ").slice(0,2).join(" ")}</th>`).join("")}</tr></thead><tbody>`
+    +ids.sort((a,b)=>FB.rt[b].puntaje-FB.rt[a].puntaje).map(i=>{const r=FB.rt[i];return `<tr data-i="${i}"><td>${i}</td><td>${r.mercado} ${r.tf}</td><td>${Math.round(r.puntaje)}</td>`
+      +Object.keys(FBT).map(p=>`<td class="${r.ok[p]?"verde":"rojo"}">${r.ok[p]?"✓":"✗"}</td>`).join("")+`</tr>`}).join("")+"</tbody>":`<tbody><tr><td class="mut">Nothing retested in this project yet.</td></tr></tbody>`;
 }
-$("fb_ir").onclick=async()=>{
-  if(!FB.op)return;$("fb_ir").disabled=true;
-  const q=`que=buscar&perfil=${FB.p}&datos=${FB.d}&mercados=${FB.m.join(",")}&tfs=${FB.tf.join(",")}&grande=${FB.g?1:0}`;
-  try{const r=await api("fabrica/api/correr?"+q,{method:"POST"}),j=r.ok?await r.json():{ok:false,error:"The Factory refused it (error "+r.status+")."};
-    if(!j.ok){banner("fb_estado","rojo","Didn't start",j.error||"");$("fb_ir").disabled=false;return}}
-  catch(e){if(!(e instanceof SinClave))banner("fb_estado","rojo","Didn't start",String(e.message||e));$("fb_ir").disabled=false;return}
+$("sq_tabs").onclick=e=>{const b=e.target.closest("button");if(b){FB.tab=b.dataset.x;LS.set("fab_tab",FB.tab);fbTabs()}};
+$("sq_pr").onchange=()=>{FB.pr=$("sq_pr").value;FB.db=null;$("sq_det").hidden=true;fbCargarDb()};
+$("sq_fil").onchange=()=>{FB.filtro=+$("sq_fil").value||0;fbTabla()};
+$("sq_tab").onclick=e=>{const th=e.target.closest("th[data-k]");if(th){FB.orden=[th.dataset.k,FB.orden[0]===th.dataset.k?-FB.orden[1]:-1];return fbTabla()}
+  const cb=e.target.closest("input[data-c]");if(cb){const i=+cb.dataset.c;cb.checked?FB.sel.add(i):FB.sel.delete(i);if(FB.sel.size>30){FB.sel.delete(i);cb.checked=false}fbTabla();return}
+  const tr=e.target.closest("tr[data-i]");if(tr)fbDetalle(+tr.dataset.i)};
+$("sq_rtt").onclick=e=>{const tr=e.target.closest("tr[data-i]");if(tr){FB.tab="databank";fbTabs();fbDetalle(+tr.dataset.i)}};
+async function fbCorrer(ruta,op){
+  try{const r=await api(ruta,op),j=r.ok?await r.json():{ok:false,error:"The Factory refused it (error "+r.status+")."};if(!j.ok)banner("fb_estado","rojo","Didn't start",j.error||"")}
+  catch(e){if(!(e instanceof SinClave))banner("fb_estado","rojo","Didn't start",String(e.message||e))}
   setTimeout(cargarFab,1500);
-};
-$("fb_parar").onclick=async()=>{if(!confirm("Stop the search? What it found so far is lost."))return;try{await api("fabrica/api/parar",{method:"POST"})}catch(e){}setTimeout(cargarFab,1000)};
-$("fb_lista").onclick=e=>{const r=e.target.closest("[data-s]");if(r)fbVer(r.dataset.s)};
+}
+$("sq_ir").onclick=()=>{$("sq_ir").disabled=true;FB.pr=null;fbCorrer("fabrica/api/fab/build",{method:"POST",body:JSON.stringify(FB.c)})};
+$("sq_ret").onclick=()=>{if(!FB.sel.size)return;$("sq_ret").disabled=true;fbCorrer(`fabrica/api/correr?que=retest&s=${FB.pr}&ids=${[...FB.sel].join(",")}`,{method:"POST"});FB.db=null};
+$("fb_parar").onclick=async()=>{if(!confirm("Stop it? What it found so far is lost."))return;try{await api("fabrica/api/parar",{method:"POST"})}catch(e){}setTimeout(cargarFab,1000)};
 {const h=location.hash.slice(1)||LS.get("panel_vista");if(TITULOS[h])irA(h)}   // al recargar vuelve a la última pestaña
 if(FIJA&&!CLAVE)pedirClave();
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
